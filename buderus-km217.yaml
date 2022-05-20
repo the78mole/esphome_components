@@ -1,0 +1,161 @@
+esphome:
+  name: buderus-km217
+  platform: ESP32
+  board: esp32dev
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "xxx"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: buderus-km217.local
+    password: xxx
+
+captive_portal:
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO2
+  rx_pin: GPIO4
+  baud_rate: 2400
+
+external_components:
+  - source:
+      type: local
+      path: my_components
+    components: [ km271_wifi ]
+      
+#custom_component:
+#- id: my_km217
+#  lambda: |-
+#    auto my_km217 = new KM217Component(10000, id(uart_bus));
+#    App.register_component(my_km217);
+#    return {my_km217};
+##    return {my_km217->updates, my_km217->s1, my_km217->s2, my_km217->b1};
+
+##    on_press:
+##      lambda: id(my_km217).km217_log_mode_on();
+
+km271_wifi:
+  - id: budoil
+    uart_id: uart_bus
+
+switch:
+  - platform: gpio
+    name: LED1_Green
+    pin: 
+      number: 21
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    name: LED2_Green
+    pin: 
+      number: 22
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    name: LED3_Yellow
+    pin: 
+      number: 23
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    name: LED4_Red
+    pin: 
+      number: 25
+      mode: OUTPUT
+      inverted: true
+
+sensor:
+#  - platform: custom
+#    lambda: |-
+#      return { get_km217(my_km217)->s1 };
+#    sensors:
+#      - name: "KM217 Sensor 1"
+  - platform: wifi_signal
+    name: "KM217 WiFi Signal Sensor"
+    update_interval: 60s
+  - platform: adc
+    pin: 36
+    unit_of_measurement: "V"
+    name: "KM217 5V Supply"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 32
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH4"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 33
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH5"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 34
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH6"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 35
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH7"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+#  - platform: custom
+#    id: my_km217
+#    lambda: |-
+#      auto my_km217 = new KM217Component(10000, id(uart_bus));
+#      App.register_component(my_km217);
+#      return {my_km217->updates, my_km217->s1, my_km217->s2, my_km217->b1};
+#    sensors:
+#      - name: "KM271 Updates"
+#        accuracy_decimals: 0
+#      - name: "KM271 Sensor1"
+#        accuracy_decimals: 0
+#      - name: "KM271 Sensor2"
+      
+      
