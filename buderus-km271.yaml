@@ -30,9 +30,7 @@ uart:
   baud_rate: 2400
 
 external_components:
-  - source:
-      type: git
-      path: https://github.com/the78mole/esphome_components.git
+  - source: github://the78mole/esphome_components@main
     components: [ km271_wifi ]
       
 km271_wifi:
