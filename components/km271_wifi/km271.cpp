@@ -21,9 +21,11 @@ static const uint32_t ZVZ = 220;    // Zeichenverzugszeit: Time-out between data
 static const int ALIVE_RST = 20000; // Milliseconds
 
 enum State3964R {
-    WAIT_STX = 0,
-    WAIT_DLE_ETX,
-    WAIT_CSUM
+    WAIT_RX_STX = 0,
+    WAIT_RX_DLE_ETX,
+    WAIT_RX_CSUM,
+    WAIT_TX_ACK_SEND_DATA,
+    WAIT_TX_ACK
 };
 
 void KM271Component::parse_3964R() {
@@ -43,20 +45,22 @@ void KM271Component::print_hex_buffer(char * buf, size_t len) {
     char * pTmpBuf = &tmpBuf[0];
     char * pBuf = &buf[0];
 
-    memset(tmpBuf, 0, sizeof(tmpBuf));
+    if(0x04 != buf[0]) {
+        memset(tmpBuf, 0, sizeof(tmpBuf));
 
-    for(size_t i = 0; i < len; i++) {
-        //ESP_LOGD(TAG, "BUF (%5d) PRINT %3d: 0x%02X", sizeof(tmpBuf), i, buf[i]);
-        pTmpBuf += sprintf(pTmpBuf, "%02X ", buf[i]);
+        for(size_t i = 0; i < len; i++) {
+            //ESP_LOGD(TAG, "BUF (%5d) PRINT %3d: 0x%02X", sizeof(tmpBuf), i, buf[i]);
+            pTmpBuf += sprintf(pTmpBuf, "%02X ", buf[i]);
+        }
+
+        ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
     }
-
-    ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
 
 }
 
 void KM271Component::process_state(char c) {
-    static State3964R state = WAIT_STX;
-    State3964R new_state = WAIT_STX;
+    static State3964R state = WAIT_RX_STX;
+    State3964R new_state = WAIT_RX_STX;
 
     static uint32_t last_action;
     const uint32_t now = millis();
@@ -73,7 +77,7 @@ void KM271Component::process_state(char c) {
     if(timeSinceLA > QVZ) {
         // Reset transaction when QVZ is over
         ESP_LOGW(TAG, "QVZ time-out");
-        state = WAIT_STX;
+        state = WAIT_RX_STX;
     }
 
     new_state = state;
@@ -83,7 +87,7 @@ void KM271Component::process_state(char c) {
 
     switch(state) {
 
-        case WAIT_STX:
+        case WAIT_RX_STX:
             pRxBuf = &rxBuffer[0];
             csum = 0x00;
             rxLen = 0;
@@ -91,14 +95,14 @@ void KM271Component::process_state(char c) {
             if(STX == c) {
                 //ESP_LOGD(TAG, "Start Request received, sending ACK = DLE");
                 this->send_ACK_DLE();
-                new_state = WAIT_DLE_ETX;
+                new_state = WAIT_RX_DLE_ETX;
             }
             break;
 
-        case WAIT_DLE_ETX:
+        case WAIT_RX_DLE_ETX:
             if(timeSinceLA > ZVZ) {
                 ESP_LOGW(TAG, "ZVZ time-out");
-                new_state = WAIT_STX;
+                new_state = WAIT_RX_STX;
                 break;
             }
             *pRxBuf = c;
@@ -110,7 +114,7 @@ void KM271Component::process_state(char c) {
                 if(ETX == c && toggleDLE) {
                     //ESP_LOGD(TAG, "End of Transmission received -> next CSUM (0x%02X)", csum);
                     savedCsum = csum;
-                    new_state = WAIT_CSUM;
+                    new_state = WAIT_RX_CSUM;
                     pRxBuf++;
                 } else if (DLE == c && toggleDLE) {
                     // We have a 0x10 byte of data (not control char)
@@ -128,30 +132,30 @@ void KM271Component::process_state(char c) {
 
             } else {
                 ESP_LOGE(TAG, "RX Buffer overrun!");
-                new_state = WAIT_STX;
+                new_state = WAIT_RX_STX;
             }
 
             break;
         
-        case WAIT_CSUM:
+        case WAIT_RX_CSUM:
             *pRxBuf = c;
             //ESP_LOGD(TAG, "CSUM: S:0x%02X, C:0x%02X, R:0x%02X", savedCsum, csum, c);
             this->print_hex_buffer(rxBuffer, rxLen);
             if(0x00 == csum && savedCsum == c) {
                 //ESP_LOGI(TAG, "Checksum match, sending ACK = DLE");
                 this->send_ACK_DLE();
-                ESP_LOGD(TAG, "Received data -> Parsing TODO");
+                //ESP_LOGD(TAG, "Received data -> Parsing TODO");
                 // parse the data
             } else {
                 ESP_LOGE(TAG, "Checksum mismatch, sending NAK");
                 this->send_NAK();
             }
-            new_state = WAIT_STX;
+            new_state = WAIT_RX_STX;
             break;
 
         default:
-            state = WAIT_STX;
-            new_state = WAIT_STX;
+            state = WAIT_RX_STX;
+            new_state = WAIT_RX_STX;
             break;
     }
 

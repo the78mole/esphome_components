@@ -8,9 +8,7 @@ Simply add the external component lines to your device's YAML file in ESPhome an
 An example yaml could be also found in this GIT repo.
 
     external_components:
-      - source:
-        type: git
-        url: https://github.com/the78mole/esphome_components
+      - source: github://the78mole/esphome_components@main
       components: [ km271_wifi ]
 
 The Sensors shall look like this:

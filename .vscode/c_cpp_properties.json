@@ -6,13 +6,15 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "includePath": [
+                "C:\\GIT\\esphome\\esphome",
+                "C:\\GIT\\esphome\\**",
+                "C:\\GIT\\esphome",
                 "${config:idf.espIdfPath}/components/**",
                 "${config:idf.espIdfPathWin}/components/**",
                 "${config:idf.espAdfPath}/components/**",
                 "${config:idf.espAdfPathWin}/components/**",
                 "${workspaceFolder}/**",
-                "C:\\Users\\danie\\.espressif\\tools\\xtensa-esp32-elf\\esp-2020r3-8.4.0\\xtensa-esp32-elf\\xtensa-esp32-elf\\include\\c++\\8.4.0",
-                "C:\\GIT\\esphome\\esphome"
+                "C:\\Users\\danie\\.espressif\\tools\\xtensa-esp32-elf\\esp-2020r3-8.4.0\\xtensa-esp32-elf\\xtensa-esp32-elf\\include\\c++\\8.4.0"
             ],
             "browse": {
                 "path": [
