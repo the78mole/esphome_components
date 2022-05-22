@@ -40,6 +40,14 @@ class KM271Component : public PollingComponent, public uart::UARTDevice {
   //char check_start_end_bytes_(uint8_t byte);
   //void publish_value_(const ObisInfo &obis_info);
 
+  void process_state(char c);
+  void parse_3964R();
+
+  // Helper function (for better readability of code)
+  void send_ACK_DLE();
+  void send_NAK();
+  void print_hex_buffer(char * buf, size_t len);
+
   // Serial parser
   bool record_ = false;
   uint16_t incoming_mask_ = 0;

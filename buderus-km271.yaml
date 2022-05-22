@@ -1,5 +1,5 @@
 esphome:
-  name: buderus-km217
+  name: buderus-km271
   platform: ESP32
   board: esp32dev
 
@@ -10,7 +10,7 @@ logger:
 api:
 
 ota:
-  password: "xxx"
+  password: "put-your-ota-passphrase-here"  # Should be auto generated, when device is first created
 
 wifi:
   ssid: !secret wifi_ssid
@@ -18,8 +18,8 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: buderus-km217.local
-    password: xxx
+    ssid: buderus-km271.local
+    password: "put-your-captive-portal-passphrase-here"   # Should be auto generated, when device is first created
 
 captive_portal:
 
@@ -31,21 +31,10 @@ uart:
 
 external_components:
   - source:
-      type: local
-      path: my_components
+      type: git
+      path: https://github.com/the78mole/esphome_components.git
     components: [ km271_wifi ]
       
-#custom_component:
-#- id: my_km217
-#  lambda: |-
-#    auto my_km217 = new KM217Component(10000, id(uart_bus));
-#    App.register_component(my_km217);
-#    return {my_km217};
-##    return {my_km217->updates, my_km217->s1, my_km217->s2, my_km217->b1};
-
-##    on_press:
-##      lambda: id(my_km217).km217_log_mode_on();
-
 km271_wifi:
   - id: budoil
     uart_id: uart_bus
@@ -77,11 +66,6 @@ switch:
       inverted: true
 
 sensor:
-#  - platform: custom
-#    lambda: |-
-#      return { get_km217(my_km217)->s1 };
-#    sensors:
-#      - name: "KM217 Sensor 1"
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
     update_interval: 60s
@@ -145,17 +129,5 @@ sensor:
       - sliding_window_moving_average:
           window_size: 16
           send_every: 4
-#  - platform: custom
-#    id: my_km217
-#    lambda: |-
-#      auto my_km217 = new KM217Component(10000, id(uart_bus));
-#      App.register_component(my_km217);
-#      return {my_km217->updates, my_km217->s1, my_km217->s2, my_km217->b1};
-#    sensors:
-#      - name: "KM271 Updates"
-#        accuracy_decimals: 0
-#      - name: "KM271 Sensor1"
-#        accuracy_decimals: 0
-#      - name: "KM271 Sensor2"
-      
+     
       
