@@ -1,4 +1,7 @@
 {
   "C_Cpp.intelliSenseEngine": "Tag Parser",
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "files.associations": {
+    "random": "cpp"
+  }
 }

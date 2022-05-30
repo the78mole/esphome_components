@@ -41,17 +41,19 @@ class KM271Component : public PollingComponent, public uart::UARTDevice {
   //void publish_value_(const ObisInfo &obis_info);
 
   void process_state(char c);
-  void parse_3964R();
+  void parse_buderus(char * buf, size_t len);
 
   // Helper function (for better readability of code)
   void send_ACK_DLE();
   void send_NAK();
+  size_t genDataString(char * outbuf, char * inbuf, size_t len);
   void print_hex_buffer(char * buf, size_t len);
 
   // Serial parser
   bool record_ = false;
   uint16_t incoming_mask_ = 0;
   uint8_t km271_data_;
+  //BuderusParams _params;
 };
 
 } // namespace KM271

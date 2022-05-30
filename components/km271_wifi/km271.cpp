@@ -1,4 +1,5 @@
 #include "km271.h"
+#include "km271_params.h"
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "esphome/components/sensor/sensor.h"
@@ -17,6 +18,7 @@ static const uint32_t QVZ = 2000;   // Quittierungsverzugszeit: Time-out in mill
 static const uint32_t ZVZ = 220;    // Zeichenverzugszeit: Time-out between data of active transmission
 
 #define RXBUFLEN      128
+#define lenof(X)   (sizeof(X) / sizeof(X[0]))
 
 static const int ALIVE_RST = 20000; // Milliseconds
 
@@ -28,8 +30,38 @@ enum State3964R {
     WAIT_TX_ACK
 };
 
-void KM271Component::parse_3964R() {
+void KM271Component::parse_buderus(char * buf, size_t len) {
+    uint16_t param;
+    char tmpBuf[4 * RXBUFLEN];
+    char addStr[128];
+    const t_Buderus_R2017_ParamDesc * pDesc;
+    static unsigned long pCnt = 0;
 
+    if(len < 2) {
+        ESP_LOGE(TAG, "Invalid data length.");
+        return;
+    }
+
+    param = (buf[0] << 8) | buf[1];
+
+    memset(tmpBuf, 0, sizeof(tmpBuf));
+    memset(addStr, 0, sizeof(addStr));
+    this->genDataString(tmpBuf, &buf[2], len - 5);
+    if(1 == (len - 5)) {
+        sprintf(addStr, ", %d", buf[2]);
+    }
+
+    for(int i = 0; i < lenof(buderusParamDesc); i++) {
+        pDesc = &buderusParamDesc[i];
+        if(pDesc->param == param) {
+            pCnt++;
+            if(pDesc->debugEn) {
+                ESP_LOGD(TAG, "[%lu] Found param 0x%04X: %s %s (Data: 0x%s%s)", pCnt, param, pDesc->desc, pDesc->unit, tmpBuf, addStr);
+            }
+        }
+    }
+
+    // ESP_LOGD(TAG, "Received param 0x%04X", param);
 }
 
 void KM271Component::send_ACK_DLE() {
@@ -38,6 +70,22 @@ void KM271Component::send_ACK_DLE() {
 
 void KM271Component::send_NAK() {
     write_byte(NAK);
+}
+
+size_t KM271Component::genDataString(char * outbuf, char * inbuf, size_t len) {
+    char * pBuf = outbuf;
+
+    if(len < 1) {
+        ESP_LOGD(TAG, "Invalid conversion len < 1 (%d)", len);
+        return 0;
+    }
+    for(size_t i = 0; i < len; i++) {
+        pBuf += sprintf(pBuf, "%02X ", inbuf[i]);
+    }
+    pBuf--;
+    *pBuf = 0x00;
+    pBuf++;
+    return (pBuf - outbuf);
 }
 
 void KM271Component::print_hex_buffer(char * buf, size_t len) {
@@ -53,7 +101,7 @@ void KM271Component::print_hex_buffer(char * buf, size_t len) {
             pTmpBuf += sprintf(pTmpBuf, "%02X ", buf[i]);
         }
 
-        ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
+        //ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
     }
 
 }
@@ -146,6 +194,7 @@ void KM271Component::process_state(char c) {
                 this->send_ACK_DLE();
                 //ESP_LOGD(TAG, "Received data -> Parsing TODO");
                 // parse the data
+                this->parse_buderus(rxBuffer, rxLen);
             } else {
                 ESP_LOGE(TAG, "Checksum mismatch, sending NAK");
                 this->send_NAK();
@@ -185,10 +234,12 @@ void KM271Component::loop() {
 
 void KM271Component::setup() {
     ESP_LOGCONFIG(TAG, "Setup was called");
+    
 };
 
 void KM271Component::update() {
     ESP_LOGI(TAG, "Update was called");
+    //this->params.init();
 };
 
 void KM271Component::dump_config() {
