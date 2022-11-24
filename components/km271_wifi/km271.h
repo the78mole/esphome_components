@@ -6,54 +6,65 @@
 #include <iostream>
 #include <sys/time.h>
 #include <ctime>
+#include "3964r.h"
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
+#include "km271_params.h"
+
+
+#define GENERATE_SENSOR_SETTER(key, parameterId) void set_##key##_sensor(esphome::sensor::Sensor *sensor) { set_sensor(parameterId, sensor); }
+#define GENERATE_BINARY_SENSOR_SETTER(key, parameterId) void set_##key##_binary_sensor(esphome::binary_sensor::BinarySensor *sensor) { set_binary_sensor(parameterId, sensor); }
 
 
 namespace esphome {
 namespace KM271 {
 
-class KM271Component : public PollingComponent, public uart::UARTDevice {
+class KM271Component : public Component, public uart::UARTDevice {
  public:
-  //void register_sml_listener(SmlListener *listener);
+  KM271Component();
 
   void loop() override;
-  //void dump_config() override;
-  //std::vector<SmlListener *> sml_listeners_{};
-  // KM271 (uint32_t updateInterval, uart::UARTComponent *parent) : 
-  //   PollingComponent(updateInterval), uart::UARTDevice(parent)
-  // {
-  //   parentUC = parent;
-  // }
+  void dump_config() override;
 
-  // KM271 () : PollingComponent(1000) {}
+  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_target_temperature, VSTHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_temperature, VITHK1);
+  GENERATE_SENSOR_SETTER(hot_water_target_temperature, WWST);
+  GENERATE_SENSOR_SETTER(hot_water_temperature, WWIT);
+  GENERATE_SENSOR_SETTER(boiler_target_temperature, KVST);
+  GENERATE_SENSOR_SETTER(boiler_temperature, KVIT);
+  GENERATE_SENSOR_SETTER(outdoor_temperature, AT);
+  GENERATE_BINARY_SENSOR_SETTER(boiler_error, KFEHL);
+  GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR);
+
 
   void setup();
-  void dump_config();
   float get_setup_priority() const override;
   void update();
   void on_shutdown();
 
- protected:
-  //void process_km271_file_(const bytes &sml_data);
-  //char check_start_end_bytes_(uint8_t byte);
-  //void publish_value_(const ObisInfo &obis_info);
 
-  void process_state(char c);
-  void parse_buderus(char * buf, size_t len);
+ protected:
+  void set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor);
+  void set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor);
+
+
+  void process_incoming_byte(uint8_t c);
+  void parse_buderus(uint8_t * buf, size_t len);
+
 
   // Helper function (for better readability of code)
   void send_ACK_DLE();
   void send_NAK();
-  size_t genDataString(char * outbuf, char * inbuf, size_t len);
-  void print_hex_buffer(char * buf, size_t len);
+  void writeRequestValues();
+  size_t genDataString(char* outbuf, uint8_t* inbuf, size_t len);
+  void print_hex_buffer(uint8_t* buf, size_t len);
 
-  // Serial parser
-  bool record_ = false;
-  uint16_t incoming_mask_ = 0;
-  uint8_t km271_data_;
-  //BuderusParams _params;
+
+  uint32_t last_received_byte_time;
+
+
+  Parser3964R parser;
 };
 
 } // namespace KM271

@@ -63,69 +63,29 @@ switch:
       mode: OUTPUT
       inverted: true
 
+binary_sensor:
+  - platform: km271_wifi
+    boiler_error:
+      name: "Kesselfehler"
+    boiler_running:
+      name: "Kesselbetrieb"
+
 sensor:
+  - platform: km271_wifi
+    heating_circuit_1_flow_target_temperature:
+      name: "Vorlaufsolltemperatur"
+    heating_circuit_1_flow_temperature:
+      name: "Vorlauftemperatur"
+    hot_water_target_temperature:
+      name: "Warmwassersolltemperatur"
+    hot_water_temperature:
+      name: "Warmwassertemperatur"
+    boiler_target_temperature:
+      name: "Kesselvorlaufsolltemperatur"
+    boiler_temperature:
+      name: "Kesselvorlauftemperatur"
+    outdoor_temperature:
+      name: "Außentemperatur"
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
     update_interval: 60s
-  - platform: adc
-    pin: 36
-    unit_of_measurement: "V"
-    name: "KM217 5V Supply"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 32
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH4"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 33
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH5"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 34
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH6"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 35
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH7"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-     
-      
