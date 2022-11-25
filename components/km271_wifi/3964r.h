@@ -16,6 +16,8 @@ static const char NAK = 0x15;
 static const uint32_t QVZ = 2000;   // Quittierungsverzugszeit: Time-out in milliseconds for achnowledge
 static const uint32_t ZVZ = 220;    // Zeichenverzugszeit: Time-out between data of active transmission
 
+static const uint8_t maxTelegramRetries = 5; // stop if no ack after this amount of tries
+
 enum ParserState {
     WaitingForStart,
     WaitingForEtx,
@@ -44,6 +46,42 @@ public:
 private:
     bool hasUnhandledDLE;
     uint8_t currentChecksum;
+
+};
+
+enum WriterState {
+    Idle,
+    RequestPending,
+    WaitingForDle,
+    Sending,
+    SendingDLE,
+    SendingETX,
+    SendingChecksum,
+    WaitForAck
+};
+
+class Writer3964R
+{
+public:
+    Writer3964R();
+    void reset();
+    void enqueueTelegram(uint8_t *data, uint16_t length);
+    void setSTXSent();
+    uint8_t popNextByte();
+    bool hasByteToSend();
+    void restartTelegram();
+
+public:
+    WriterState writerState;
+    uint8_t retryCount;
+
+
+private:
+    uint8_t telegramToSend[MAX_TELEGRAM_SIZE];
+    uint16_t telegramLength;
+    bool hasUnhandledDLE;
+    uint8_t currentChecksum;
+    uint16_t bytesSent;
 
 };
 

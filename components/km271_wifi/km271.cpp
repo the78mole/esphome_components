@@ -35,7 +35,7 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
                 char tmpBuf[4 * MAX_TELEGRAM_SIZE];
                 genDataString(tmpBuf, &buf[2], len - 2);
 
-                ESP_LOGD(TAG, "Found parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
+                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
             }
             if(pDesc->sensor) {
                 pDesc->sensor->parseAndTransmit(buf + 2, len-2);
@@ -44,7 +44,7 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
         }
     }
 
-    ESP_LOGD(TAG, "Received param 0x%04X", parameterId);
+    // ESP_LOGD(TAG, "Received param 0x%04X", parameterId);
 }
 
 void KM271Component::send_ACK_DLE() {
@@ -53,14 +53,6 @@ void KM271Component::send_ACK_DLE() {
 
 void KM271Component::send_NAK() {
     write_byte(NAK);
-}
-
-
-void KM271Component::writeRequestValues()
-{
-    write_byte(0xee);
-    write_byte(0x00);
-    write_byte(0x00);
 }
 
 size_t KM271Component::genDataString(char* outbuf, uint8_t* inbuf, size_t len) {
@@ -94,17 +86,51 @@ void KM271Component::print_hex_buffer(uint8_t* buf, size_t len) {
 
         ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
     }
-
 }
 
 void KM271Component::process_incoming_byte(uint8_t c) {
     const uint32_t now = millis();
+    // ESP_LOGD(TAG, "R%02X", c);
 
+    if (writer.writerState == WaitingForDle) {
+        if (c == DLE) {
+            while(writer.hasByteToSend()) {
+                uint8_t byte = writer.popNextByte();
+                write_byte(byte);
+            }
+            return;
+        } else {
+            ESP_LOGW(TAG, "no dle received: %2X", c);
+            writer.restartTelegram();
+        }
+    } else if(writer.writerState == WaitForAck) {
+        if (c==DLE) {
+            writer.reset();
+            ESP_LOGD(TAG, "ack received");
+        } else if(c==NAK) {
+            if(writer.retryCount < maxTelegramRetries) {
+                writer.restartTelegram();
+                ESP_LOGW(TAG, "nack received, retrying");
+            } else {
+                writer.reset();
+                ESP_LOGE(TAG, "nack received and retry count exhausted, aborting");
+            }
+        } else {
+            if(writer.retryCount < maxTelegramRetries) {
+                writer.restartTelegram();
+                ESP_LOGW(TAG, "ack for writer was invalid, retrying: %d", c);
+            } else {
+                writer.reset();
+                ESP_LOGE(TAG, "ack for writer was invalid and retry count exhausted, aborting: %d", c);
+            }
+        }
+        return;
+    }
     uint32_t timeSinceLA = now - last_received_byte_time;
 
     if(timeSinceLA > ZVZ && parser.parsingInProgress()) {
         // Reset transaction when QVZ is over
-        ESP_LOGW(TAG, "ZVZ time-out");
+        ESP_LOGW(TAG, "ZVZ time-out, recv: %2X, state %d", c, parser.parserState);
         parser.reset();
     }
     last_received_byte_time = now;
@@ -127,33 +153,27 @@ void KM271Component::process_incoming_byte(uint8_t c) {
 }
 
 void KM271Component::loop() {
-    static int cnt = 0;
-    static uint32_t last_action;
-    const uint32_t now = millis();
-
-    if (now - last_action > ALIVE_RST) {
-        ESP_LOGD(TAG, "Alive");
-        // this->send_ACK_DLE();
-        last_action = now;
-    }
-
-    while(available()) {
+      while(available()) {
         uint8_t c = read();
-        // ESP_LOGD(TAG, "Recv: 0x%02X (%0.2f)", c, (now - last_action) / 1000.0);
-        process_incoming_byte(c);
-        last_action = now;
-    };
 
+        // if we have a write, start our request on a stx from the km217. This seems more reliable.
+        if (c == STX && parser.parserState == WaitingForStart && writer.writerState == RequestPending) {
+                write_byte(STX);
+                writer.setSTXSent();
+         } else {
+            process_incoming_byte(c);
+        }
+    };
 }
 
 void KM271Component::setup() {
     ESP_LOGCONFIG(TAG, "Setup was called");
-    const t_Buderus_R2017_ParamDesc * pDesc;
+    uint8_t logCommand[] = {0xEE, 0x00, 0x00};
+    writer.enqueueTelegram(logCommand, 3);
 };
 
 void KM271Component::update() {
     ESP_LOGI(TAG, "Update was called");
-    //this->params.init();
 };
 
 void KM271Component::dump_config() {
@@ -202,9 +222,7 @@ void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, es
     }
 
     ESP_LOGE(TAG, "Parameter ID %d is not supported", parameterId);
-
 }
-
 
 
 float KM271Component::get_setup_priority() const {

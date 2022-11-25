@@ -21,7 +21,6 @@ If you are not interested in some of the provided values, just remove the respec
 ### Limitations
    * The software only provides a sub-set of the available data. Feel free to create a pull request to add data you want to see.
    * Changing of values (e.g. target temperatures) is not yet supported. This is planned for a later version.
-   * The software currently only reports values after they change. This is especially visible with the error flags: If your heating system is working ok and does not report an error, the error sensor will always show "Unknown", as no change was observed. This is currently worked on.
  
 ### Notes by Jens
 I'm working on this project as a hobby. My work on this software is in no way associated with a company. If you like to use it, or improve on it, feel free.

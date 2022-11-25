@@ -65,6 +65,7 @@ class KM271Component : public Component, public uart::UARTDevice {
 
 
   Parser3964R parser;
+  Writer3964R writer;
 };
 
 } // namespace KM271
