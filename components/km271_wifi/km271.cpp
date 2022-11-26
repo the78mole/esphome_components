@@ -35,7 +35,7 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
                 char tmpBuf[4 * MAX_TELEGRAM_SIZE];
                 genDataString(tmpBuf, &buf[2], len - 2);
 
-                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
+                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s, %d)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf, *tmpBuf);
             }
             if(pDesc->sensor) {
                 pDesc->sensor->parseAndTransmit(buf + 2, len-2);

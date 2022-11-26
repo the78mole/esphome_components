@@ -19,6 +19,7 @@ CODEOWNERS = ["@the78mole", "@jensgraef"]
 TYPES = [
     "boiler_error",
     "boiler_running",
+    "load_pump_running"
 ]
 
 CONFIG_SCHEMA = (
@@ -31,7 +32,9 @@ CONFIG_SCHEMA = (
             cv.Optional("boiler_running"): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING
             ),
-
+            cv.Optional("load_pump_running"): binary_sensor.binary_sensor_schema(
+                device_class=DEVICE_CLASS_RUNNING
+            ),
         }
     )
 )
