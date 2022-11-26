@@ -16,7 +16,7 @@ This component uses the hardware designed by the78mole to read interesting value
 See https://esphome.io/components/external_components.html for information about integrating this into your esphome environemnt
 
 To configure the component, see the included file buderus-km271.yaml.
-If you are not interested in some of the provided values, just remove the respective entry in the the section "sensor" or "binary_sensor".
+If you are not interested in some of the provided values, just remove the respective entry in the the section "sensor" or "binary_sensor", but leave the empty sections in place to avoid comiler errors with missing headers.
  
 ### Limitations
    * The software only provides a sub-set of the available data. Feel free to create a pull request to add data you want to see.
