@@ -1,67 +1,50 @@
 #include "km271.h"
-#include "km271_params.h"
+#include <stdint.h>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
+
 
 namespace esphome {
 namespace KM271 {
 
-static const char *const TAG = "km271";
+static const char * TAG = "km271";
 
-static const char STX = 0x02;
-static const char ETX = 0x03;
-static const char DLE = 0x10;
-static const char NAK = 0x15;
-
-static const uint32_t QVZ = 2000;   // Quittierungsverzugszeit: Time-out in milliseconds for achnoledge
-static const uint32_t ZVZ = 220;    // Zeichenverzugszeit: Time-out between data of active transmission
-
-#define RXBUFLEN      128
 #define lenof(X)   (sizeof(X) / sizeof(X[0]))
 
 static const int ALIVE_RST = 20000; // Milliseconds
 
-enum State3964R {
-    WAIT_RX_STX = 0,
-    WAIT_RX_DLE_ETX,
-    WAIT_RX_CSUM,
-    WAIT_TX_ACK_SEND_DATA,
-    WAIT_TX_ACK
-};
+KM271Component::KM271Component()
+{
+}
 
-void KM271Component::parse_buderus(char * buf, size_t len) {
-    uint16_t param;
-    char tmpBuf[4 * RXBUFLEN];
-    char addStr[128];
-    const t_Buderus_R2017_ParamDesc * pDesc;
-    static unsigned long pCnt = 0;
+void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
 
     if(len < 2) {
         ESP_LOGE(TAG, "Invalid data length.");
         return;
     }
 
-    param = (buf[0] << 8) | buf[1];
-
-    memset(tmpBuf, 0, sizeof(tmpBuf));
-    memset(addStr, 0, sizeof(addStr));
-    this->genDataString(tmpBuf, &buf[2], len - 5);
-    if(1 == (len - 5)) {
-        sprintf(addStr, ", %d", buf[2]);
-    }
+    uint16_t parameterId = (buf[0] << 8) | buf[1];
 
     for(int i = 0; i < lenof(buderusParamDesc); i++) {
-        pDesc = &buderusParamDesc[i];
-        if(pDesc->param == param) {
-            pCnt++;
+        const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+        if(pDesc->parameterId == parameterId) {
             if(pDesc->debugEn) {
-                ESP_LOGD(TAG, "[%lu] Found param 0x%04X: %s %s (Data: 0x%s%s)", pCnt, param, pDesc->desc, pDesc->unit, tmpBuf, addStr);
+                char tmpBuf[4 * MAX_TELEGRAM_SIZE];
+                genDataString(tmpBuf, &buf[2], len - 2);
+
+                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
             }
+            if(pDesc->sensor) {
+                pDesc->sensor->parseAndTransmit(buf + 2, len-2);
+            }
+            break;
         }
     }
 
-    // ESP_LOGD(TAG, "Received param 0x%04X", param);
+    // ESP_LOGD(TAG, "Received param 0x%04X", parameterId);
 }
 
 void KM271Component::send_ACK_DLE() {
@@ -72,7 +55,7 @@ void KM271Component::send_NAK() {
     write_byte(NAK);
 }
 
-size_t KM271Component::genDataString(char * outbuf, char * inbuf, size_t len) {
+size_t KM271Component::genDataString(char* outbuf, uint8_t* inbuf, size_t len) {
     char * pBuf = outbuf;
 
     if(len < 1) {
@@ -88,10 +71,10 @@ size_t KM271Component::genDataString(char * outbuf, char * inbuf, size_t len) {
     return (pBuf - outbuf);
 }
 
-void KM271Component::print_hex_buffer(char * buf, size_t len) {
-    char tmpBuf[4 * RXBUFLEN];
+void KM271Component::print_hex_buffer(uint8_t* buf, size_t len) {
+    char tmpBuf[4 * MAX_TELEGRAM_SIZE];
     char * pTmpBuf = &tmpBuf[0];
-    char * pBuf = &buf[0];
+    uint8_t * pBuf = &buf[0];
 
     if(0x04 != buf[0]) {
         memset(tmpBuf, 0, sizeof(tmpBuf));
@@ -101,154 +84,146 @@ void KM271Component::print_hex_buffer(char * buf, size_t len) {
             pTmpBuf += sprintf(pTmpBuf, "%02X ", buf[i]);
         }
 
-        //ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
+        ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
     }
-
 }
 
-void KM271Component::process_state(char c) {
-    static State3964R state = WAIT_RX_STX;
-    State3964R new_state = WAIT_RX_STX;
-
-    static uint32_t last_action;
+void KM271Component::process_incoming_byte(uint8_t c) {
     const uint32_t now = millis();
-    static int rxLen = 0;
+    // ESP_LOGD(TAG, "R%02X", c);
 
-    static char lastChar = 0x00;
-    static char csum, savedCsum;
-    static char rxBuffer[RXBUFLEN];
-    static char * pRxBuf;
-    static bool toggleDLE;
+    if (writer.writerState == WaitingForDle) {
+        if (c == DLE) {
+            while(writer.hasByteToSend()) {
+                uint8_t byte = writer.popNextByte();
+                write_byte(byte);
+            }
+            return;
+        } else {
+            ESP_LOGW(TAG, "no dle received: %2X", c);
+            writer.restartTelegram();
+        }
+    } else if(writer.writerState == WaitForAck) {
+        if (c==DLE) {
+            writer.reset();
+            ESP_LOGD(TAG, "ack received");
+        } else if(c==NAK) {
+            if(writer.retryCount < maxTelegramRetries) {
+                writer.restartTelegram();
+                ESP_LOGW(TAG, "nack received, retrying");
+            } else {
+                writer.reset();
+                ESP_LOGE(TAG, "nack received and retry count exhausted, aborting");
+            }
+        } else {
+            if(writer.retryCount < maxTelegramRetries) {
+                writer.restartTelegram();
+                ESP_LOGW(TAG, "ack for writer was invalid, retrying: %d", c);
+            } else {
+                writer.reset();
+                ESP_LOGE(TAG, "ack for writer was invalid and retry count exhausted, aborting: %d", c);
+            }
+        }
+        return;
+    }
+    uint32_t timeSinceLA = now - last_received_byte_time;
 
-    uint32_t timeSinceLA = now - last_action;
-
-    if(timeSinceLA > QVZ) {
+    if(timeSinceLA > ZVZ && parser.parsingInProgress()) {
         // Reset transaction when QVZ is over
-        ESP_LOGW(TAG, "QVZ time-out");
-        state = WAIT_RX_STX;
+        ESP_LOGW(TAG, "ZVZ time-out, recv: %2X, state %d", c, parser.parserState);
+        parser.reset();
     }
+    last_received_byte_time = now;
 
-    new_state = state;
+    if(parser.parsingInProgress()) {
+        parser.consumeByte(c);
 
-    csum ^= c; // Sum up the checksum
-    rxLen++;
-
-    switch(state) {
-
-        case WAIT_RX_STX:
-            pRxBuf = &rxBuffer[0];
-            csum = 0x00;
-            rxLen = 0;
-            toggleDLE = false;
-            if(STX == c) {
-                //ESP_LOGD(TAG, "Start Request received, sending ACK = DLE");
-                this->send_ACK_DLE();
-                new_state = WAIT_RX_DLE_ETX;
-            }
-            break;
-
-        case WAIT_RX_DLE_ETX:
-            if(timeSinceLA > ZVZ) {
-                ESP_LOGW(TAG, "ZVZ time-out");
-                new_state = WAIT_RX_STX;
-                break;
-            }
-            *pRxBuf = c;
-
-
-            if(pRxBuf < &rxBuffer[RXBUFLEN]) {
-                // If a double DLE is received, it is DLE = 0x10 data 
-                // and not initiating the end of transmission
-                if(ETX == c && toggleDLE) {
-                    //ESP_LOGD(TAG, "End of Transmission received -> next CSUM (0x%02X)", csum);
-                    savedCsum = csum;
-                    new_state = WAIT_RX_CSUM;
-                    pRxBuf++;
-                } else if (DLE == c && toggleDLE) {
-                    // We have a 0x10 byte of data (not control char)
-                    // don't move the buffer pointer (we wrote 0x10 a cycle before)
-                } else {
-                    pRxBuf++;
-                }
-                
-                // Recognition of two 0x10 as data or single 0x10 as control
-                if(DLE == c) {
-                    toggleDLE = !(toggleDLE);
-                } else {
-                    toggleDLE = false;
-                }
-
-            } else {
-                ESP_LOGE(TAG, "RX Buffer overrun!");
-                new_state = WAIT_RX_STX;
-            }
-
-            break;
-        
-        case WAIT_RX_CSUM:
-            *pRxBuf = c;
-            //ESP_LOGD(TAG, "CSUM: S:0x%02X, C:0x%02X, R:0x%02X", savedCsum, csum, c);
-            this->print_hex_buffer(rxBuffer, rxLen);
-            if(0x00 == csum && savedCsum == c) {
-                //ESP_LOGI(TAG, "Checksum match, sending ACK = DLE");
-                this->send_ACK_DLE();
-                //ESP_LOGD(TAG, "Received data -> Parsing TODO");
-                // parse the data
-                this->parse_buderus(rxBuffer, rxLen);
-            } else {
-                ESP_LOGE(TAG, "Checksum mismatch, sending NAK");
-                this->send_NAK();
-            }
-            new_state = WAIT_RX_STX;
-            break;
-
-        default:
-            state = WAIT_RX_STX;
-            new_state = WAIT_RX_STX;
-            break;
+        if (parser.parserState == TelegramComplete) {
+            this->send_ACK_DLE();
+            parse_buderus(parser.decodedTelegram, parser.currentTelegramLength);
+            parser.reset();
+        }
+    } else {
+        if(c == STX) {
+            // ESP_LOGD(TAG, "Start Request received, sending ACK = DLE");
+            this->send_ACK_DLE();
+            parser.startTelegram();
+        }
     }
-
-    state = new_state;
-    last_action = now;
-    lastChar = c;
 }
 
 void KM271Component::loop() {
-    static int cnt = 0;
-    static uint32_t last_action;
-    const uint32_t now = millis();
+      while(available()) {
+        uint8_t c = read();
 
-    if (now - last_action > ALIVE_RST) {
-        ESP_LOGD(TAG, "Alive");
-        last_action = now;
-    }
-
-    while(available()) {
-        const char c = read();      
-        //ESP_LOGD(TAG, "Recv: 0x%02X (%0.2f)", c, (now - last_action) / 1000.0);
-        this->process_state(c);
-        last_action = now;
+        // if we have a write, start our request on a stx from the km217. This seems more reliable.
+        if (c == STX && parser.parserState == WaitingForStart && writer.writerState == RequestPending) {
+                write_byte(STX);
+                writer.setSTXSent();
+         } else {
+            process_incoming_byte(c);
+        }
     };
-
 }
 
 void KM271Component::setup() {
     ESP_LOGCONFIG(TAG, "Setup was called");
-    
+    uint8_t logCommand[] = {0xEE, 0x00, 0x00};
+    writer.enqueueTelegram(logCommand, 3);
 };
 
 void KM271Component::update() {
     ESP_LOGI(TAG, "Update was called");
-    //this->params.init();
 };
 
 void KM271Component::dump_config() {
     ESP_LOGCONFIG(TAG, "Dump Config was called");
-};
+    for(int i = 0; i < lenof(buderusParamDesc); i++) {
+        const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+        if (pDesc->sensor) {
+            ESP_LOGCONFIG(TAG, "Sensor %s enabled", pDesc->desc);
+        }
+    }
+}
 
 void KM271Component::on_shutdown() {
     ESP_LOGI(TAG, "Shutdown was called");
-};
+}
+
+void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor)
+{
+    for(int i = 0; i < lenof(buderusParamDesc); i++) {
+        t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+        if(pDesc->parameterId == parameterId) {
+            if (pDesc->sensor) {
+                ESP_LOGE(TAG, "Sensor for id %d already set", parameterId);
+                return;
+            }
+            pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType);
+            return;
+        }
+    }
+
+    ESP_LOGE(TAG, "Parameter %d is not supported", parameterId);
+}
+
+void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor)
+{
+    for(int i = 0; i < lenof(buderusParamDesc); i++) {
+        t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+        if(pDesc->parameterId == parameterId) {
+            if (pDesc->sensor) {
+                ESP_LOGE(TAG, "Sensor for id %d already set", parameterId);
+                return;
+            }
+            pDesc->sensor = new BuderusParamSensor(sensor);
+            return;
+        }
+    }
+
+    ESP_LOGE(TAG, "Parameter ID %d is not supported", parameterId);
+}
+
 
 float KM271Component::get_setup_priority() const {
     return setup_priority::DATA;
