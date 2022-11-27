@@ -40,6 +40,18 @@ An example yaml could be also found in this GIT repo.
           name: "Kesselvorlauftemperatur"
         outdoor_temperature:
           name: "Außentemperatur"
+        room_target_temperature:
+          name: "Raumsolltemperatur"
+        heating_curve_n10:
+          name: "Heizkurve -10 °C"
+        heating_curve_0:
+          name: "Heizkurve 0 °C"
+        heating_curve_p10:
+          name: "Heizkurve +10 °C"
+        boiler_turn_on_temperature:
+          name: "Brennereinschalttemperatur"
+        boiler_turn_off_temperature:
+          name: "Brennerausschalttemperatur"
 
 The Sensors shall look like this:
 

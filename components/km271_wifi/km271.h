@@ -34,6 +34,12 @@ class KM271Component : public Component, public uart::UARTDevice {
   GENERATE_SENSOR_SETTER(boiler_target_temperature, KVST);
   GENERATE_SENSOR_SETTER(boiler_temperature, KVIT);
   GENERATE_SENSOR_SETTER(outdoor_temperature, AT);
+  GENERATE_SENSOR_SETTER(room_target_temperature, RSTHK1);
+  GENERATE_SENSOR_SETTER(heating_curve_n10, KLHK1_N10);
+  GENERATE_SENSOR_SETTER(heating_curve_0, KLHK1_P00);
+  GENERATE_SENSOR_SETTER(heating_curve_p10, KLHK1_P10);
+  GENERATE_SENSOR_SETTER(boiler_turn_on_temperature, BET);
+  GENERATE_SENSOR_SETTER(boiler_turn_off_temperature, BAT);
   GENERATE_BINARY_SENSOR_SETTER(boiler_error, KFEHL);
   GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR);
   GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW);
