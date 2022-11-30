@@ -94,23 +94,23 @@ sensor:
       name: "HK1 Heizkurve 0 °C"
     heating_circuit_1_curve_n10:
       name: "HK1 Heizkurve -10 °C"
-    heating_circuit_1_flow_target_temperature:
+    heating_circuit_2_flow_target_temperature:
       name: "HK2 Vorlaufsolltemperatur"
-    heating_circuit_1_flow_temperature:
+    heating_circuit_2_flow_temperature:
       name: "HK2 Vorlaufisttemperatur"
-    heating_circuit_1_room_target_temperature:
+    heating_circuit_2_room_target_temperature:
       name: "HK2 Raumsolltemperatur"
-    heating_circuit_1_room_temperature:
+    heating_circuit_2_room_temperature:
       name: "HK2 Raumisttemperatur"
-    heating_circuit_1_pump_power:
+    heating_circuit_2_pump_power:
       name: "HK2 Pumpenleistung"
-    heating_circuit_1_mixer_position:
+    heating_circuit_2_mixer_position:
       name: "HK2 Mischerstellung"
-    heating_circuit_1_curve_p10:
+    heating_circuit_2_curve_p10:
       name: "HK2 Heizkurve +10 °C"
-    heating_circuit_1_curve_0:
+    heating_circuit_2_curve_0:
       name: "HK2 Heizkurve 0 °C"
-    heating_circuit_1_curve_n10:
+    heating_circuit_2_curve_n10:
       name: "HK2 Heizkurve -10 °C"
     hot_water_target_temperature:
       name: "Warmwassersolltemperatur"
