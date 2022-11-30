@@ -7,6 +7,7 @@ from esphome.const import (
     CONF_ID,
     DEVICE_CLASS_PROBLEM,
     DEVICE_CLASS_RUNNING,
+    DEVICE_CLASS_POWER,
 )
 
 from . import (
@@ -17,23 +18,28 @@ from . import (
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
+    "load_pump_running",
     "boiler_error",
     "boiler_running",
-    "load_pump_running"
+    "boiler_actuation"
+
 ]
 
 CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
+            cv.Optional("load_pump_running"): binary_sensor.binary_sensor_schema(
+                device_class=DEVICE_CLASS_RUNNING
+            ),
             cv.Optional("boiler_error"): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
             ),
             cv.Optional("boiler_running"): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING
             ),
-            cv.Optional("load_pump_running"): binary_sensor.binary_sensor_schema(
-                device_class=DEVICE_CLASS_RUNNING
+            cv.Optional("boiler_actuation"): binary_sensor.binary_sensor_schema(
+                device_class=DEVICE_CLASS_POWER
             ),
         }
     )
