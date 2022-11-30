@@ -100,37 +100,6 @@ enum Buderus_R2017_ParameterId {
     CFG13     = 0x00a8, //: "Brenner Min Modulation, Brenner Mod Laufzeit"
 };
 
-enum Buderus_R2017_ErrorMsg {
-    0 = "Kein Fehler",
-    2 = "Aussenfühler defekt",
-    3 = "HK1-Vorlauffühler defekt",
-    4 = "HK2-Vorlauffühler defekt",
-    8 = "Warmwasserfühler defekt",
-    9 = "Warmwasser bleibt kalt",
-   10 = "Störung thermische Desinfektion",
-   11 = "HK1-Fernbedienung defekt",
-   12 = "HK2-Fernbedienung defekt",
-   15 = "Keine Kommunikation mit HK1-Fernbedienung",
-   16 = "Keine Kommunikation mit HK2-Fernbedienung",
-   20 = "Störung Brenner 1",
-   24 = "Keine Verbindung mit Kessel 1",
-   30 = "Interner Fehler Nr. 1",
-   31 = "Interner Fehler Nr. 2",
-   32 = "Interner Fehler Nr. 3",
-   33 = "Interner Fehler Nr. 4",
-   49 = "Kesselvorlauffühler defekt",
-   50 = "Kesselzusatzfühler defekt",
-   51 = "Kessel bleibt kalt",
-   52 = "Störung Brenner",
-   53 = "Störung Sicherheitskette",
-   54 = "Externe Störung Kessel",
-   55 = "Abgasfühler defekt",
-   56 = "Abgasgrenze überschritten",
-   87 = "Rücklauffühler defekt",
-   92 = "RESET"
-
-};
-
 enum SensorType {
     NONE = 0,
     INT,
