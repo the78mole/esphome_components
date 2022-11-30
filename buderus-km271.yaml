@@ -74,6 +74,8 @@ binary_sensor:
     boiler_actuation:
       name: "Brenneransteuerung"
 
+number:
+
 sensor:
   - platform: km271_wifi
     heating_circuit_1_flow_target_temperature:

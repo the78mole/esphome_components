@@ -1,0 +1,9 @@
+switch:
+  - platform: km271_wifi
+    warm_water_heating_auto_off:
+      name: "Warmwasserbereitung Auto/Nacht"
+
+number:
+  - platform: km271_wifi
+    warm_water_temperature:
+      name: "Warmwassersolltemperatur Tag"

@@ -65,7 +65,7 @@ class Writer3964R
 public:
     Writer3964R();
     void reset();
-    void enqueueTelegram(uint8_t *data, uint16_t length);
+    void enqueueTelegram(const uint8_t *data, uint16_t length);
     void setSTXSent();
     uint8_t popNextByte();
     bool hasByteToSend();

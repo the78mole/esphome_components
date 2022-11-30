@@ -104,7 +104,7 @@ void Writer3964R::reset()
     retryCount = 0;
 }
 
-void Writer3964R::enqueueTelegram(uint8_t *data, uint16_t length)
+void Writer3964R::enqueueTelegram(const uint8_t *data, uint16_t length)
 {
     if(writerState != Idle) {
         ESP_LOGE(TAG, "Writer not idle");
@@ -114,6 +114,7 @@ void Writer3964R::enqueueTelegram(uint8_t *data, uint16_t length)
         ESP_LOGE(TAG, "Telegram too long %d", length);
         return;
     }
+    ESP_LOGD(TAG, "Enqueuing telegram of length %d", length);
 
     hasUnhandledDLE = false;
     bytesSent = 0;

@@ -15,6 +15,8 @@
 
 #define GENERATE_SENSOR_SETTER(key, parameterId) void set_##key##_sensor(esphome::sensor::Sensor *sensor) { set_sensor(parameterId, sensor); }
 #define GENERATE_BINARY_SENSOR_SETTER(key, parameterId) void set_##key##_binary_sensor(esphome::binary_sensor::BinarySensor *sensor) { set_binary_sensor(parameterId, sensor); }
+#define GENERATE_SWITCH_SETTER(key, parameterId) void set_##key##_switch(BuderusParamSwitch *switch_) { set_switch(parameterId, switch_); }
+#define GENERATE_NUMBER_SETTER(key, parameterId) void set_##key##_number(BuderusParamNumber *number) { set_number(parameterId, number); }
 
 
 namespace esphome {
@@ -60,6 +62,9 @@ class KM271Component : public Component, public uart::UARTDevice {
   GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR);
   GENERATE_BINARY_SENSOR_SETTER(boiler_actuation, BANST);
 
+  GENERATE_SWITCH_SETTER(warm_water_heating_auto_off, CFG_WW_Aufbereitung);
+  GENERATE_NUMBER_SETTER(warm_water_temperature, CFG_WW_Temperatur);
+
   void setup();
   float get_setup_priority() const override;
   void update();
@@ -67,8 +72,12 @@ class KM271Component : public Component, public uart::UARTDevice {
 
 
  protected:
+  t_Buderus_R2017_ParamDesc * findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
   void set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor);
   void set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor);
+  void set_switch(Buderus_R2017_ParameterId parameterId, BuderusParamSwitch *switch_);
+  void set_number(Buderus_R2017_ParameterId parameterId, BuderusParamNumber *number);
+
 
 
   void process_incoming_byte(uint8_t c);
