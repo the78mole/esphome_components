@@ -33,7 +33,16 @@ void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
                 value = (value << 8) + data[i];
             }
             sensor->publish_state(value);
-        } else {
+        } 
+        else if (sensorType == INTDIVIDEDBY2) {
+            ESP_LOGD(TAG, "Found int with length %d that needs to be devided by 2", len);
+            uint32_t value = 0;
+            for (int i=0; i<len; i++) {
+                value = (value << 8) + data[i];
+            }
+            sensor->publish_state(((float)value) / 2.0f);
+        }
+        else {
           ESP_LOGD(TAG, "Sensor type %d NYI", sensorType);
         }
     } else if(binarySensor) {

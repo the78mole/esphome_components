@@ -29,21 +29,36 @@ class KM271Component : public Component, public uart::UARTDevice {
 
   GENERATE_SENSOR_SETTER(heating_circuit_1_flow_target_temperature, VSTHK1);
   GENERATE_SENSOR_SETTER(heating_circuit_1_flow_temperature, VITHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_room_target_temperature, RSTHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_room_temperature, RITHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_pump_power, PLHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_mixer_position, MSHK1);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_p10, KLHK1_P10);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_0, KLHK1_P00);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_n10, KLHK1_N10);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_target_temperature, VSTHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_temperature, VITHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_room_target_temperature, RSTHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_room_temperature, RITHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_pump_power, PLHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_mixer_position, MSHK2);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_p10, KLHK2_P10);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_0, KLHK2_P00);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_n10, KLHK2_N10);
   GENERATE_SENSOR_SETTER(hot_water_target_temperature, WWST);
   GENERATE_SENSOR_SETTER(hot_water_temperature, WWIT);
   GENERATE_SENSOR_SETTER(boiler_target_temperature, KVST);
   GENERATE_SENSOR_SETTER(boiler_temperature, KVIT);
-  GENERATE_SENSOR_SETTER(outdoor_temperature, AT);
-  GENERATE_SENSOR_SETTER(room_target_temperature, RSTHK1);
-  GENERATE_SENSOR_SETTER(heating_curve_n10, KLHK1_N10);
-  GENERATE_SENSOR_SETTER(heating_curve_0, KLHK1_P00);
-  GENERATE_SENSOR_SETTER(heating_curve_p10, KLHK1_P10);
   GENERATE_SENSOR_SETTER(boiler_turn_on_temperature, BET);
   GENERATE_SENSOR_SETTER(boiler_turn_off_temperature, BAT);
+  GENERATE_SENSOR_SETTER(exhaust_gas_temperature, ABTMP);
+  GENERATE_SENSOR_SETTER(outdoor_temperature, AT);
+  GENERATE_SENSOR_SETTER(attenuated_outdoor_temperature, ATD);
+
+  GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW);
   GENERATE_BINARY_SENSOR_SETTER(boiler_error, KFEHL);
   GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR);
-  GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW);
-
+  GENERATE_BINARY_SENSOR_SETTER(boiler_actuation, BANST);
 
   void setup();
   float get_setup_priority() const override;
