@@ -4,4 +4,5 @@ km271.config
 km271.creator*
 km271.cxxflags
 km271.files
-km271.include
+km271.includes
+*~

@@ -10,10 +10,9 @@ namespace esphome {
 namespace KM271 {
 
 static const char * TAG = "km271";
+static const uint8_t SENSOR_LOOP_CALL_EVERY=5;
 
 #define lenof(X)   (sizeof(X) / sizeof(X[0]))
-
-static const int ALIVE_RST = 20000; // Milliseconds
 
 KM271Component::KM271Component()
 {
@@ -35,7 +34,7 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
                 char tmpBuf[4 * MAX_TELEGRAM_SIZE];
                 genDataString(tmpBuf, &buf[2], len - 2);
 
-                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s, %d)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf, *tmpBuf);
+                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
             }
             if(pDesc->sensor) {
                 pDesc->sensor->parseAndTransmit(buf + 2, len-2);
@@ -153,7 +152,7 @@ void KM271Component::process_incoming_byte(uint8_t c) {
 }
 
 void KM271Component::loop() {
-      while(available()) {
+    while(available()) {
         uint8_t c = read();
 
         // if we have a write, start our request on a stx from the km217. This seems more reliable.
@@ -164,10 +163,24 @@ void KM271Component::loop() {
             process_incoming_byte(c);
         }
     };
+
+    sensorLoopCounter++;
+    if (sensorLoopCounter > SENSOR_LOOP_CALL_EVERY) {
+        sensorLoopCounter = 0;
+
+        for(int i = 0; i < lenof(buderusParamDesc); i++) {
+            const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+            if (pDesc->sensor) {
+                pDesc->sensor->loop();
+            }
+        }
+    }
+
 }
 
 void KM271Component::setup() {
     ESP_LOGCONFIG(TAG, "Setup was called");
+    sensorLoopCounter = 0;
     uint8_t logCommand[] = {0xEE, 0x00, 0x00};
     writer.enqueueTelegram(logCommand, 3);
 };
@@ -190,40 +203,69 @@ void KM271Component::on_shutdown() {
     ESP_LOGI(TAG, "Shutdown was called");
 }
 
-void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor)
+t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired)
 {
     for(int i = 0; i < lenof(buderusParamDesc); i++) {
         t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
         if(pDesc->parameterId == parameterId) {
             if (pDesc->sensor) {
                 ESP_LOGE(TAG, "Sensor for id %d already set", parameterId);
-                return;
+                return nullptr;
             }
-            pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType);
-            return;
+            if (writableRequired && !pDesc->writable) {
+                ESP_LOGE(TAG, "Parameter %d is not writable", parameterId);
+                return nullptr;
+            }
+            return pDesc;
         }
     }
+    return nullptr;
+}
 
-    ESP_LOGE(TAG, "Parameter %d is not supported", parameterId);
+void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor)
+{
+    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
+    if (!pDesc) {
+        ESP_LOGE(TAG, "set_sensor: No available slot for parameter ID %d found", parameterId);
+        return;
+    }
+    pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType, pDesc->sensorTypeParam);
 }
 
 void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor)
 {
-    for(int i = 0; i < lenof(buderusParamDesc); i++) {
-        t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-        if(pDesc->parameterId == parameterId) {
-            if (pDesc->sensor) {
-                ESP_LOGE(TAG, "Sensor for id %d already set", parameterId);
-                return;
-            }
-            pDesc->sensor = new BuderusParamSensor(sensor);
-            return;
-        }
+    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
+    if (!pDesc) {
+        ESP_LOGE(TAG, "set_binary_sensor: No available slot for parameter ID %d found", parameterId);
+        return;
     }
 
-    ESP_LOGE(TAG, "Parameter ID %d is not supported", parameterId);
+    pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType, pDesc->sensorTypeParam);
 }
 
+void KM271Component::set_switch(Buderus_R2017_ParameterId parameterId, BuderusParamSwitch *switch_)
+{
+    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
+    if (!pDesc) {
+        ESP_LOGE(TAG, "set_switch: No available slot for parameter ID %d found", parameterId);
+        return;
+    }
+
+    switch_->setupWriting(&writer, parameterId, pDesc->sensorType);
+    pDesc->sensor = new BuderusParamSensor(switch_, pDesc->sensorType, pDesc->sensorTypeParam);
+}
+
+void KM271Component::set_number(Buderus_R2017_ParameterId parameterId, BuderusParamNumber *number)
+{
+    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
+    if (!pDesc) {
+        ESP_LOGE(TAG, "set_number: No available slot for parameter ID %d found", parameterId);
+        return;
+    }
+
+    number->setupWriting(&writer, parameterId, pDesc->sensorType);
+    pDesc->sensor = new BuderusParamSensor(number, pDesc->sensorType, pDesc->sensorTypeParam);
+}
 
 float KM271Component::get_setup_priority() const {
     return setup_priority::DATA;

@@ -82,3 +82,7 @@ An example yaml could be also found in this GIT repo.
           name: "Außentemperatur"
         attenuated_outdoor_temperature:
           name: "Gedaempfte Aussentemperatur"
+
+    switch:
+
+    number:

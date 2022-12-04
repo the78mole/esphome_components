@@ -5,13 +5,16 @@
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
-
+#include "esphome/components/switch/switch.h"
+#include "esphome/components/number/number.h"
 
 namespace esphome {
 namespace KM271 {
 
 
 enum Buderus_R2017_ParameterId {
+    CFG_WW_Temperatur = 0x007e,
+    CFG_WW_Aufbereitung = 0x0085,
     BW1HK1    = 0x8000, //: "Betriebswerte 1 HK1"
     BW2HK1    = 0x8001, //: "Betriebswerte 2 HK1"
     VSTHK1    = 0x8002, //: "Vorlaufsolltemperatur HK1"       (Grad)
@@ -105,27 +108,73 @@ enum SensorType {
     INT,
     INTDIVIDEDBY2,
     STRING,
+    BYTE_AT_OFFSET, // a single byte, with ofset in byte specified in sensor param
+    TAG_NACHT_AUTO_SELECT, //   [ 0 => "Nacht", 1=> "Tag", 2=> "Automatik" ],
+};
+
+class Writer3964R;
+
+
+class BuderusParamSwitch: public esphome::switch_::Switch {
+public:
+    BuderusParamSwitch();
+    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType);
+protected:
+    void write_state(bool state) override;
+
+private:
+    Writer3964R * writer;
+    Buderus_R2017_ParameterId parameterId;
+    SensorType sensorType;
+};
+
+class BuderusParamNumber: public esphome::number::Number {
+public:
+    BuderusParamNumber();
+    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType);
+    void loop();
+
+protected:
+    void control(float value);
+
+private:
+    Writer3964R * writer;
+    Buderus_R2017_ParameterId parameterId;
+    SensorType sensorType;
+    uint32_t lastWriteRequest;
+    bool hasPendingWriteRequest;
+    float pendingWriteValue;
 };
 
 
 class BuderusParamSensor {
     public:
-        BuderusParamSensor(esphome::sensor::Sensor * sensor, SensorType sensorType);
-        BuderusParamSensor(esphome::binary_sensor::BinarySensor * sensor);
+        BuderusParamSensor(esphome::sensor::Sensor * sensor, SensorType sensorType, uint8_t senorTypeParam);
+        BuderusParamSensor(esphome::binary_sensor::BinarySensor * sensor, SensorType sensorType, uint8_t senorTypeParam);
+        BuderusParamSensor(BuderusParamSwitch * paramSwitch, SensorType sensorType, uint8_t senorTypeParam);
+        BuderusParamSensor(BuderusParamNumber* paramNumber, SensorType sensorType, uint8_t senorTypeParam);
+
 
         void parseAndTransmit(uint8_t *data, size_t len);
+        void loop();
 
     private:
         esphome::sensor::Sensor *sensor;
         esphome::binary_sensor::BinarySensor *binarySensor;
+        BuderusParamSwitch *switch_;
+        BuderusParamNumber *number;
         SensorType sensorType;
+        uint8_t sensorTypeParam;
 };
+
 
 
 struct t_Buderus_R2017_ParamDesc {
     Buderus_R2017_ParameterId parameterId;
     bool debugEn;
+    bool writable;
     SensorType sensorType;
+    uint16_t sensorTypeParam;
     const char* desc;
     const char* unit;
     BuderusParamSensor* sensor;
@@ -134,79 +183,80 @@ struct t_Buderus_R2017_ParamDesc {
 typedef struct t_Buderus_R2017_ParamDesc t_Buderus_R2017_ParamDesc;
 
 static t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
-        { BW1HK1    , true, SensorType::INT, "Betriebswerte 1 HK1", "", NULL },
-        { BW2HK1    , true, SensorType::INT, "Betriebswerte 2 HK1", "", NULL },
-        { VSTHK1    , true, SensorType::INT, "Vorlaufsolltemperatur HK1", "°C", NULL },        // (Grad)
-        { VITHK1    , true, SensorType::INT, "Vorlaufisttemperatur HK1", "°C", NULL },         // (Grad)
-        { RSTHK1    , true, SensorType::INTDIVIDEDBY2, "Raumsolltemperatur HK1", "°C", NULL },           // (Grad)
-        { RITHK1    , true, SensorType::INTDIVIDEDBY2, "Raumisttemperatur HK1", "°C", NULL },            // (Grad)
-        { EOZHK1    , true, SensorType::INT, "Einschaltoptimierungszeit HK1", "", NULL },
-        { AOZHK1    , true, SensorType::INT, "Ausschaltoptimierungszeit HK1", "", NULL },
-        { PLHK1     , true, SensorType::INT, "Pumpenleistung HK1", "%", NULL },               // (Grad)
-        { MSHK1     , true, SensorType::INT, "Mischerstellung HK1", "%", NULL },              // (Grad)
-        { NB01      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB02      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { KLHK1_P10 , true, SensorType::INT, "Heizkennlinie HK1 bei + 10 Grad", "°C", NULL },  // (Grad)
-        { KLHK1_P00 , true, SensorType::INT, "Heizkennlinie HK1 bei 0 Grad", "°C", NULL },     // (Grad)
-        { KLHK1_N10 , true, SensorType::INT, "Heizkennlinie HK1 bei - 10 Grad", "°C", NULL },  // (Grad)
-        { NB03      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB04      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB05      , false, SensorType::NONE, "nicht belegt", "", NULL },
+        { CFG_WW_Temperatur, true, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", "", NULL},
+        { CFG_WW_Aufbereitung, true, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", "", NULL},
+        { BW1HK1    , true, false, SensorType::INT, 0, "Betriebswerte 1 HK1", "", NULL },
+        { BW2HK1    , true, false, SensorType::INT, 0, "Betriebswerte 2 HK1", "", NULL },
+        { VSTHK1    , true, false, SensorType::INT, 0, "Vorlaufsolltemperatur HK1", "°C", NULL },        // (Grad)
+        { VITHK1    , true, false, SensorType::INT, 0, "Vorlaufisttemperatur HK1", "°C", NULL },         // (Grad)
+        { RSTHK1    , true, false, SensorType::INTDIVIDEDBY2, 0, "Raumsolltemperatur HK1", "°C", NULL },           // (Grad)
+        { RITHK1    , true, false, SensorType::INTDIVIDEDBY2, 0, "Raumisttemperatur HK1", "°C", NULL },            // (Grad)
+        { EOZHK1    , true, false, SensorType::INT, 0, "Einschaltoptimierungszeit HK1", "", NULL },
+        { AOZHK1    , true, false, SensorType::INT, 0, "Ausschaltoptimierungszeit HK1", "", NULL },
+        { PLHK1     , true, false, SensorType::INT, 0, "Pumpenleistung HK1", "%", NULL },               // (Grad)
+        { MSHK1     , true, false, SensorType::INT, 0, "Mischerstellung HK1", "%", NULL },              // (Grad)
+        { NB01      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB02      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { KLHK1_P10 , true, false, SensorType::INT, 0, "Heizkennlinie HK1 bei + 10 Grad", "°C", NULL },  // (Grad)
+        { KLHK1_P00 , true, false, SensorType::INT, 0, "Heizkennlinie HK1 bei 0 Grad", "°C", NULL },     // (Grad)
+        { KLHK1_N10 , true, false, SensorType::INT, 0, "Heizkennlinie HK1 bei - 10 Grad", "°C", NULL },  // (Grad)
+        { NB03      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB04      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB05      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
     
-        { BW1HK2    , true, SensorType::INT, "Betriebswerte 1 HK2", "", NULL },
-        { BW2HK2    , true, SensorType::INT, "Betriebswerte 2 HK2", "", NULL },
-        { VSTHK2    , true, SensorType::INT, "Vorlaufsolltemperatur HK2", "°C", NULL },        // (Grad)
-        { VITHK2    , true, SensorType::INT, "Vorlaufisttemperatur HK2", "°C", NULL },         // (Grad)
-        { RSTHK2    , true, SensorType::INTDIVIDEDBY2, "Raumsolltemperatur HK2", "°C", NULL },           // (Grad)
-        { RITHK2    , true, SensorType::INTDIVIDEDBY2, "Raumisttemperatur HK2", "°C", NULL },            // (Grad)
-        { EOZHK2    , true, SensorType::INT, "Einschaltoptimierungszeit HK2", "", NULL },
-        { AOZHK2    , true, SensorType::INT, "Ausschaltoptimierungszeit HK2", "", NULL },
-        { PLHK2     , true, SensorType::INT, "Pumpenleistung HK2", "%", NULL },
-        { MSHK2     , true, SensorType::INT, "Mischerstellung HK2", "%", NULL },
-        { NB06      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB07      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { KLHK2_P10 , true, SensorType::INT, "Heizkennlinie HK2 bei + 10 Grad", "°C", NULL },  // (Grad)
-        { KLHK2_P00 , true, SensorType::INT, "Heizkennlinie HK2 bei 0 Grad", "°C", NULL },     // (Grad)
-        { KLHK2_N10 , true, SensorType::INT, "Heizkennlinie HK2 bei - 10 Grad", "°C", NULL },  // (Grad)
-        { NB08      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB09      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { NB10      , false, SensorType::NONE, "nicht belegt", "", NULL },
+        { BW1HK2    , true, false, SensorType::INT, 0, "Betriebswerte 1 HK2", "", NULL },
+        { BW2HK2    , true, false, SensorType::INT, 0, "Betriebswerte 2 HK2", "", NULL },
+        { VSTHK2    , true, false, SensorType::INT, 0, "Vorlaufsolltemperatur HK2", "°C", NULL },        // (Grad)
+        { VITHK2    , true, false, SensorType::INT, 0, "Vorlaufisttemperatur HK2", "°C", NULL },         // (Grad)
+        { RSTHK2    , true, false, SensorType::INTDIVIDEDBY2, 0, "Raumsolltemperatur HK2", "°C", NULL },           // (Grad)
+        { RITHK2    , true, false, SensorType::INTDIVIDEDBY2, 0, "Raumisttemperatur HK2", "°C", NULL },            // (Grad)
+        { EOZHK2    , true, false, SensorType::INT, 0, "Einschaltoptimierungszeit HK2", "", NULL },
+        { AOZHK2    , true, false, SensorType::INT, 0, "Ausschaltoptimierungszeit HK2", "", NULL },
+        { PLHK2     , true, false, SensorType::INT, 0, "Pumpenleistung HK2", "%", NULL },
+        { MSHK2     , true, false, SensorType::INT, 0, "Mischerstellung HK2", "%", NULL },
+        { NB06      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB07      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { KLHK2_P10 , true, false, SensorType::INT, 0, "Heizkennlinie HK2 bei + 10 Grad", "°C", NULL },  // (Grad)
+        { KLHK2_P00 , true, false, SensorType::INT, 0, "Heizkennlinie HK2 bei 0 Grad", "°C", NULL },     // (Grad)
+        { KLHK2_N10 , true, false, SensorType::INT, 0, "Heizkennlinie HK2 bei - 10 Grad", "°C", NULL },  // (Grad)
+        { NB08      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB09      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { NB10      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
     
-        { BW1WW     , true, SensorType::INT, "Betriebswerte 1 WW", "", NULL },
-        { BW2WW     , true, SensorType::INT, "Betriebswerte 2 WW", "", NULL },
-        { WWST      , true, SensorType::INT, "Warmwassersolltemperatur", "°C", NULL },         // (Grad)
-        { WWIT      , true, SensorType::INT, "Warmwasseristtemperatur", "°C", NULL },          // (Grad)
-        { OZWW      , true, SensorType::INT, "Warmwasseroptimierungszeit", "", NULL },
-        { LPWW      , true, SensorType::INT, "Ladepumpe", "", NULL },                          // ["aus", "Ladepumpe", "Warmwasserpumpe", "beide"]
+        { BW1WW     , true, false, SensorType::INT, 0, "Betriebswerte 1 WW", "", NULL },
+        { BW2WW     , true, false, SensorType::INT, 0, "Betriebswerte 2 WW", "", NULL },
+        { WWST      , true, false, SensorType::INT, 0, "Warmwassersolltemperatur", "°C", NULL },         // (Grad)
+        { WWIT      , true, false, SensorType::INT, 0, "Warmwasseristtemperatur", "°C", NULL },          // (Grad)
+        { OZWW      , true, false, SensorType::INT, 0, "Warmwasseroptimierungszeit", "", NULL },
+        { LPWW      , true, false, SensorType::INT, 0, "Ladepumpe", "", NULL },                          // ["aus", "Ladepumpe", "Warmwasserpumpe", "beide"]
 
-        { KVST      , true, SensorType::INT, "Kesselvorlaufsolltemperatur", "°C", NULL },      // (Grad)
-        { KVIT      , true, SensorType::INT, "Kesselvorlaufisttemperatur", "°C", NULL },       // (Grad)
-        { BET       , true, SensorType::INT, "Brennereinschalttemperatur", "°C", NULL },       // (Grad)
-        { BAT       , true, SensorType::INT, "Brennerausschalttemperatur", "°C", NULL },       // (Grad)
-        { KINT1     , true, SensorType::INT, "Kesselintegral 1", "", NULL },
-        { KINT2     , true, SensorType::INT, "Kesselintegral 2", "", NULL },
-        { KFEHL     , true, SensorType::INT, "Kesselfehler", "", NULL },
-        { KBETR     , true, SensorType::INT, "Kesselbetrieb", "", NULL },
-        { BANST     , true, SensorType::INT, "Brenneransteuerung", "", NULL },                 // ["aus", "an"]
-        { ABTMP     , true, SensorType::INT, "Abgastemperatur", "°C", NULL },                  // (Grad)
-        { MODBSTELL , true, SensorType::INT, "modulare Brenner Stellwert", "", NULL },
-        { NB11      , false, SensorType::NONE, "nicht belegt", "", NULL },
-        { BLZ1S2    , true, SensorType::INT, "Brennerlaufzeit 1 Stunden 2", "h", NULL },
-        { BLZ1S1    , true, SensorType::INT, "Brennerlaufzeit 1 Stunden 1", "h", NULL },
-        { BLZ1S0    , true, SensorType::INT, "Brennerlaufzeit 1 Stunden 0", "h", NULL },
-        { BLZ2S2    , true, SensorType::INT, "Brennerlaufzeit 2 Stunden 2", "h", NULL },
-        { BLZ2S1    , true, SensorType::INT, "Brennerlaufzeit 2 Stunden 1", "h", NULL },
-        { BLZ2S0    , true, SensorType::INT, "Brennerlaufzeit 2 Stunden 0", "h", NULL },
+        { KVST      , true, false, SensorType::INT, 0, "Kesselvorlaufsolltemperatur", "°C", NULL },      // (Grad)
+        { KVIT      , true, false, SensorType::INT, 0, "Kesselvorlaufisttemperatur", "°C", NULL },       // (Grad)
+        { BET       , true, false, SensorType::INT, 0, "Brennereinschalttemperatur", "°C", NULL },       // (Grad)
+        { BAT       , true, false, SensorType::INT, 0, "Brennerausschalttemperatur", "°C", NULL },       // (Grad)
+        { KINT1     , true, false, SensorType::INT, 0, "Kesselintegral 1", "", NULL },
+        { KINT2     , true, false, SensorType::INT, 0, "Kesselintegral 2", "", NULL },
+        { KFEHL     , true, false, SensorType::INT, 0, "Kesselfehler", "", NULL },
+        { KBETR     , true, false, SensorType::INT, 0, "Kesselbetrieb", "", NULL },
+        { BANST     , true, false, SensorType::INT, 0, "Brenneransteuerung", "", NULL },                 // ["aus", "an"]
+        { ABTMP     , true, false, SensorType::INT, 0, "Abgastemperatur", "°C", NULL },                  // (Grad)
+        { MODBSTELL , true, false, SensorType::INT, 0, "modulare Brenner Stellwert", "", NULL },
+        { NB11      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
+        { BLZ1S2    , true, false, SensorType::INT, 0, "Brennerlaufzeit 1 Stunden 2", "h", NULL },
+        { BLZ1S1    , true, false, SensorType::INT, 0, "Brennerlaufzeit 1 Stunden 1", "h", NULL },
+        { BLZ1S0    , true, false, SensorType::INT, 0, "Brennerlaufzeit 1 Stunden 0", "h", NULL },
+        { BLZ2S2    , true, false, SensorType::INT, 0, "Brennerlaufzeit 2 Stunden 2", "h", NULL },
+        { BLZ2S1    , true, false, SensorType::INT, 0, "Brennerlaufzeit 2 Stunden 1", "h", NULL },
+        { BLZ2S0    , true, false, SensorType::INT, 0, "Brennerlaufzeit 2 Stunden 0", "h", NULL },
     
-        { AT        , true, SensorType::INT, "Aussentemperatur", "°C", NULL },                 // (Grad)
-        { ATD       , true, SensorType::INT, "Gedaempfte Aussentemperatur", "°C", NULL },      // (Grad)
-        { VVK       , true, SensorType::INT, "Versionsnummer VK", "", NULL },
-        { VNK       , true, SensorType::INT, "Versionsnummer NK", "", NULL },
-        { MODKENN   , true, SensorType::INT, "Modulkennung", "", NULL },
-        { NB12      , false, SensorType::NONE, "nicht belegt", "", NULL },
+        { AT        , true, false, SensorType::INT, 0, "Aussentemperatur", "°C", NULL },                 // (Grad)
+        { ATD       , true, false, SensorType::INT, 0, "Gedaempfte Aussentemperatur", "°C", NULL },      // (Grad)
+        { VVK       , true, false, SensorType::INT, 0, "Versionsnummer VK", "", NULL },
+        { VNK       , true, false, SensorType::INT, 0, "Versionsnummer NK", "", NULL },
+        { MODKENN   , true, false, SensorType::INT, 0, "Modulkennung", "", NULL },
+        { NB12      , false, false, SensorType::NONE, 0, "nicht belegt", "", NULL },
 
-        { ALARM     , true, SensorType::INT, "Alarmstatus", "", NULL }
-
+        { ALARM     , true, false, SensorType::INT, 0, "Alarmstatus", "", NULL }
 };
 
 

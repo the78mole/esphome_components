@@ -17,11 +17,26 @@ See https://esphome.io/components/external_components.html for information about
 
 To configure the component, see the included file buderus-km271.yaml.
 If you are not interested in some of the provided values, just remove the respective entry in the the section "sensor" or "binary_sensor", but leave the empty sections in place to avoid comiler errors with missing headers.
- 
+
+#### Writing Values and Changing Parameters 
+If you plan to change settings for your heater, see the included file buderus-km271-writable.yaml. This file also provides integration for changing values via home assistant.
+
+*CAUTION*: 
+Changing settings of your heater might lead to undesired results, e.g. increased fuel consumption, annoyed family members or even failure of your device.
+Please use caution when changing settings of your heater and verify that the results are as desired. Rule of thumb: If you don't feel comfortable changing the settings directly on the heater control unit,
+do dot do it via this software either.
+
+*MORE CAUTION*: 
+If you plan to change settings, please take care not to change settings too
+frequently. Devices such as these heaters typically use so called EEPROM chips to store settings. Such chips only support a certain number of write operations before breaking down.
+You should be safe for some years if you don't write more 20 values per day - but there is no guarantee. Maybe someone can dig out some documentation about this to make sure.
+
 ### Limitations
    * The software only provides a sub-set of the available data. Feel free to create a pull request to add data you want to see.
-   * Changing of values (e.g. target temperatures) is not yet supported. This is planned for a later version.
- 
+   * Changing of values is only supported for a few values
+   * Only one write request can be active at the same time
+   * Written values are not read back for verification.
+
 ### Notes by Jens
 I'm working on this project as a hobby. My work on this software is in no way associated with a company. If you like to use it, or improve on it, feel free.
 Use it at your own risk - it might work perfectly or it might not.
