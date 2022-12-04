@@ -5,7 +5,6 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 
-
 namespace esphome {
 namespace KM271 {
 
@@ -25,7 +24,7 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
         return;
     }
 
-    uint16_t parameterId = (buf[0] << 8) | buf[1];
+    const uint16_t parameterId = (buf[0] << 8) | buf[1];
 
     for(int i = 0; i < lenof(buderusParamDesc); i++) {
         const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
@@ -104,14 +103,14 @@ void KM271Component::process_incoming_byte(uint8_t c) {
         }
     } else if(writer.writerState == WaitForAck) {
         if (c==DLE) {
-            writer.reset();
+            writer.telegramFinished();
             ESP_LOGD(TAG, "ack received");
         } else if(c==NAK) {
             if(writer.retryCount < maxTelegramRetries) {
                 writer.restartTelegram();
                 ESP_LOGW(TAG, "nack received, retrying");
             } else {
-                writer.reset();
+                writer.telegramFinished();
                 ESP_LOGE(TAG, "nack received and retry count exhausted, aborting");
             }
         } else {
@@ -119,7 +118,7 @@ void KM271Component::process_incoming_byte(uint8_t c) {
                 writer.restartTelegram();
                 ESP_LOGW(TAG, "ack for writer was invalid, retrying: %d", c);
             } else {
-                writer.reset();
+                writer.telegramFinished();
                 ESP_LOGE(TAG, "ack for writer was invalid and retry count exhausted, aborting: %d", c);
             }
         }
