@@ -73,12 +73,11 @@ class KM271Component : public Component, public uart::UARTDevice {
 
  protected:
   t_Buderus_R2017_ParamDesc * findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
+
   void set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor);
   void set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor);
   void set_switch(Buderus_R2017_ParameterId parameterId, BuderusParamSwitch *switch_);
   void set_number(Buderus_R2017_ParameterId parameterId, BuderusParamNumber *number);
-
-
 
   void process_incoming_byte(uint8_t c);
   void parse_buderus(uint8_t * buf, size_t len);
@@ -91,12 +90,11 @@ class KM271Component : public Component, public uart::UARTDevice {
   size_t genDataString(char* outbuf, uint8_t* inbuf, size_t len);
   void print_hex_buffer(uint8_t* buf, size_t len);
 
-
   uint32_t last_received_byte_time;
-
-
   Parser3964R parser;
   Writer3964R writer;
+  /** used to call the loop function of the sensors every x calls to the loop function of the component */
+  uint8_t sensorLoopCounter;
 };
 
 } // namespace KM271

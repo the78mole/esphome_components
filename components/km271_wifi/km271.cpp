@@ -10,10 +10,9 @@ namespace esphome {
 namespace KM271 {
 
 static const char * TAG = "km271";
+static const uint8_t SENSOR_LOOP_CALL_EVERY=5;
 
 #define lenof(X)   (sizeof(X) / sizeof(X[0]))
-
-static const int ALIVE_RST = 20000; // Milliseconds
 
 KM271Component::KM271Component()
 {
@@ -153,7 +152,7 @@ void KM271Component::process_incoming_byte(uint8_t c) {
 }
 
 void KM271Component::loop() {
-      while(available()) {
+    while(available()) {
         uint8_t c = read();
 
         // if we have a write, start our request on a stx from the km217. This seems more reliable.
@@ -165,17 +164,23 @@ void KM271Component::loop() {
         }
     };
 
-      for(int i = 0; i < lenof(buderusParamDesc); i++) {
-          const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-          if (pDesc->sensor) {
-              pDesc->sensor->loop();
-          }
-      }
+    sensorLoopCounter++;
+    if (sensorLoopCounter > SENSOR_LOOP_CALL_EVERY) {
+        sensorLoopCounter = 0;
+
+        for(int i = 0; i < lenof(buderusParamDesc); i++) {
+            const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+            if (pDesc->sensor) {
+                pDesc->sensor->loop();
+            }
+        }
+    }
 
 }
 
 void KM271Component::setup() {
     ESP_LOGCONFIG(TAG, "Setup was called");
+    sensorLoopCounter = 0;
     uint8_t logCommand[] = {0xEE, 0x00, 0x00};
     writer.enqueueTelegram(logCommand, 3);
 };

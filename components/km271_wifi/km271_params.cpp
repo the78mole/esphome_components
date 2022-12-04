@@ -127,7 +127,6 @@ void BuderusParamSensor::loop()
 BuderusParamSwitch::BuderusParamSwitch():
     writer(nullptr)
 {
-
 }
 
 void BuderusParamSwitch::setupWriting(Writer3964R *writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType)
@@ -135,7 +134,6 @@ void BuderusParamSwitch::setupWriting(Writer3964R *writer, Buderus_R2017_Paramet
     this->writer = writer;
     this->parameterId = parameterId;
     this->sensorType = sensorType;
-
 }
 
 void BuderusParamSwitch::write_state(bool state)
@@ -157,15 +155,12 @@ void BuderusParamSwitch::write_state(bool state)
     } else {
         ESP_LOGE(TAG, "No write configuration for parameter %d found", parameterId);
     }
-
-
 }
 
 BuderusParamNumber::BuderusParamNumber():
     writer(nullptr),
     hasPendingWriteRequest(false)
 {
-
 }
 
 void BuderusParamNumber::setupWriting(Writer3964R *writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType)
