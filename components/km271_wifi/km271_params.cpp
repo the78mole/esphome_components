@@ -203,10 +203,11 @@ void BuderusParamNumber::loop()
     if (this->hasPendingWriteRequest) {
         uint32_t now = millis();
         if (now - lastWriteRequest > writeConsolidationPeriod) {
-            this->hasPendingWriteRequest = false;
             const uint8_t message[] = { data_type_warm_water, 0x07, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep};
-            writer->enqueueTelegram(message, 8);
-            publish_state(this->pendingWriteValue);
+            if(writer->enqueueTelegram(message, 8)) {
+                this->hasPendingWriteRequest = false;
+                publish_state(this->pendingWriteValue);
+            }
         }
     }
 }

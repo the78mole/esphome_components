@@ -2,8 +2,9 @@
 #define C3964R_H
 
 #include <stdint.h>
+#include "telegramqueue.h"
 
-#define MAX_TELEGRAM_SIZE 128
+#define MAX_TELEGRAM_SIZE 64
 
 namespace esphome {
 namespace KM271 {
@@ -64,8 +65,9 @@ class Writer3964R
 {
 public:
     Writer3964R();
-    void reset();
-    void enqueueTelegram(const uint8_t *data, uint16_t length);
+    bool enqueueTelegram(const uint8_t *data, uint8_t length);
+    void telegramFinished();
+
     void setSTXSent();
     uint8_t popNextByte();
     bool hasByteToSend();
@@ -82,6 +84,7 @@ private:
     bool hasUnhandledDLE;
     uint8_t currentChecksum;
     uint16_t bytesSent;
+    TelegramQueue queue;
 
 };
 

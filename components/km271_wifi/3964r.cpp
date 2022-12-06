@@ -95,26 +95,32 @@ Writer3964R::Writer3964R():
 
 }
 
-void Writer3964R::reset()
+void Writer3964R::telegramFinished()
 {
     hasUnhandledDLE = false;
     bytesSent = 0;
     telegramLength = 0;
     writerState = Idle;
     retryCount = 0;
+
+    if (!queue.isEmpty()) {
+        telegramLength = queue.popTelegram(telegramToSend, MAX_TELEGRAM_SIZE);
+        if (telegramLength >0) {
+            writerState = RequestPending;
+        }
+    }
 }
 
-void Writer3964R::enqueueTelegram(const uint8_t *data, uint16_t length)
+bool Writer3964R::enqueueTelegram(const uint8_t *data, uint8_t length)
 {
-    if(writerState != Idle) {
-        ESP_LOGE(TAG, "Writer not idle");
-        return;
-    }
     if (length > MAX_TELEGRAM_SIZE) {
         ESP_LOGE(TAG, "Telegram too long %d", length);
-        return;
+        return false;
     }
-    ESP_LOGD(TAG, "Enqueuing telegram of length %d", length);
+
+    if(writerState != Idle) {
+        return queue.enqueueTelegram(data, length);
+    }
 
     hasUnhandledDLE = false;
     bytesSent = 0;
@@ -123,6 +129,7 @@ void Writer3964R::enqueueTelegram(const uint8_t *data, uint16_t length)
     telegramLength = length;
     writerState = RequestPending;
     retryCount = 0;
+    return true;
 }
 
 void Writer3964R::setSTXSent()
