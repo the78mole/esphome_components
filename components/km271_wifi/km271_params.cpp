@@ -54,7 +54,8 @@ BuderusParamSensor::BuderusParamSensor(BuderusParamNumber *paramNumber, SensorTy
 
 }
 
-uint32_t parseInt(uint8_t *data, size_t len)
+
+uint32_t parseUnsignedInteger(uint8_t *data, size_t len)
 {
     uint32_t value = 0;
     for (int i=0; i<len; i++) {
@@ -63,23 +64,35 @@ uint32_t parseInt(uint8_t *data, size_t len)
     return value;
 }
 
+int32_t parseSignedInteger(uint8_t *data, size_t len)
+{
+    if (len == 1) {
+        return (int8_t) data[0];
+    } else if (len == 2) {
+        uint16_t value = (data[0] << 8) + data[1];
+        return (int16_t) value;
+    } else if (len == 4) {
+        uint32_t value = parseUnsignedInteger(data, len);
+        return (int32_t) value;
+    } else {
+        ESP_LOGE(TAG, "Found unsupported signed integer with length %d", len);
+        return parseUnsignedInteger(data, len);
+    }
+}
+
 void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
 {
     if (sensor) {
-        if (sensorType == INT) {
-            ESP_LOGD(TAG, "Found int with length %d", len);
-            uint32_t value = parseInt(data, len);
+        if (sensorType == UNSIGNED_INT) {
+            uint32_t value = parseUnsignedInteger(data, len);
             sensor->publish_state(value);
-        } 
-        else if (sensorType == INTDIVIDEDBY2) {
-            ESP_LOGD(TAG, "Found int with length %d that needs to be devided by 2", len);
-            uint32_t value = 0;
-            for (int i=0; i<len; i++) {
-                value = (value << 8) + data[i];
-            }
+        } else if (sensorType == SIGNED_INT) {
+            int32_t value = parseSignedInteger(data, len);
+            sensor->publish_state(value);
+        } else if (sensorType == SIGNED_INT_DIVIDED_BY_2) {
+            int32_t value = parseSignedInteger(data, len);
             sensor->publish_state(((float)value) / 2.0f);
-        }
-        else {
+        } else {
             ESP_LOGW(TAG, "Sensor type %d NYI", sensorType);
         }
     } else if(binarySensor) {
@@ -98,8 +111,11 @@ void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
             ESP_LOGW(TAG, "Sensor type %d NYI for switch", sensorType);
         }
     } else if(number) {
-        if (sensorType == INT) {
-            uint32_t value = parseInt(data, len);
+        if (sensorType == UNSIGNED_INT) {
+            uint32_t value = parseUnsignedInteger(data, len);
+            number->publish_state(value);
+        } else if (sensorType == SIGNED_INT) {
+            int32_t value = parseSignedInteger(data, len);
             number->publish_state(value);
         } else if(sensorType == BYTE_AT_OFFSET) {
             if (sensorTypeParam < len) {
