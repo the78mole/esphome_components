@@ -89,8 +89,8 @@ void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
         } else if (sensorType == SIGNED_INT) {
             int32_t value = parseSignedInteger(data, len);
             sensor->publish_state(value);
-        } else if (sensorType == SIGNED_INT_DIVIDED_BY_2) {
-            int32_t value = parseSignedInteger(data, len);
+        } else if (sensorType == UNSIGNED_INT_DIVIDED_BY_2) {
+            uint32_t value = parseUnsignedInteger(data, len);
             sensor->publish_state(((float)value) / 2.0f);
         } else {
             ESP_LOGW(TAG, "Sensor type %d NYI", sensorType);
