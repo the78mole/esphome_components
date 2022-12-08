@@ -1,0 +1,250 @@
+# This is the configuration, I've put on the board.
+# If you apply voltage to it, the green LED D! serves as status led2
+# usually blinking with around 1 Hz. If you press button USER 1, it will
+# toggle green led D2.
+# To upload a new firmware, search for the "Fallback Hotspot" WiFi and
+# log in with password "Z8zfajgxVvNw". It could take up to a minute for
+# the fallack AP to be enabled when not able to connect to the "test"
+# wifi network. So, if status is blinking, give it a minute to show up.
+substitutions:
+  name: "km271-for-friends"
+
+esphome:
+  name: "${name}"
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  name_add_mac_suffix: true
+
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: the78mole.km271-wifi
+    version: "1.0"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+#  password: "xxx"
+
+wifi:
+#  ssid: "test"
+#  password: "testtest"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Fallback Hotspot"
+    password: "Z8zfajgxVvNw"
+
+dashboard_import:
+  package_import_url: github://the78mole/esphome_components/blob/main/components/km271_wifi/km271-for-friends.yaml
+
+captive_portal:
+#  keep_user_credentials: true
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO2
+  rx_pin: GPIO4
+  baud_rate: 2400
+
+external_components:
+  - source:
+      type: local
+      path: my_components/components
+    components: [ km271_wifi ]
+#  - source: github://the78mole/esphome_components@main
+#    components: [ km271_wifi ]
+ 
+esp32_improv:
+  authorizer: improvble
+  authorized_duration: 120s
+  status_indicator: led3
+  identify_duration: 60s
+
+improv_serial: 
+
+km271_wifi:
+  - id: budoil
+    uart_id: uart_bus
+
+#  - platform: km271_wifi
+#    km271_id: budoil
+#    name: "Vorlaufisttemperatur"
+#    reg_id: 0x8003
+
+status_led:
+  id: ledgn1
+  pin: 
+    number: GPIO21
+    inverted: true
+    
+number:
+  - platform: km271_wifi
+    warm_water_temperature:
+      name: "Warmwassersolltemperatur Tag"
+
+binary_sensor:
+  - platform: km271_wifi
+    boiler_error:
+      name: "KM271 Kesselfehler"
+    boiler_running:
+      name: "KM271 Kesselbetrieb"
+    load_pump_running:
+      name: "KM271 Ladepumpe"
+  - platform: gpio
+    name: "USER 1"
+    pin:
+      number: GPIO26
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - switch.toggle: led2
+  - platform: gpio
+    id: improvble
+    name: "USER 2"
+    pin:
+      number: GPIO27
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+
+sensor:
+  - platform: km271_wifi
+    heating_circuit_1_flow_target_temperature:
+      name: "KM271 Vorlaufsolltemperatur"
+    heating_circuit_1_flow_temperature:
+      name: "KM271 Vorlauftemperatur"
+    hot_water_target_temperature:
+      name: "KM271 Warmwassersolltemperatur"
+    hot_water_temperature:
+      name: "KM271 Warmwassertemperatur"
+    boiler_target_temperature:
+      name: "KM271 Kesselvorlaufsolltemperatur"
+    boiler_temperature:
+      name: "KM271 Kesselvorlauftemperatur"
+    outdoor_temperature:
+      name: "KM271 Außentemperatur"
+    heating_circuit_1_room_target_temperature:
+      name: "KM271 Raumsolltemperatur"
+    heating_circuit_1_curve_n10:
+      name: "KM271 Heizkurve -10 °C"
+    heating_circuit_1_curve_0:
+      name: "KM271 Heizkurve 0 °C"
+    heating_circuit_1_curve_p10:
+      name: "KM271 Heizkurve +10 °C"
+    boiler_turn_on_temperature:
+      name: "KM271 Brennereinschalttemperatur"
+    boiler_turn_off_temperature:
+      name: "KM271 Brennerausschalttemperatur"
+
+  - platform: wifi_signal
+    name: "KM217 WiFi Signal Sensor"
+    update_interval: 60s
+
+#sensor:
+  - platform: adc
+    pin: 36
+    unit_of_measurement: "V"
+    name: "KM217 5V Supply"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 32
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH4"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 33
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH5"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 34
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH6"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: adc
+    pin: 35
+    unit_of_measurement: "V"
+    name: "KM217 ADC CH7"
+    accuracy_decimals: 2
+    update_interval: 60s
+    attenuation: 6dB
+    filters:
+      - multiply: 2.274
+      - sliding_window_moving_average:
+          window_size: 16
+          send_every: 4
+  - platform: wifi_signal
+    name: "KM217 WiFi Signal Sensor"
+    update_interval: 60s
+      
+switch:
+  - platform: km271_wifi
+    warm_water_heating_auto_off:
+      name: "Warmwasserbereitung Auto/Nacht"
+  - platform: gpio
+    id: led2
+    name: LED2_Green
+    pin: 
+      number: 22
+      mode: OUTPUT
+      inverted: true
+
+output:
+  - platform: gpio
+    id: led3
+    #name: LED3_Yellow
+    pin: 
+      number: 23
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    id: led4
+    #name: LED4_Red
+    pin: 
+      number: 25
+      mode: OUTPUT
+      inverted: true
