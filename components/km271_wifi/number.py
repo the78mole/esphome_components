@@ -39,7 +39,7 @@ async def setup_conf(config, key, hub):
     if key in config:
         conf = config[key]
 
-        sens = await number.new_number(conf, min_value=30, max_value=60)
+        sens = await number.new_number(conf, min_value=30, max_value=60, step=1)
         cg.add(getattr(hub, f"set_{key}_number")(sens))
 
 
