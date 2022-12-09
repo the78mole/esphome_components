@@ -8,6 +8,8 @@ from esphome.const import (
     DEVICE_CLASS_PROBLEM,
     DEVICE_CLASS_RUNNING,
     DEVICE_CLASS_POWER,
+    ENTITY_CATEGORY_DIAGNOSTIC,
+    ENTITY_CATEGORY_NONE
 )
 
 from . import (
