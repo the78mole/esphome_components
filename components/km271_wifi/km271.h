@@ -69,7 +69,7 @@ class KM271Component : public Component, public uart::UARTDevice {
   float get_setup_priority() const override;
   void update();
   void on_shutdown();
-
+  Writer3964R writer;
 
  protected:
   t_Buderus_R2017_ParamDesc * findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
@@ -92,7 +92,6 @@ class KM271Component : public Component, public uart::UARTDevice {
 
   uint32_t last_received_byte_time;
   Parser3964R parser;
-  Writer3964R writer;
   /** used to call the loop function of the sensors every x calls to the loop function of the component */
   uint8_t sensorLoopCounter;
 };
