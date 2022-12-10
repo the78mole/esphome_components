@@ -99,13 +99,13 @@ void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
         binarySensor->publish_state(data[len-1] > 0);
     } else if(switch_) {
         if (sensorType == TAG_NACHT_AUTO_SELECT) {
-            ESP_LOGD(TAG, "Found tag/nacht/auto select length %d: %s", len, (char *)data);
+            ESP_LOGD(TAG, "Found tag/nacht/auto select length %d: 0x%02x (0:Nacht, 1:Tag, 2: Auto) 0x%02x", len, data[0], data[1] );
             if(data[0] == 0) { // nacht
                 switch_->publish_state(false);
             } else if(data[0] == 1 || data[0] == 2) { // tag, auto
                 switch_->publish_state(true);
             } else {
-                ESP_LOGW(TAG, "Invalid value for tag/nacht/auto select: %d %c %c ...", len, data[0], data[1]);
+                ESP_LOGW(TAG, "Invalid value for tag/nacht/auto select: %d 0x%02x 0x%02x ...", len, data[0], data[1]);
             }
         } else {
             ESP_LOGW(TAG, "Sensor type %d NYI for switch", sensorType);
