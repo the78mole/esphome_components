@@ -10,46 +10,42 @@ namespace KM271 {
 
 static const char *const TAG = "BPARM";
 
-BuderusParamSensor::BuderusParamSensor(esphome::sensor::Sensor *sensor,  SensorType sensorType, uint8_t sensorTypeParam):
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::sensor::Sensor *sensor):
+    paramDesc(paramDesc),
     sensor(sensor),
     binarySensor(nullptr),
     switch_(nullptr),
-    number(nullptr),
-    sensorType(sensorType),
-    sensorTypeParam(sensorTypeParam)
+    number(nullptr)
 {
 
 }
 
-BuderusParamSensor::BuderusParamSensor(esphome::binary_sensor::BinarySensor *sensor, SensorType sensorType, uint8_t sensorTypeParam):
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::binary_sensor::BinarySensor *sensor):
+    paramDesc(paramDesc),
     sensor(nullptr),
     binarySensor(sensor),
     switch_(nullptr),
-    number(nullptr),
-    sensorType(sensorType),
-    sensorTypeParam(sensorTypeParam)
+    number(nullptr)
 {
 
 }
 
-BuderusParamSensor::BuderusParamSensor(BuderusParamSwitch *switch_, SensorType sensorType, uint8_t sensorTypeParam):
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSwitch *switch_):
+    paramDesc(paramDesc),
     sensor(nullptr),
     binarySensor(nullptr),
     switch_(switch_),
-    number(nullptr),
-    sensorType(sensorType),
-    sensorTypeParam(sensorTypeParam)
+    number(nullptr)
 {
 
 }
 
-BuderusParamSensor::BuderusParamSensor(BuderusParamNumber *paramNumber, SensorType sensorType, uint8_t sensorTypeParam):
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamNumber *paramNumber):
+   paramDesc(paramDesc),
     sensor(nullptr),
     binarySensor(nullptr),
     switch_(nullptr),
-    number(paramNumber),
-    sensorType(sensorType),
-    sensorTypeParam(sensorTypeParam)
+    number(paramNumber)
 {
 
 }
@@ -80,25 +76,25 @@ int32_t parseSignedInteger(uint8_t *data, size_t len)
     }
 }
 
-void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
+void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
 {
     if (sensor) {
-        if (sensorType == UNSIGNED_INT) {
+        if (paramDesc->sensorType == UNSIGNED_INT) {
             uint32_t value = parseUnsignedInteger(data, len);
             sensor->publish_state(value);
-        } else if (sensorType == SIGNED_INT) {
+        } else if (paramDesc->sensorType == SIGNED_INT) {
             int32_t value = parseSignedInteger(data, len);
             sensor->publish_state(value);
-        } else if (sensorType == UNSIGNED_INT_DIVIDED_BY_2) {
+        } else if (paramDesc->sensorType == UNSIGNED_INT_DIVIDED_BY_2) {
             uint32_t value = parseUnsignedInteger(data, len);
             sensor->publish_state(((float)value) / 2.0f);
         } else {
-            ESP_LOGW(TAG, "Sensor type %d NYI", sensorType);
+            ESP_LOGW(TAG, "Sensor type %d NYI", paramDesc->sensorType);
         }
     } else if(binarySensor) {
         binarySensor->publish_state(data[len-1] > 0);
     } else if(switch_) {
-        if (sensorType == TAG_NACHT_AUTO_SELECT) {
+        if (paramDesc->sensorType == TAG_NACHT_AUTO_SELECT) {
             ESP_LOGD(TAG, "Found tag/nacht/auto select length %d: 0x%02x (0:Nacht, 1:Tag, 2: Auto) 0x%02x", len, data[0], data[1] );
             if(data[0] == 0) { // nacht
                 switch_->publish_state(false);
@@ -108,32 +104,32 @@ void BuderusParamSensor::parseAndTransmit(uint8_t *data, size_t len)
                 ESP_LOGW(TAG, "Invalid value for tag/nacht/auto select: %d 0x%02x 0x%02x ...", len, data[0], data[1]);
             }
         } else {
-            ESP_LOGW(TAG, "Sensor type %d NYI for switch", sensorType);
+            ESP_LOGW(TAG, "Sensor type %d NYI for switch", paramDesc->sensorType);
         }
     } else if(number) {
-        if (sensorType == UNSIGNED_INT) {
+        if (paramDesc->sensorType == UNSIGNED_INT) {
             uint32_t value = parseUnsignedInteger(data, len);
             number->publish_state(value);
-        } else if (sensorType == SIGNED_INT) {
+        } else if (paramDesc->sensorType == SIGNED_INT) {
             int32_t value = parseSignedInteger(data, len);
             number->publish_state(value);
-        } else if(sensorType == BYTE_AT_OFFSET) {
-            if (sensorTypeParam < len) {
-                uint8_t value = data[sensorTypeParam];
+        } else if(paramDesc->sensorType == BYTE_AT_OFFSET) {
+            if (paramDesc->sensorTypeParam < len) {
+                uint8_t value = data[paramDesc->sensorTypeParam];
                 number->publish_state(value);
             } else {
-                ESP_LOGE(TAG, "Offset for sensor type BYTE_AT_OFFSET %d > data len %d", sensorTypeParam, len);
+                ESP_LOGE(TAG, "Offset for sensor type BYTE_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
             }
         } else {
-            ESP_LOGE(TAG, "Sensor type %d NYI for number", sensorType);
+            ESP_LOGE(TAG, "Sensor type %d NYI for number", paramDesc->sensorType);
         }
 
     } else {
-        ESP_LOGE(TAG, "No sensor, binary sensor or switch defined");
+        ESP_LOGE(TAG, "No sensor, binary sensor, switch or number defined");
     }
 }
 
-void BuderusParamSensor::loop()
+void BuderusValueHandler::loop()
 {
   if(number) {
       number->loop();
