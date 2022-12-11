@@ -92,7 +92,25 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
             ESP_LOGW(TAG, "Sensor type %d NYI", paramDesc->sensorType);
         }
     } else if(binarySensor) {
-        binarySensor->publish_state(data[len-1] > 0);
+        if (paramDesc->sensorType == UNSIGNED_INT) {
+            binarySensor->publish_state(data[len-1] > 0);
+        } else if(paramDesc->sensorType == BIT_AT_OFFSET) {
+            uint16_t bitOffset = paramDesc->sensorTypeParam;
+            uint16_t byteOffset = 0;
+            while (bitOffset >= 8) {
+                byteOffset += 1;
+                bitOffset -= 8;
+                if (byteOffset >= len) {
+                    ESP_LOGW(TAG, "Parameter %d has bit offset %d but message only has %d bytes", paramDesc->parameterId, paramDesc->sensorType, len);
+                    return;
+                }
+            }
+            bool value = !!(data[byteOffset] & (1 << bitOffset));
+            binarySensor->publish_state(value);
+        } else {
+            ESP_LOGW(TAG, "Sensor type %d NYI for binary sensor", paramDesc->sensorType);
+        }
+
     } else if(switch_) {
         if (paramDesc->sensorType == TAG_NACHT_AUTO_SELECT) {
             ESP_LOGD(TAG, "Found tag/nacht/auto select length %d: 0x%02x (0:Nacht, 1:Tag, 2: Auto) 0x%02x", len, data[0], data[1] );

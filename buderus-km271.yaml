@@ -67,6 +67,8 @@ binary_sensor:
   - platform: km271_wifi
     load_pump_running:
       name: "Ladepumpenbetrieb"
+    circulation_pump_running:
+      name: "Zirkulationspumpenbetrieb"
     boiler_error:
       name: "Kesselfehler"
     boiler_running:

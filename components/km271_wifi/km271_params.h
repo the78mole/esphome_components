@@ -110,7 +110,8 @@ enum SensorType {
     SIGNED_INT,
     UNSIGNED_INT_DIVIDED_BY_2,
     STRING,
-    BYTE_AT_OFFSET, // a single byte, with ofset in byte specified in sensor param
+    BYTE_AT_OFFSET, // a single byte, with offset in bytes specified in sensor param
+    BIT_AT_OFFSET, // a single bit, with offset in bits specified in sensor param
     TAG_NACHT_AUTO_SELECT, //   [ 0 => "Nacht", 1=> "Tag", 2=> "Automatik" ],
 };
 
@@ -234,8 +235,8 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
         { WWST      , false, SensorType::UNSIGNED_INT, 0, "Warmwassersolltemperatur", "°C"},         // (Grad)
         { WWIT      , false, SensorType::UNSIGNED_INT, 0, "Warmwasseristtemperatur", "°C"},          // (Grad)
         { OZWW      , false, SensorType::UNSIGNED_INT, 0, "Warmwasseroptimierungszeit", ""},
-        { LPWW      , false, SensorType::UNSIGNED_INT, 0, "Ladepumpe", ""},                          // ["aus", "Ladepumpe", "Warmwasserpumpe", "beide"]
-
+        { LPWW      , false, SensorType::BIT_AT_OFFSET, 0, "Ladepumpe", "" },
+        { LPWW      , false, SensorType::BIT_AT_OFFSET, 1, "Zirkulationspumpe", "" },
         { KVST      , false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufsolltemperatur", "°C"},      // (Grad)
         { KVIT      , false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufisttemperatur", "°C"},       // (Grad)
         { BET       , false, SensorType::UNSIGNED_INT, 0, "Brennereinschalttemperatur", "°C"},       // (Grad)
