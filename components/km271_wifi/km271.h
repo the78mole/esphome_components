@@ -72,7 +72,7 @@ class KM271Component : public Component, public uart::UARTDevice {
   Writer3964R writer;
 
  protected:
-  t_Buderus_R2017_ParamDesc * findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
+  const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
 
   void set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor);
   void set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor);

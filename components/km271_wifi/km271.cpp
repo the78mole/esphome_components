@@ -24,25 +24,14 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
         return;
     }
 
-    const uint16_t parameterId = (buf[0] << 8) | buf[1];
+    const uint16_t parameterIdNumeric = (buf[0] << 8) | buf[1];
+    auto parameterId = static_cast<Buderus_R2017_ParameterId>(parameterIdNumeric);
 
-    for(int i = 0; i < lenof(buderusParamDesc); i++) {
-        const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-        if(pDesc->parameterId == parameterId) {
-            if(pDesc->debugEn) {
-                char tmpBuf[4 * MAX_TELEGRAM_SIZE];
-                genDataString(tmpBuf, &buf[2], len - 2);
-
-                ESP_LOGD(TAG, "Parameter 0x%04X: %s %s (Data: %d, 0x%s)", parameterId, pDesc->desc, pDesc->unit, len-2, tmpBuf);
-            }
-            if(pDesc->sensor) {
-                pDesc->sensor->parseAndTransmit(buf + 2, len-2);
-            }
-            break;
-        }
+    auto result = valueHandlerMap.equal_range(parameterId);
+    for (ValueHandlerMap::iterator i=result.first; i!=result.second; i++) {
+        BuderusValueHandler * handler = i->second;
+        i->second->parseAndTransmit(buf + 2, len-2);
     }
-
-    // ESP_LOGD(TAG, "Received param 0x%04X", parameterId);
 }
 
 void KM271Component::send_ACK_DLE() {
@@ -167,11 +156,8 @@ void KM271Component::loop() {
     if (sensorLoopCounter > SENSOR_LOOP_CALL_EVERY) {
         sensorLoopCounter = 0;
 
-        for(int i = 0; i < lenof(buderusParamDesc); i++) {
-            const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-            if (pDesc->sensor) {
-                pDesc->sensor->loop();
-            }
+        for(ValueHandlerMap::iterator i = valueHandlerMap.begin(); i!=valueHandlerMap.end(); i++) {
+            i->second->loop();
         }
     }
 
@@ -190,11 +176,9 @@ void KM271Component::update() {
 
 void KM271Component::dump_config() {
     ESP_LOGCONFIG(TAG, "Dump Config was called");
-    for(int i = 0; i < lenof(buderusParamDesc); i++) {
-        const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-        if (pDesc->sensor) {
-            ESP_LOGCONFIG(TAG, "Sensor %s enabled", pDesc->desc);
-        }
+
+    for(ValueHandlerMap::iterator i = valueHandlerMap.begin(); i!=valueHandlerMap.end(); i++) {
+        ESP_LOGCONFIG(TAG, "Sensor %s enabled", i->second->paramDesc->desc);
     }
 }
 
@@ -202,15 +186,11 @@ void KM271Component::on_shutdown() {
     ESP_LOGI(TAG, "Shutdown was called");
 }
 
-t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired)
+const t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired)
 {
     for(int i = 0; i < lenof(buderusParamDesc); i++) {
-        t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
+        const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
         if(pDesc->parameterId == parameterId) {
-            if (pDesc->sensor) {
-                ESP_LOGE(TAG, "Sensor for id %d already set", parameterId);
-                return nullptr;
-            }
             if (writableRequired && !pDesc->writable) {
                 ESP_LOGE(TAG, "Parameter %d is not writable", parameterId);
                 return nullptr;
@@ -223,47 +203,48 @@ t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Buderus_R2
 
 void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor)
 {
-    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
     if (!pDesc) {
         ESP_LOGE(TAG, "set_sensor: No available slot for parameter ID %d found", parameterId);
         return;
     }
-    pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType, pDesc->sensorTypeParam);
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
 }
 
 void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor)
 {
-    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, false);
     if (!pDesc) {
         ESP_LOGE(TAG, "set_binary_sensor: No available slot for parameter ID %d found", parameterId);
         return;
     }
 
-    pDesc->sensor = new BuderusParamSensor(sensor, pDesc->sensorType, pDesc->sensorTypeParam);
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
 }
 
 void KM271Component::set_switch(Buderus_R2017_ParameterId parameterId, BuderusParamSwitch *switch_)
 {
-    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
     if (!pDesc) {
         ESP_LOGE(TAG, "set_switch: No available slot for parameter ID %d found", parameterId);
         return;
     }
 
     switch_->setupWriting(&writer, parameterId, pDesc->sensorType);
-    pDesc->sensor = new BuderusParamSensor(switch_, pDesc->sensorType, pDesc->sensorTypeParam);
+
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, switch_)));
 }
 
 void KM271Component::set_number(Buderus_R2017_ParameterId parameterId, BuderusParamNumber *number)
 {
-    t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, true);
     if (!pDesc) {
         ESP_LOGE(TAG, "set_number: No available slot for parameter ID %d found", parameterId);
         return;
     }
 
     number->setupWriting(&writer, parameterId, pDesc->sensorType);
-    pDesc->sensor = new BuderusParamSensor(number, pDesc->sensorType, pDesc->sensorTypeParam);
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, number)));
 }
 
 float KM271Component::get_setup_priority() const {
