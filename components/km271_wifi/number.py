@@ -4,7 +4,8 @@ from esphome.components import number
 from esphome.const import (
     CONF_ID,
     CONF_MIN_VALUE,
-    CONF_MAX_VALUE
+    CONF_MAX_VALUE,
+    CONF_STEP
 )
 
 from . import (
@@ -29,6 +30,9 @@ CONFIG_SCHEMA = (
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
             cv.Optional("warm_water_temperature"): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
+                cv.Optional(CONF_STEP, default=1): cv.positive_float,
             })
         }
     )
@@ -39,7 +43,7 @@ async def setup_conf(config, key, hub):
     if key in config:
         conf = config[key]
 
-        sens = await number.new_number(conf, min_value=30, max_value=60, step=1)
+        sens = await number.new_number(conf, min_value=conf[CONF_MIN_VALUE], max_value=conf[CONF_MAX_VALUE], step=conf[CONF_STEP])
         cg.add(getattr(hub, f"set_{key}_number")(sens))
 
 
