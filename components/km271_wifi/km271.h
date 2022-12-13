@@ -13,10 +13,14 @@
 #include "km271_params.h"
 
 
-#define GENERATE_SENSOR_SETTER(key, parameterId) void set_##key##_sensor(esphome::sensor::Sensor *sensor) { set_sensor(parameterId, sensor); }
-#define GENERATE_BINARY_SENSOR_SETTER(key, parameterId) void set_##key##_binary_sensor(esphome::binary_sensor::BinarySensor *sensor) { set_binary_sensor(parameterId, sensor); }
-#define GENERATE_SWITCH_SETTER(key, parameterId) void set_##key##_switch(BuderusParamSwitch *switch_) { set_switch(parameterId, switch_); }
-#define GENERATE_NUMBER_SETTER(key, parameterId) void set_##key##_number(BuderusParamNumber *number) { set_number(parameterId, number); }
+#define GENERATE_SENSOR_SETTER(key, parameterId, sensorTypeParam) void set_##key##_sensor(esphome::sensor::Sensor *sensor) \
+  { set_sensor(parameterId, sensorTypeParam, sensor); }
+#define GENERATE_BINARY_SENSOR_SETTER(key, parameterId, sensorTypeParam) void set_##key##_binary_sensor(esphome::binary_sensor::BinarySensor *sensor) \
+  { set_binary_sensor(parameterId, sensorTypeParam, sensor); }
+#define GENERATE_SWITCH_SETTER(key, parameterId, sensorTypeParam) void set_##key##_switch(BuderusParamSwitch *switch_) \
+  { set_switch(parameterId, sensorTypeParam, switch_); }
+#define GENERATE_NUMBER_SETTER(key, parameterId, sensorTypeParam) void set_##key##_number(BuderusParamNumber *number) \
+  { set_number(parameterId, sensorTypeParam, number); }
 
 
 namespace esphome {
@@ -29,41 +33,42 @@ class KM271Component : public Component, public uart::UARTDevice {
   void loop() override;
   void dump_config() override;
 
-  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_target_temperature, VSTHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_temperature, VITHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_room_target_temperature, RSTHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_room_temperature, RITHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_pump_power, PLHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_mixer_position, MSHK1);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_p10, KLHK1_P10);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_0, KLHK1_P00);
-  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_n10, KLHK1_N10);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_target_temperature, VSTHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_temperature, VITHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_room_target_temperature, RSTHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_room_temperature, RITHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_pump_power, PLHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_mixer_position, MSHK2);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_p10, KLHK2_P10);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_0, KLHK2_P00);
-  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_n10, KLHK2_N10);
-  GENERATE_SENSOR_SETTER(hot_water_target_temperature, WWST);
-  GENERATE_SENSOR_SETTER(hot_water_temperature, WWIT);
-  GENERATE_SENSOR_SETTER(boiler_target_temperature, KVST);
-  GENERATE_SENSOR_SETTER(boiler_temperature, KVIT);
-  GENERATE_SENSOR_SETTER(boiler_turn_on_temperature, BET);
-  GENERATE_SENSOR_SETTER(boiler_turn_off_temperature, BAT);
-  GENERATE_SENSOR_SETTER(exhaust_gas_temperature, ABTMP);
-  GENERATE_SENSOR_SETTER(outdoor_temperature, AT);
-  GENERATE_SENSOR_SETTER(attenuated_outdoor_temperature, ATD);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_target_temperature, VSTHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_flow_temperature, VITHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_room_target_temperature, RSTHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_room_temperature, RITHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_pump_power, PLHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_mixer_position, MSHK1, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_p10, KLHK1_P10, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_0, KLHK1_P00, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_1_curve_n10, KLHK1_N10, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_target_temperature, VSTHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_flow_temperature, VITHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_room_target_temperature, RSTHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_room_temperature, RITHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_pump_power, PLHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_mixer_position, MSHK2, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_p10, KLHK2_P10, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_0, KLHK2_P00, 0);
+  GENERATE_SENSOR_SETTER(heating_circuit_2_curve_n10, KLHK2_N10, 0);
+  GENERATE_SENSOR_SETTER(hot_water_target_temperature, WWST, 0);
+  GENERATE_SENSOR_SETTER(hot_water_temperature, WWIT, 0);
+  GENERATE_SENSOR_SETTER(boiler_target_temperature, KVST, 0);
+  GENERATE_SENSOR_SETTER(boiler_temperature, KVIT, 0);
+  GENERATE_SENSOR_SETTER(boiler_turn_on_temperature, BET, 0);
+  GENERATE_SENSOR_SETTER(boiler_turn_off_temperature, BAT, 0);
+  GENERATE_SENSOR_SETTER(exhaust_gas_temperature, ABTMP, 0);
+  GENERATE_SENSOR_SETTER(outdoor_temperature, AT, 0);
+  GENERATE_SENSOR_SETTER(attenuated_outdoor_temperature, ATD, 0);
 
-  GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW);
-  GENERATE_BINARY_SENSOR_SETTER(boiler_error, KFEHL);
-  GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR);
-  GENERATE_BINARY_SENSOR_SETTER(boiler_actuation, BANST);
+  GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW, 0);
+  GENERATE_BINARY_SENSOR_SETTER(circulation_pump_running, LPWW, 1);
+  GENERATE_BINARY_SENSOR_SETTER(boiler_error, KFEHL, 0);
+  GENERATE_BINARY_SENSOR_SETTER(boiler_running, KBETR, 0);
+  GENERATE_BINARY_SENSOR_SETTER(boiler_actuation, BANST, 0);
 
-  GENERATE_SWITCH_SETTER(warm_water_heating_auto_off, CFG_WW_Aufbereitung);
-  GENERATE_NUMBER_SETTER(warm_water_temperature, CFG_WW_Temperatur);
+  GENERATE_SWITCH_SETTER(warm_water_heating_auto_off, CFG_WW_Aufbereitung, 0);
+  GENERATE_NUMBER_SETTER(warm_water_temperature, CFG_WW_Temperatur, 3);
 
   void setup();
   float get_setup_priority() const override;
@@ -72,12 +77,12 @@ class KM271Component : public Component, public uart::UARTDevice {
   Writer3964R writer;
 
  protected:
-  const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, bool writableRequired);
+  const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, bool writableRequired);
 
-  void set_sensor(Buderus_R2017_ParameterId parameterId, esphome::sensor::Sensor *sensor);
-  void set_binary_sensor(Buderus_R2017_ParameterId parameterId, esphome::binary_sensor::BinarySensor *sensor);
-  void set_switch(Buderus_R2017_ParameterId parameterId, BuderusParamSwitch *switch_);
-  void set_number(Buderus_R2017_ParameterId parameterId, BuderusParamNumber *number);
+  void set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::sensor::Sensor *sensor);
+  void set_binary_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::binary_sensor::BinarySensor *sensor);
+  void set_switch(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSwitch *switch_);
+  void set_number(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamNumber *number);
 
   void process_incoming_byte(uint8_t c);
   void parse_buderus(uint8_t * buf, size_t len);
