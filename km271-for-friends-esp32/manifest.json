@@ -1,0 +1,9 @@
+{
+  "chipFamily": "ESP32",
+  "parts": [
+    {
+      "path": "km271-for-friends-esp32/km271-for-friends-esp32.bin",
+      "offset": 0
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "KM271-WiFi",
+  "version": "",
+  "home_assistant_domain": "esphome",
+  "new_install_skip_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "km271-for-friends-esp32/km271-for-friends-esp32.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
