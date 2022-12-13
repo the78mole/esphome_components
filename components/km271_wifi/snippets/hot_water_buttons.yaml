@@ -1,0 +1,22 @@
+# This can be used to show buttons instead of a select,
+# which makes it easier to use it in automations
+
+button:
+  - platform: template
+    name: "KM271 WW-Bereitung Aus"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Ein"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Auto"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
