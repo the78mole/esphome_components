@@ -1,0 +1,10 @@
+name: Build and Publish
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    uses: esphome/workflows/.github/workflows/publish.yml@main
+    with:
+      files: components/km271_wifi/km271-for-friends.yaml
+      name: Your Project Name
