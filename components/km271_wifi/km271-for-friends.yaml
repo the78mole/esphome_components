@@ -57,11 +57,11 @@ uart:
   baud_rate: 2400
 
 external_components:
-  - source:
-      type: local
-      path: my_components/components
+  - source: github://the78mole/esphome_components@main
     components: [ km271_wifi ]
-#  - source: github://the78mole/esphome_components@main
+#  - source:
+#      type: local
+#      path: my_components/components
 #    components: [ km271_wifi ]
  
 esp32_improv:
