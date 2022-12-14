@@ -1,0 +1,11 @@
+# To set the target temperature of the hot water,
+# some prefer a number input over a slider.
+# Here are the options.
+# Described here: https://developers.home-assistant.io/docs/core/entity/number/#properties
+
+number:
+  - platform: km271_wifi
+    warm_water_temperature:
+      name: "Warmwassersolltemperatur Tag"
+      mode: box
+#      mode: slider  # default
