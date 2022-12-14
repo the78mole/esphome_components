@@ -1,0 +1,141 @@
+binary_sensor:
+  - platform: km271_wifi
+    # Betriebswerte 1 HK1
+    heating_circuit_1_switch_off_optimization:
+      name: "HK1 Ausschaltoptimierung"
+    heating_circuit_1_switch_on_optimization:
+      name: "HK1 Einschaltoptimierung"
+    heating_circuit_1_automatic:
+      name: "HK1 Automatik"
+    heating_circuit_1_ww_priority_processing:
+      name: "HK1 Warmwasservorrang"
+    heating_circuit_1_screed_drying:
+      name: "HK1 Estrichtrocknung"
+    heating_circuit_1_holiday:
+      name: "HK1 Ferien"
+    heating_circuit_1_antifreeze:
+      name: "HK1 Frostschutz"
+    heating_circuit_1_manually:
+      name: "HK1 Manuell"
+    # Betriebswerte 2 HK1
+    heating_circuit_1_summer:
+      name: "HK1 Sommer-Modus"
+    heating_circuit_1_day:
+      name: "HK1 Tag-Modus"
+    heating_circuit_1_no_comm_with_rc:
+      name: "HK1 Keine Kommunikation mit FB"
+    heating_circuit_1_rc_faulty:
+      name: "HK1 FB fehlerhaft"
+    heating_circuit_1_flow_sensor_error:
+      name: "HK1 Fehler Vorlauffuehler"
+    heating_circuit_1_max_flow:
+      name: "HK1 Maximaler Vorlauf"
+    heating_circuit_1_external_fault_input:
+      name: "HK1 Externer Stoereingang"
+    # Betriebswerte 1 HK2
+    heating_circuit_2_switch_off_optimization:
+      name: "HK2 Ausschaltoptimierung"
+    heating_circuit_2_switch_on_optimization:
+      name: "HK2 Einschaltoptimierung"
+    heating_circuit_2_automatic:
+      name: "HK2 Automatik"
+    heating_circuit_2_ww_priority_processing:
+      name: "HK2 Warmwasservorrang"
+    heating_circuit_2_screed_drying:
+      name: "HK2 Estrichtrocknung"
+    heating_circuit_2_holiday:
+      name: "HK2 Ferien"
+    heating_circuit_2_antifreeze:
+      name: "HK2 Frostschutz"
+    heating_circuit_2_manually:
+      name: "HK2 Manuell"
+    # Betriebswerte 2 HK2
+    heating_circuit_2_summer:
+      name: "HK2 Sommer-Modus"
+    heating_circuit_2_day:
+      name: "HK2 Tag-Modus"
+    heating_circuit_2_no_comm_with_rc:
+      name: "HK2 Keine Kommunikation mit FB"
+    heating_circuit_2_rc_faulty:
+      name: "HK2 FB fehlerhaft"
+    heating_circuit_2_flow_sensor_error:
+      name: "HK2 Fehler Vorlauffuehler"
+    heating_circuit_2_max_flow:
+      name: "HK2 Maximaler Vorlauf"
+    heating_circuit_2_external_fault_input:
+      name: "HK2 Externer Stoereingang"
+    # Betriebswerte 1 WW
+    ww_automatic:
+      name: "WW Automatik"
+    ww_disinfection:
+      name: "WW Desinfektion"
+    ww_reload:
+      name: "WW Nachladung"
+    ww_holiday:
+      name: "WW Ferien"
+    ww_error_disinfection:
+      name: "WW Fehler Desinfektion"
+    ww_error_sensor:
+      name: "WW Fehler Fuehler"
+    ww_error_stays_cold:
+      name: "WW Fehler WW bleibt kalt"
+    ww_error_anode:
+      name: "WW Fehler Anode"
+    # Betriebswerte 2 WW
+    ww_loading:
+      name: "WW Laden"
+    ww_manually:
+      name: "WW Manuell"
+    ww_reloading:
+      name: "WW Nachladen"
+    ww_switch_off_optimization:
+      name: "WW Ausschaltoptimierung"
+    ww_switch_on_optimization:
+      name: "WW Einschaltoptimierung"
+    ww_day_mode:
+      name: "WW Tag Modus"
+    ww_post_processing:
+      name: "WW Nachbereitung"
+    ww_priority_processing:
+      name: "WW Vorrangschaltung"
+    # Kesselfehler
+    error_burner_malfunction:
+      name: "Fehler Brennerstoerung"
+    error_boiler_sensor:
+      name: "Fehler Kesselfuehler"
+    error_additional_sensor:
+      name: "Fehler Zusatzfuehler"
+    error_boiler_stays_cold:
+      name: "Fehler Kessel bleibt kalt"
+    error_exhaust_gas_sensor:
+      name: "Fehler Abgasfuehler"
+    error_exhaust_gas_over_limit:
+      name: "Fehler Abgas ueber Grenzwert"
+    error_safety_chain_released:
+      name: "Fehler Sicherungskette ausgeloest"
+    error_external_disturbance:
+      name: "Fehler Externe Stoerung"
+    # Kesselbetrieb
+    boiler_emission_test:
+      name: "Kessel Abgastest"
+    boiler_1st_stage_operation:
+      name: "Kessel Betrieb 1.Stufe"
+    boiler_protection:
+      name: "Kessel Schutz"
+    boiler_under_operation:
+      name: "Kessel unter Betrieb"
+    boiler_performance_free:
+      name: "Kessel Leistung frei"
+    boiler_performance_high:
+      name: "Kessel Leistung hoch"
+    boiler_2st_stage_operation:
+      name: "Kessel Betrieb 2.Stufe"
+  #Alarmstatus
+    alarm_exhaust_gas_sensor:
+      name: "Alarm Abgasfuehler"
+    alarm_boiler_flow_sensor:
+      name: "Alarm Kesselvorlauffuehler"
+    alarm_burner:
+      name: "Alarm Brenner"
+    alarm_heating_circuit_2_flow_sensor:
+      name: "Alarm HK2 Vorlauffuehler"
