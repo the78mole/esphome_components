@@ -13,7 +13,7 @@ from . import (
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "warm_water_heating_auto_off"
+    "ww_heating_auto_off"
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -25,7 +25,7 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("warm_water_heating_auto_off"): switch.switch_schema(BuderusParamSwitch),
+            cv.Optional("ww_heating_auto_off"): switch.switch_schema(BuderusParamSwitch),
         }
     )
 )

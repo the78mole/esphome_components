@@ -38,8 +38,8 @@ TYPES = [
     "heating_circuit_2_curve_p10",
     "heating_circuit_2_curve_0",
     "heating_circuit_2_curve_n10",
-    "hot_water_target_temperature",
-    "hot_water_temperature",
+    "ww_target_temperature",
+    "ww_temperature",
     "boiler_target_temperature",
     "boiler_temperature",
     "boiler_turn_on_temperature",
@@ -176,14 +176,14 @@ CONFIG_SCHEMA = (
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC, 	
             ),
-            cv.Optional("hot_water_target_temperature"): sensor.sensor_schema(
+            cv.Optional("ww_target_temperature"): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("hot_water_temperature"): sensor.sensor_schema(
+            cv.Optional("ww_temperature"): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,

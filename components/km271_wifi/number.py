@@ -16,7 +16,7 @@ from . import (
 CODEOWNERS = ["@jensgraef"]
 
 TYPES = [
-    "warm_water_temperature"
+    "ww_temperature"
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -28,7 +28,7 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("warm_water_temperature"): number.NUMBER_SCHEMA.extend({
+            cv.Optional("ww_temperature"): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
