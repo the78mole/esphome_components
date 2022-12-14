@@ -190,81 +190,161 @@ typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *
 static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
-        { CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
-        { CFG_WW_Aufbereitung, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", ""},
-        { BW1HK1    , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 HK1", ""},
-        { BW2HK1    , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 HK1", ""},
-        { VSTHK1    , false, SensorType::UNSIGNED_INT, 0, "Vorlaufsolltemperatur HK1", "°C"},        // (Grad)
-        { VITHK1    , false, SensorType::UNSIGNED_INT, 0, "Vorlaufisttemperatur HK1", "°C"},         // (Grad)
-        { RSTHK1    , false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumsolltemperatur HK1", "°C"},           // (Grad)
-        { RITHK1    , false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumisttemperatur HK1", "°C"},            // (Grad)
-        { EOZHK1    , false, SensorType::UNSIGNED_INT, 0, "Einschaltoptimierungszeit HK1", ""},
-        { AOZHK1    , false, SensorType::UNSIGNED_INT, 0, "Ausschaltoptimierungszeit HK1", ""},
-        { PLHK1     , false, SensorType::UNSIGNED_INT, 0, "Pumpenleistung HK1", "%"},               // (Grad)
-        { MSHK1     , false, SensorType::SIGNED_INT, 0, "Mischerstellung HK1", "%"},              // (Grad)
-        { NB01      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB02      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { KLHK1_P10 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei + 10 Grad", "°C"},  // (Grad)
-        { KLHK1_P00 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei 0 Grad", "°C"},     // (Grad)
-        { KLHK1_N10 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei - 10 Grad", "°C"},  // (Grad)
-        { NB03      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB04      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB05      , false, SensorType::NONE, 0, "nicht belegt", ""},
-    
-        { BW1HK2    , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 HK2", ""},
-        { BW2HK2    , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 HK2", ""},
-        { VSTHK2    , false, SensorType::UNSIGNED_INT, 0, "Vorlaufsolltemperatur HK2", "°C"},        // (Grad)
-        { VITHK2    , false, SensorType::UNSIGNED_INT, 0, "Vorlaufisttemperatur HK2", "°C"},         // (Grad)
-        { RSTHK2    , false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumsolltemperatur HK2", "°C"},           // (Grad)
-        { RITHK2    , false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumisttemperatur HK2", "°C"},            // (Grad)
-        { EOZHK2    , false, SensorType::UNSIGNED_INT, 0, "Einschaltoptimierungszeit HK2", ""},
-        { AOZHK2    , false, SensorType::UNSIGNED_INT, 0, "Ausschaltoptimierungszeit HK2", ""},
-        { PLHK2     , false, SensorType::UNSIGNED_INT, 0, "Pumpenleistung HK2", "%"},
-        { MSHK2     , false, SensorType::SIGNED_INT, 0, "Mischerstellung HK2", "%"},
-        { NB06      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB07      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { KLHK2_P10 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei + 10 Grad", "°C"},  // (Grad)
-        { KLHK2_P00 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei 0 Grad", "°C"},     // (Grad)
-        { KLHK2_N10 , false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei - 10 Grad", "°C"},  // (Grad)
-        { NB08      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB09      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { NB10      , false, SensorType::NONE, 0, "nicht belegt", ""},
-    
-        { BW1WW     , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 WW", ""},
-        { BW2WW     , false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 WW", ""},
-        { WWST      , false, SensorType::UNSIGNED_INT, 0, "Warmwassersolltemperatur", "°C"},         // (Grad)
-        { WWIT      , false, SensorType::UNSIGNED_INT, 0, "Warmwasseristtemperatur", "°C"},          // (Grad)
-        { OZWW      , false, SensorType::UNSIGNED_INT, 0, "Warmwasseroptimierungszeit", ""},
-        { LPWW      , false, SensorType::BIT_AT_OFFSET, 0, "Ladepumpe", "" },
-        { LPWW      , false, SensorType::BIT_AT_OFFSET, 1, "Zirkulationspumpe", "" },
-        { KVST      , false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufsolltemperatur", "°C"},      // (Grad)
-        { KVIT      , false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufisttemperatur", "°C"},       // (Grad)
-        { BET       , false, SensorType::UNSIGNED_INT, 0, "Brennereinschalttemperatur", "°C"},       // (Grad)
-        { BAT       , false, SensorType::UNSIGNED_INT, 0, "Brennerausschalttemperatur", "°C"},       // (Grad)
-        { KINT1     , false, SensorType::UNSIGNED_INT, 0, "Kesselintegral 1", ""},
-        { KINT2     , false, SensorType::UNSIGNED_INT, 0, "Kesselintegral 2", ""},
-        { KFEHL     , false, SensorType::UNSIGNED_INT, 0, "Kesselfehler", ""},
-        { KBETR     , false, SensorType::UNSIGNED_INT, 0, "Kesselbetrieb", ""},
-        { BANST     , false, SensorType::UNSIGNED_INT, 0, "Brenneransteuerung", ""},                 // ["aus", "an"]
-        { ABTMP     , false, SensorType::UNSIGNED_INT, 0, "Abgastemperatur", "°C"},                  // (Grad)
-        { MODBSTELL , false, SensorType::UNSIGNED_INT, 0, "modulare Brenner Stellwert", ""},
-        { NB11      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { BLZ1S2    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 2", "h"},
-        { BLZ1S1    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 1", "h"},
-        { BLZ1S0    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 0", "h"},
-        { BLZ2S2    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 2", "h"},
-        { BLZ2S1    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 1", "h"},
-        { BLZ2S0    , false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 0", "h"},
-    
-        { AT        , false, SensorType::SIGNED_INT, 0, "Aussentemperatur", "°C"},                 // (Grad)
-        { ATD       , false, SensorType::SIGNED_INT, 0, "Gedaempfte Aussentemperatur", "°C"},      // (Grad)
-        { VVK       , false, SensorType::UNSIGNED_INT, 0, "Versionsnummer VK", ""},
-        { VNK       , false, SensorType::UNSIGNED_INT, 0, "Versionsnummer NK", ""},
-        { MODKENN   , false, SensorType::UNSIGNED_INT, 0, "Modulkennung", ""},
-        { NB12      , false, SensorType::NONE, 0, "nicht belegt", ""},
-        { ALARM     , false, SensorType::UNSIGNED_INT, 0, "Alarmstatus", ""}
+    {CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
+    {CFG_WW_Aufbereitung, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", ""},
+    // Betriebswerte 1 HK1
+    //{BW1HK1, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 HK1", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Ausschaltoptimierung", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 1, "HK1 Einschaltoptimierung", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 2, "HK1 Automatik", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 3, "HK1 Warmwasservorrang", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 4, "HK1 Estrichtrocknung", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 5, "HK1 Ferien", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 6, "HK1 Frostschutz", ""},
+    {BW1HK1, false, SensorType::BIT_AT_OFFSET, 7, "HK1 Manuell", ""},
+    // Betriebswerte 2 HK1
+    //{BW2HK1, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 HK1", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Sommer-Modus", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 1, "HK1 Tag-Modus", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 2, "HK1 Keine Kommunikation mit FB", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 3, "HK1 FB fehlerhaft", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 4, "HK1 Fehler Vorlauffuehler", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 5, "HK1 Maximaler Vorlauf", ""},
+    {BW2HK1, false, SensorType::BIT_AT_OFFSET, 6, "HK1 Externer Stoereingang", ""},
+    //{BW2HK1, false, SensorType::BIT_AT_OFFSET, 7, "HK1 Frei - Party/Pause", ""}, // unklar was hier gemeint ist
+    {BW2HK1, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 HK1", ""},
+    {VSTHK1, false, SensorType::UNSIGNED_INT, 0, "Vorlaufsolltemperatur HK1", "°C"},           // (Grad)
+    {VITHK1, false, SensorType::UNSIGNED_INT, 0, "Vorlaufisttemperatur HK1", "°C"},            // (Grad)
+    {RSTHK1, false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumsolltemperatur HK1", "°C"}, // (Grad)
+    {RITHK1, false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumisttemperatur HK1", "°C"},  // (Grad)
+    {EOZHK1, false, SensorType::UNSIGNED_INT, 0, "Einschaltoptimierungszeit HK1", ""},
+    {AOZHK1, false, SensorType::UNSIGNED_INT, 0, "Ausschaltoptimierungszeit HK1", ""},
+    {PLHK1, false, SensorType::UNSIGNED_INT, 0, "Pumpenleistung HK1", "%"}, // (Grad)
+    {MSHK1, false, SensorType::SIGNED_INT, 0, "Mischerstellung HK1", "%"},  // (Grad)
+    {NB01, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB02, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {KLHK1_P10, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei + 10 Grad", "°C"}, // (Grad)
+    {KLHK1_P00, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei 0 Grad", "°C"},    // (Grad)
+    {KLHK1_N10, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK1 bei - 10 Grad", "°C"}, // (Grad)
+    {NB03, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB04, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB05, false, SensorType::NONE, 0, "nicht belegt", ""},
+    // Betriebswerte 1 HK2
+    //{BW1HK2, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 HK2", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 0, "HK2 Ausschaltoptimierung", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 1, "HK2 Einschaltoptimierung", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 2, "HK2 Automatik", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 3, "HK2 Warmwasservorrang", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 4, "HK2 Estrichtrocknung", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 5, "HK2 Ferien", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 6, "HK2 Frostschutz", ""},
+    {BW1HK2, false, SensorType::BIT_AT_OFFSET, 7, "HK2 Manuell", ""},
+    // Betriebswerte 2 HK2
+    //{BW2HK2, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 HK2", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 0, "HK2 Sommer-Modus", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 1, "HK2 Tag-Modus", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 2, "HK2 Keine Kommunikation mit FB", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 3, "HK2 FB fehlerhaft", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 4, "HK2 Fehler Vorlauffuehler", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 5, "HK2 Maximaler Vorlauf", ""},
+    {BW2HK2, false, SensorType::BIT_AT_OFFSET, 6, "HK2 Externer Stoereingang", ""},
+    //{BW2HK2, false, SensorType::BIT_AT_OFFSET, 7, "HK2 Frei - Party/Pause", ""}, // unklar was hier gemeint ist
+    {VSTHK2, false, SensorType::UNSIGNED_INT, 0, "Vorlaufsolltemperatur HK2", "°C"},           // (Grad)
+    {VITHK2, false, SensorType::UNSIGNED_INT, 0, "Vorlaufisttemperatur HK2", "°C"},            // (Grad)
+    {RSTHK2, false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumsolltemperatur HK2", "°C"}, // (Grad)
+    {RITHK2, false, SensorType::UNSIGNED_INT_DIVIDED_BY_2, 0, "Raumisttemperatur HK2", "°C"},  // (Grad)
+    {EOZHK2, false, SensorType::UNSIGNED_INT, 0, "Einschaltoptimierungszeit HK2", ""},
+    {AOZHK2, false, SensorType::UNSIGNED_INT, 0, "Ausschaltoptimierungszeit HK2", ""},
+    {PLHK2, false, SensorType::UNSIGNED_INT, 0, "Pumpenleistung HK2", "%"},
+    {MSHK2, false, SensorType::SIGNED_INT, 0, "Mischerstellung HK2", "%"},
+    {NB06, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB07, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {KLHK2_P10, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei + 10 Grad", "°C"}, // (Grad)
+    {KLHK2_P00, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei 0 Grad", "°C"},    // (Grad)
+    {KLHK2_N10, false, SensorType::UNSIGNED_INT, 0, "Heizkennlinie HK2 bei - 10 Grad", "°C"}, // (Grad)
+    {NB08, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB09, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {NB10, false, SensorType::NONE, 0, "nicht belegt", ""},
+    // Betriebswerte 1 WW
+    // {BW1WW, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 WW", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 0, "WW Automatik", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 1, "WW Desinfektion", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 2, "WW Nachladung", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 3, "WW Ferien", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 4, "WW Fehler Desinfektion", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 5, "WW Fehler Fuehler", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 6, "WW Fehler WW bleibt kalt", ""},
+    {BW1WW, false, SensorType::BIT_AT_OFFSET, 7, "WW Fehler Anode", ""},
+    // Betriebswerte 2 WW
+    // {BW2WW, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 2 WW", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 0, "WW Laden", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 1, "WW Manuell", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 2, "WW Nachladen", ""}, // ist 1 bei Lade-/Nachlade-Aktivität der Warmwasser - Ladepumpe, jedoch nicht über die komplette Zeit.
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 3, "WW Ausschaltoptimierung", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 4, "WW Einschaltoptimierung", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 5, "WW Tag Modus", ""},
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 6, "WW Nachbereitung", ""},    // wird gleichzeitig mit dem 6. Bit 1, aber mit zeitlicher Verzögerung 0. Möglicherweise das Zeitfenster, in dem bei Bedarf noch Warmwasserbereitung, auch über den Tag - Heiz - Modus hinaus, stattfindet.
+    {BW2WW, false, SensorType::BIT_AT_OFFSET, 7, "WW Vorrangschaltung", ""}, // ist 1, solange Warmwasserbereitung mit Vorrang stattfindet.
+    {WWST, false, SensorType::UNSIGNED_INT, 0, "WW Solltemperatur", "°C"}, // (Grad)
+    {WWIT, false, SensorType::UNSIGNED_INT, 0, "WW Isttemperatur", "°C"},  // (Grad)
+    {OZWW, false, SensorType::UNSIGNED_INT, 0, "WW Optimierungszeit", ""},
+    // Pumpenansteuerung
+    //{LPWW, false, SensorType::UNSIGNED_INT, 0, "Ladepumpe", ""}, // ["aus", "Ladepumpe", "Warmwasserpumpe", "beide"]
+    {LPWW, false, SensorType::BIT_AT_OFFSET, 0, "Ladepumpe", ""},
+    {LPWW, false, SensorType::BIT_AT_OFFSET, 1, "Zirkulationspumpe", ""},
+    {LPWW, false, SensorType::BIT_AT_OFFSET, 2, "Solarpumpe Absenkung", ""},
+    {KVST, false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufsolltemperatur", "°C"}, // (Grad)
+    {KVIT, false, SensorType::UNSIGNED_INT, 0, "Kesselvorlaufisttemperatur", "°C"},  // (Grad)
+    {BET, false, SensorType::UNSIGNED_INT, 0, "Brennereinschalttemperatur", "°C"},   // (Grad)
+    {BAT, false, SensorType::UNSIGNED_INT, 0, "Brennerausschalttemperatur", "°C"},   // (Grad)
+    {KINT1, false, SensorType::UNSIGNED_INT, 0, "Kesselintegral 1", ""},
+    {KINT2, false, SensorType::UNSIGNED_INT, 0, "Kesselintegral 2", ""},
+    // Kesselfehler
+    //{KFEHL, false, SensorType::UNSIGNED_INT, 0, "Kesselfehler", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 0, "Fehler Brennerstoerung", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 1, "Fehler Kesselfuehler", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 2, "Fehler Zusatzfuehler", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 3, "Fehler Kessel bleibt kalt", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 4, "Fehler Abgasfuehler", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 5, "Fehler Abgas ueber Grenzwert", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 6, "Fehler Sicherungskette ausgeloest", ""},
+    {KFEHL, false, SensorType::BIT_AT_OFFSET, 7, "Fehler Externe Stoerung", ""},
+    // Kesselbetrieb
+    //{KBETR, false, SensorType::UNSIGNED_INT, 0, "Kesselbetrieb", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 0, "Kessel Abgastest", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 1, "Kessel Betrieb 1.Stufe", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 2, "Kessel Schutz", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 3, "Kessel unter Betrieb", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 4, "Kessel Leistung frei", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 5, "Kessel Leistung hoch", ""},
+    {KBETR, false, SensorType::BIT_AT_OFFSET, 6, "Kessel Betrieb 2.Stufe", ""},
+    {BANST, false, SensorType::UNSIGNED_INT, 0, "Brenneransteuerung", ""}, // 0: Brenner aus, 1 : Brenner an in Stufe 1, 2 : Brenner an in Stufe 2(laut Buderus - ungeprüft)
+    {ABTMP, false, SensorType::UNSIGNED_INT, 0, "Abgastemperatur", "°C"},  // (Grad)
+    {MODBSTELL, false, SensorType::UNSIGNED_INT, 0, "modulare Brenner Stellwert", ""},
+    {NB11, false, SensorType::NONE, 0, "nicht belegt", ""},
+    {BLZ1S2, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 2", "h"},
+    {BLZ1S1, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 1", "h"},
+    {BLZ1S0, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 0", "h"},
+    {BLZ2S2, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 2", "h"},
+    {BLZ2S1, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 1", "h"},
+    {BLZ2S0, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 0", "h"},
+    {AT, false, SensorType::SIGNED_INT, 0, "Aussentemperatur", "°C"},             // (Grad)
+    {ATD, false, SensorType::SIGNED_INT, 0, "Gedaempfte Aussentemperatur", "°C"}, // (Grad)
+    {VVK, false, SensorType::UNSIGNED_INT, 0, "Versionsnummer VK", ""},
+    {VNK, false, SensorType::UNSIGNED_INT, 0, "Versionsnummer NK", ""},
+    {MODKENN, false, SensorType::UNSIGNED_INT, 0, "Modulkennung", ""},
+    {NB12, false, SensorType::NONE, 0, "nicht belegt", ""},
+    // Alarmstatus
+    //{ALARM, false, SensorType::UNSIGNED_INT, 0, "Alarmstatus", ""}
+    {ALARM, false, SensorType::BIT_AT_OFFSET, 0, "Alarm Abgasfuehler", ""},
+    //{ALARM, false, SensorType::BIT_AT_OFFSET, 1, "Alarm 02", ""},
+    {ALARM, false, SensorType::BIT_AT_OFFSET, 2, "Alarm Kesselvorlauffuehler", ""},
+    //{ALARM, false, SensorType::BIT_AT_OFFSET, 3, "Alarm 08", ""},
+    {ALARM, false, SensorType::BIT_AT_OFFSET, 4, "Alarm Brenner", ""},
+    //{ALARM, false, SensorType::BIT_AT_OFFSET, 5, "Alarm 20", ""},
+    {ALARM, false, SensorType::BIT_AT_OFFSET, 6, "Alarm HK2 Vorlauffuehler", ""},
+    //{ALARM, false, SensorType::BIT_AT_OFFSET, 7, "Alarm 80", ""},
+
 };
-
-
 }
 }
