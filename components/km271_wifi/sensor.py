@@ -6,8 +6,11 @@ from esphome.const import (
     CONF_ID,
     UNIT_CELSIUS,
     UNIT_PERCENT,
+    UNIT_MINUTE,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_DURATION,
     STATE_CLASS_MEASUREMENT,
+    STATE_CLASS_TOTAL_INCREASING,
     ENTITY_CATEGORY_DIAGNOSTIC,
     ENTITY_CATEGORY_NONE
 )
@@ -46,7 +49,9 @@ TYPES = [
     "boiler_turn_off_temperature",
     "exhaust_gas_temperature",
     "outdoor_temperature",
-    "attenuated_outdoor_temperature"
+    "attenuated_outdoor_temperature",
+    "boiler_runtime_1",
+    "boiler_runtime_2"
 ]
 
 
@@ -240,6 +245,20 @@ CONFIG_SCHEMA = (
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
+            cv.Optional("boiler_runtime_1"): sensor.sensor_schema(
+                unit_of_measurement=UNIT_MINUTE,
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_DURATION,
+                state_class=STATE_CLASS_TOTAL_INCREASING,
+                entity_category=ENTITY_CATEGORY_NONE,
+            ),
+            cv.Optional("boiler_runtime_2"): sensor.sensor_schema(
+                unit_of_measurement=UNIT_MINUTE,
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_DURATION,
+                state_class=STATE_CLASS_TOTAL_INCREASING,
+                entity_category=ENTITY_CATEGORY_NONE,
+            )
         }
     )
 )

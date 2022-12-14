@@ -15,7 +15,8 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     sensor(sensor),
     binarySensor(nullptr),
     switch_(nullptr),
-    number(nullptr)
+    number(nullptr),
+    assembler(nullptr)
 {
 
 }
@@ -25,7 +26,8 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     sensor(nullptr),
     binarySensor(sensor),
     switch_(nullptr),
-    number(nullptr)
+    number(nullptr),
+    assembler(nullptr)
 {
 
 }
@@ -35,7 +37,8 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     sensor(nullptr),
     binarySensor(nullptr),
     switch_(switch_),
-    number(nullptr)
+    number(nullptr),
+    assembler(nullptr)
 {
 
 }
@@ -45,7 +48,20 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     sensor(nullptr),
     binarySensor(nullptr),
     switch_(nullptr),
-    number(paramNumber)
+    number(paramNumber),
+    assembler(nullptr)
+{
+
+}
+
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc *paramDesc, MultiParameterUnsignedIntegerAssembler *assembler):
+    paramDesc(paramDesc),
+     sensor(nullptr),
+     binarySensor(nullptr),
+     switch_(nullptr),
+     number(nullptr),
+     assembler(assembler)
+
 {
 
 }
@@ -140,6 +156,14 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
             }
         } else {
             ESP_LOGE(TAG, "Sensor type %d NYI for number", paramDesc->sensorType);
+        }
+    } else if(assembler) {
+        if (paramDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
+            ESP_LOGD(TAG, "Parameter: %d type param %d Len %d, data: %d %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0], data[1]);
+            uint32_t value = parseUnsignedInteger(data, len);
+            assembler->handleReceivedValue(paramDesc->sensorTypeParam, value);
+        } else {
+            ESP_LOGE(TAG, "Sensor type %d NYI for MultiParameterUnsignedIntegerAssembler", paramDesc->sensorType);
         }
 
     } else {
@@ -239,6 +263,37 @@ void BuderusParamNumber::loop()
                 publish_state(this->pendingWriteValue);
             }
         }
+    }
+}
+
+MultiParameterUnsignedIntegerAssembler::MultiParameterUnsignedIntegerAssembler(esphome::sensor::Sensor *targetSensor):
+    sensor(targetSensor),
+    component_known{false, false, false}
+{
+
+}
+
+void MultiParameterUnsignedIntegerAssembler::handleReceivedValue(uint16_t sensorTypeParam, uint8_t value)
+{
+    ESP_LOGD(TAG, "Received value for st param %d: %d", sensorTypeParam, value);
+
+    int valueIndex = sensorTypeParam & 0x0f;
+    if (valueIndex > 2) {
+        ESP_LOGE(TAG, "Invalid sensor type param: %d", sensorTypeParam);
+        return;
+    }
+    components[valueIndex] = value;
+    component_known[valueIndex] = true;
+
+    bool all_components_known = component_known[0] && component_known[1] && component_known[2];
+    if (all_components_known) {
+       /** @todo handle updates:
+        *  if lsb updates last, only send if lsb updates
+        *  if msb updates last, only send if msb updates
+        *  if not known, send after a cool down persiod */
+       uint32_t result = (((components[2] << 8) + components[1]) << 8 )  + components[0];
+       ESP_LOGD(TAG, "Assembling %d %d %d to %d", components[0], components[1], components[2], result);
+       sensor->publish_state(result);
     }
 }
 
