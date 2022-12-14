@@ -134,6 +134,11 @@ sensor:
       name: "Außentemperatur"
     attenuated_outdoor_temperature:
       name: "Gedaempfte Aussentemperatur"
+    boiler_runtime_1:
+      name: "Brennerlaufzeit 1"
+    boiler_runtime_2:
+      name: "Brennerlaufzeit 2"
+
 
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"

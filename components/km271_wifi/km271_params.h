@@ -73,12 +73,12 @@ enum Buderus_R2017_ParameterId {
     ABTMP     = 0x8833, //: "Abgastemperatur"                 (Grad)
     MODBSTELL = 0x8834, //: "modulare Brenner Stellwert"
     NB11      = 0x8835, //: "nicht belegt"
-    BLZ1S2    = 0x8836, //: "Brennerlaufzeit 1 Stunden 2"
-    BLZ1S1    = 0x8837, //: "Brennerlaufzeit 1 Stunden 1"
-    BLZ1S0    = 0x8838, //: "Brennerlaufzeit 1 Stunden 0"
-    BLZ2S2    = 0x8839, //: "Brennerlaufzeit 2 Stunden 2"
-    BLZ2S1    = 0x883a, //: "Brennerlaufzeit 2 Stunden 1"
-    BLZ2S0    = 0x883b, //: "Brennerlaufzeit 2 Stunden 0"
+    BLZ1S2    = 0x8836, //: "Brennerlaufzeit 1 Minuten 2"
+    BLZ1S1    = 0x8837, //: "Brennerlaufzeit 1 Minuten 1"
+    BLZ1S0    = 0x8838, //: "Brennerlaufzeit 1 Minuten 0"
+    BLZ2S2    = 0x8839, //: "Brennerlaufzeit 2 Minuten 2"
+    BLZ2S1    = 0x883a, //: "Brennerlaufzeit 2 Minuten 1"
+    BLZ2S0    = 0x883b, //: "Brennerlaufzeit 2 Minuten 0"
 
     AT        = 0x893c, //: "Aussentemperatur"                (Grad)
     ATD       = 0x893d, //: "gedaempfte Aussentemperatur"     (Grad)
@@ -89,7 +89,7 @@ enum Buderus_R2017_ParameterId {
 
     ALARM     = 0xaa42, //: "ERR_Alarmstatus"
 
-    CFG1      = 0x0000, //: "Sommar ab, HK1 Nacht-/Tag-/Urlaubstemperatur, Betriebsart"
+    CFG1      = 0x0000, //: "Sommer ab, HK1 Nacht-/Tag-/Urlaubstemperatur, Betriebsart"
     CFG2      = 0x000E, //: "HK1 Max Temperatur, HK1 Auslegung"
     CFG3      = 0x0015, //: "HK1 Aufschalttemperatur, HK1 Aussenhalt_ab"
     CFG4      = 0x001c, //: "HK1 Absenkungsart, HK1 Heizsystem"
@@ -113,6 +113,10 @@ enum SensorType {
     BYTE_AT_OFFSET, // a single byte, with offset in bytes specified in sensor param
     BIT_AT_OFFSET, // a single bit, with offset in bits specified in sensor param
     TAG_NACHT_AUTO_SELECT, //   [ 0 => "Nacht", 1=> "Tag", 2=> "Automatik" ],
+    // an 24 bit unsigned integer that spans multiple parameters identified.
+    // sensor type param msb identifies the group the value belongs to and sensor type param lsb determines the weight of the value: 0-2
+
+    MULTI_PARAMETER_UNSIGNED_INTEGER
 };
 
 class Writer3964R;
@@ -149,6 +153,19 @@ private:
     float pendingWriteValue;
 };
 
+/** Helper class to reassemble values that span multiple buderus parameters */
+class MultiParameterUnsignedIntegerAssembler
+{
+public:
+
+    MultiParameterUnsignedIntegerAssembler(esphome::sensor::Sensor *targetSensor);
+    void handleReceivedValue(uint16_t sensorTypeParam, uint8_t value);
+private:
+    esphome::sensor::Sensor * sensor;
+    uint8_t components[3];
+    bool component_known[3];
+};
+
 
 
 struct t_Buderus_R2017_ParamDesc {
@@ -170,6 +187,7 @@ class BuderusValueHandler {
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::binary_sensor::BinarySensor * sensor);
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSwitch * paramSwitch);
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamNumber* paramNumber);
+        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, MultiParameterUnsignedIntegerAssembler *assembler);
 
         void parseAndTransmit(uint8_t *data, size_t len);
         void loop();
@@ -182,6 +200,7 @@ class BuderusValueHandler {
         esphome::binary_sensor::BinarySensor *binarySensor;
         BuderusParamSwitch *switch_;
         BuderusParamNumber *number;
+        MultiParameterUnsignedIntegerAssembler *assembler;
 };
 
 
@@ -322,12 +341,12 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {ABTMP, false, SensorType::UNSIGNED_INT, 0, "Abgastemperatur", "°C"},  // (Grad)
     {MODBSTELL, false, SensorType::UNSIGNED_INT, 0, "modulare Brenner Stellwert", ""},
     {NB11, false, SensorType::NONE, 0, "nicht belegt", ""},
-    {BLZ1S2, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 2", "h"},
-    {BLZ1S1, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 1", "h"},
-    {BLZ1S0, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 1 Stunden 0", "h"},
-    {BLZ2S2, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 2", "h"},
-    {BLZ2S1, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 1", "h"},
-    {BLZ2S0, false, SensorType::UNSIGNED_INT, 0, "Brennerlaufzeit 2 Stunden 0", "h"},
+    {BLZ1S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0102, "Brennerlaufzeit 1 Minuten 2", "m"},
+    {BLZ1S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0101, "Brennerlaufzeit 1 Minuten 1", "m"},
+    {BLZ1S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0100, "Brennerlaufzeit 1 Minuten 0", "m"},
+    {BLZ2S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0202, "Brennerlaufzeit 2 Minuten 2", "m"},
+    {BLZ2S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0201, "Brennerlaufzeit 2 Minuten 1", "m"},
+    {BLZ2S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0200, "Brennerlaufzeit 2 Minuten 0", "m"},
     {AT, false, SensorType::SIGNED_INT, 0, "Aussentemperatur", "°C"},             // (Grad)
     {ATD, false, SensorType::SIGNED_INT, 0, "Gedaempfte Aussentemperatur", "°C"}, // (Grad)
     {VVK, false, SensorType::UNSIGNED_INT, 0, "Versionsnummer VK", ""},
@@ -344,7 +363,6 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     //{ALARM, false, SensorType::BIT_AT_OFFSET, 5, "Alarm 20", ""},
     {ALARM, false, SensorType::BIT_AT_OFFSET, 6, "Alarm HK2 Vorlauffuehler", ""},
     //{ALARM, false, SensorType::BIT_AT_OFFSET, 7, "Alarm 80", ""},
-
 };
 }
 }

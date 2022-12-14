@@ -121,6 +121,9 @@ class KM271Component : public Component, public uart::UARTDevice {
 
   GENERATE_SENSOR_SETTER(outdoor_temperature, AT, 0);
   GENERATE_SENSOR_SETTER(attenuated_outdoor_temperature, ATD, 0);
+  GENERATE_SENSOR_SETTER(boiler_runtime_1, BLZ1S0, 0x100);
+  GENERATE_SENSOR_SETTER(boiler_runtime_2, BLZ2S0, 0x200);
+
   // Pumpenansteuerung
   GENERATE_BINARY_SENSOR_SETTER(load_pump_running, LPWW, 0);
   GENERATE_BINARY_SENSOR_SETTER(circulation_pump_running, LPWW, 1);
