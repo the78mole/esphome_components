@@ -226,9 +226,6 @@ void BuderusParamNumber::setupWriting(Writer3964R *writer, Buderus_R2017_Paramet
 
 void BuderusParamNumber::control(float value)
 {
-    const uint8_t keep = 0x65;
-    const uint8_t data_type_warm_water = 0x0c;
-
     if(parameterId == CFG_WW_Temperatur) {
         float target_temperature = value;
         if (target_temperature < 30) {
@@ -243,6 +240,19 @@ void BuderusParamNumber::control(float value)
         this->pendingWriteValue = target_temperature;
         this->lastWriteRequest = millis();
 
+    } else if(parameterId == CFG_HK1_Auslegungstemperatur) {
+        float target_temperature = value;
+        if (target_temperature < 30) {
+            target_temperature = 30;
+        } else if (target_temperature > 90) {
+            target_temperature = 90;
+        }
+
+        // do not write directly, but instead wait until the value does not change for some time and write then
+        // this is to avoid writing to the heater each time the user clicks on the up arrow
+        this->hasPendingWriteRequest = true;
+        this->pendingWriteValue = target_temperature;
+        this->lastWriteRequest = millis();
     } else {
         ESP_LOGE(TAG, "No write configuration for number parameter %d found", parameterId);
     }
@@ -253,14 +263,30 @@ void BuderusParamNumber::loop()
     uint32_t writeConsolidationPeriod = 1000;
     const uint8_t keep = 0x65;
     const uint8_t data_type_warm_water = 0x0c;
+    const uint8_t data_type_heating_circuit_1 = 0x07;
 
     if (this->hasPendingWriteRequest) {
         uint32_t now = millis();
         if (now - lastWriteRequest > writeConsolidationPeriod) {
-            const uint8_t message[] = { data_type_warm_water, 0x07, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep};
-            if(writer->enqueueTelegram(message, 8)) {
+
+            if (parameterId == CFG_WW_Temperatur) {
+              const uint8_t message[] = { data_type_warm_water, 0x07, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep};
+                if(writer->enqueueTelegram(message, 8)) {
+                    this->hasPendingWriteRequest = false;
+                    publish_state(this->pendingWriteValue);
+
+                }
+            } else if(parameterId == CFG_HK1_Auslegungstemperatur) {
+                const uint8_t message[] = { data_type_heating_circuit_1, 0x0e, keep, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep};
+                  if(writer->enqueueTelegram(message, 8)) {
+                      this->hasPendingWriteRequest = false;
+                      publish_state(this->pendingWriteValue);
+
+                  }
+            } else {
+                ESP_LOGE(TAG, "No support for writing parameter %d", parameterId);
                 this->hasPendingWriteRequest = false;
-                publish_state(this->pendingWriteValue);
+
             }
         }
     }

@@ -16,7 +16,8 @@ from . import (
 CODEOWNERS = ["@jensgraef"]
 
 TYPES = [
-    "ww_temperature"
+    "ww_temperature",
+    "hc1_design_temperature",
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -31,6 +32,12 @@ CONFIG_SCHEMA = (
             cv.Optional("ww_temperature"): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
+                cv.Optional(CONF_STEP, default=1): cv.positive_float,
+            }),
+            cv.Optional("hc1_design_temperature"): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             })
