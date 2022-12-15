@@ -14,6 +14,7 @@ namespace KM271 {
 
 
 enum Buderus_R2017_ParameterId {
+    CFG_HK1_Auslegungstemperatur = 0x000e,
     CFG_WW_Temperatur = 0x007e,
     CFG_WW_Aufbereitung = 0x0085,
     BW1HK1    = 0x8000, //: "Betriebswerte 1 HK1"
@@ -190,6 +191,7 @@ typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *
 static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
+    {CFG_HK1_Auslegungstemperatur, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
     {CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
     {CFG_WW_Aufbereitung, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", ""},
     // Betriebswerte 1 HK1
