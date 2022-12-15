@@ -110,6 +110,9 @@ number:
     ww_temperature:
       name: "Warmwassersolltemperatur Tag"
       mode: slider
+    hc1_design_temperature:
+      name: "Auslegungstemperatur"
+      mode: slider
 
 select:
   - platform: template
