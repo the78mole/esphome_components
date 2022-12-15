@@ -76,43 +76,61 @@ km271_wifi:
   - id: budoil
     uart_id: uart_bus
 
-#  - platform: km271_wifi
-#    km271_id: budoil
-#    name: "Vorlaufisttemperatur"
-#    reg_id: 0x8003
-
 status_led:
   id: ledgn1
   pin: 
     number: GPIO21
     inverted: true
-    
+
+button:
+  - platform: restart
+    name: "KM271-WiFi Restart"
+  - platform: template
+    name: "KM271 WW-Bereitung Aus"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Ein"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Auto"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+
+
 number:
   - platform: km271_wifi
-    warm_water_temperature:
+    ww_temperature:
       name: "Warmwassersolltemperatur Tag"
+      mode: slider
+
+select:
+  - platform: template
+    name: "Warmwasser Betriebsart"
+    id: warmwasser_betriebsart
+    entity_category: config
+    optimistic: true
+    options:
+      - Dauerhaft aus (0)
+      - Dauerhaft ein (1)
+      - Automatik (2)
+    initial_option: Automatik (2)
+    set_action: 
+      - lambda:
+          auto index = id(warmwasser_betriebsart).index_of(x);
+          if (index.has_value()) {
+            uint8_t command[] = {0x0C, 0x0E, (uint8_t)index.value(), 0x65, 0x65, 0x65, 0x65, 0x65};
+            budoil->writer.enqueueTelegram(command, 8);
+          }
 
 binary_sensor:
-  - platform: km271_wifi
-    boiler_error:
-      name: "KM271 Kesselfehler"
-    boiler_running:
-      name: "KM271 Kesselbetrieb"
-    load_pump_running:
-      name: "KM271 Ladepumpe"
-  - platform: gpio
-    name: "USER 1"
-    pin:
-      number: GPIO26
-      inverted: true
-      mode:
-        input: true
-        pullup: true
-    filters:
-      - delayed_on: 10ms
-    on_press:
-      then:
-        - switch.toggle: led2
   - platform: gpio
     id: improvble
     name: "USER 2"
@@ -122,6 +140,41 @@ binary_sensor:
       mode:
         input: true
         pullup: true
+  - platform: km271_wifi
+    error_burner_malfunction:
+      name: "KM271 Kesselfehler"
+    error_additional_sensor:
+      name: "KM271 Zusatzsensorfehler"
+    error_boiler_sensor:
+      name: "KM271 Sensorfehler"
+    error_boiler_stays_cold:
+      name: "KM271 Kessel bleibt kalt"
+    error_safety_chain_released:
+      name: "KM271 Sicherheitskette ausgelöst"
+    error_external_disturbance:
+      name: "KM271 Externer Fehler"
+    alarm_boiler_flow_sensor:
+      name: "KM271 Alarm Kesselflusssensor"
+    alarm_burner:
+      name: "KM271 Alarm Kessel"
+    boiler_1st_stage_operation:
+      name: "KM271 Kessel 1. Stufe"
+    boiler_protection:
+      name: "KM271 Kessel Schutz"
+    boiler_under_operation:
+      name: "KM271 Kessel in Betrieb"
+    boiler_performance_free:
+      name: "KM271 Kessel Leistung frei"
+    boiler_performance_high:
+      name: "KM271 Kessel Leistung hoch"
+    boiler_2st_stage_operation:
+      name: "KM271 Kessel 2. Stufe"
+    boiler_actuation:
+      name: "KM271 Kessel Ansteuerung"
+    load_pump_running:
+      name: "KM271 Ladepumpe"
+    circulation_pump_running:
+      name: "KM271 Zirkulationspumpenbetrieb"
 
 sensor:
   - platform: km271_wifi
@@ -129,9 +182,9 @@ sensor:
       name: "KM271 Vorlaufsolltemperatur"
     heating_circuit_1_flow_temperature:
       name: "KM271 Vorlauftemperatur"
-    hot_water_target_temperature:
+    ww_target_temperature:
       name: "KM271 Warmwassersolltemperatur"
-    hot_water_temperature:
+    ww_temperature:
       name: "KM271 Warmwassertemperatur"
     boiler_target_temperature:
       name: "KM271 Kesselvorlaufsolltemperatur"
@@ -155,78 +208,9 @@ sensor:
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
     update_interval: 60s
-
-#sensor:
-  - platform: adc
-    pin: 36
-    unit_of_measurement: "V"
-    name: "KM217 5V Supply"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 32
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH4"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 33
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH5"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 34
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH6"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: adc
-    pin: 35
-    unit_of_measurement: "V"
-    name: "KM217 ADC CH7"
-    accuracy_decimals: 2
-    update_interval: 60s
-    attenuation: 6dB
-    filters:
-      - multiply: 2.274
-      - sliding_window_moving_average:
-          window_size: 16
-          send_every: 4
-  - platform: wifi_signal
-    name: "KM217 WiFi Signal Sensor"
-    update_interval: 60s
       
 switch:
-  - platform: km271_wifi
-    warm_water_heating_auto_off:
-      name: "Warmwasserbereitung Auto/Nacht"
   - platform: gpio
-    id: led2
     name: LED2_Green
     pin: 
       number: 22
