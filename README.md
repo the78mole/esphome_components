@@ -10,9 +10,11 @@ You will find some precompiled bin-files to upload to your hardware in the [gh-p
 ## KM217 Wifi
 
 ### Overview
-This component uses the hardware designed by the78mole to read interesting values from a buderus logamatic oil fired heating system.
+This component uses the hardware designed by the78mole to read interesting values from a buderus logamatic oil fired heating system (Logamatic 2107 M). We also had reports of gas burning systems, this module fits in and communicates with the controller. Here is just small prtion of what information you can get from the logamatic:
 
  ![image](images/home-assistant-values.png)
+ ![image](images/home-assistant-values-2.png)
+ ![image](images/home-assistant-values-3.png)
  
 ### Usage
 See https://esphome.io/components/external_components.html for information about integrating this into your esphome environemnt
