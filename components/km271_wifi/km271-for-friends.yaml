@@ -204,6 +204,11 @@ sensor:
       name: "KM271 Brennereinschalttemperatur"
     boiler_turn_off_temperature:
       name: "KM271 Brennerausschalttemperatur"
+    boiler_runtime_1:
+      name: "Brennerlaufzeit 1"
+    boiler_runtime_2:
+      name: "Brennerlaufzeit 2"
+
 
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
