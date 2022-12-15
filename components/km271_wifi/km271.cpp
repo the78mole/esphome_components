@@ -27,6 +27,10 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
     const uint16_t parameterIdNumeric = (buf[0] << 8) | buf[1];
     auto parameterId = static_cast<Buderus_R2017_ParameterId>(parameterIdNumeric);
 
+    char tmpBuf[4 * MAX_TELEGRAM_SIZE];
+    genDataString(tmpBuf, &buf[2], len - 2);
+    ESP_LOGD(TAG, "Parameter 0x%04X: (Data: %d, 0x%s)", parameterId, len-2, tmpBuf);
+
     auto result = valueHandlerMap.equal_range(parameterId);
     for (ValueHandlerMap::iterator i=result.first; i!=result.second; i++) {
         BuderusValueHandler * handler = i->second;
