@@ -1,7 +1,7 @@
 # Alternative 1 with a switch, but only toggles between auto and off
 switch:
   - platform: km271_wifi
-    warm_water_heating_auto_off:
+    ww_heating_auto_off:
       name: "Warmwasserbereitung Auto/Nacht"
 
 #Alternative 2 with a select and lambda supporting all three values
@@ -26,5 +26,5 @@ select:
 
 number:
   - platform: km271_wifi
-    warm_water_temperature:
+    ww_temperature:
       name: "Warmwassersolltemperatur Tag"
