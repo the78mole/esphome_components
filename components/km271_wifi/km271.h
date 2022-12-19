@@ -21,6 +21,9 @@
   { set_switch(parameterId, sensorTypeParam, switch_); }
 #define GENERATE_NUMBER_SETTER(key, parameterId, sensorTypeParam) void set_##key##_number(BuderusParamNumber *number) \
   { set_number(parameterId, sensorTypeParam, number); }
+#define GENERATE_SELECT_SETTER(key, parameterId, sensorTypeParam) void set_##key##_select(BuderusParamSelect *select) \
+  { set_select(parameterId, sensorTypeParam, select); }
+
 
 
 namespace esphome {
@@ -157,6 +160,8 @@ class KM271Component : public Component, public uart::UARTDevice {
   GENERATE_BINARY_SENSOR_SETTER(alarm_heating_circuit_2_flow_sensor, ALARM, 6);
   //GENERATE_BINARY_SENSOR_SETTER(alarm_80, ALARM, 7);
 
+
+  GENERATE_SELECT_SETTER(heating_circuit_1_operation_mode, CFG_HK1_Betriebsart, 4);
   GENERATE_SWITCH_SETTER(ww_heating_auto_off, CFG_WW_Aufbereitung, 0);
   GENERATE_NUMBER_SETTER(ww_temperature, CFG_WW_Temperatur, 3);
   GENERATE_NUMBER_SETTER(hc1_design_temperature, CFG_HK1_Auslegungstemperatur, 4);
@@ -174,6 +179,8 @@ class KM271Component : public Component, public uart::UARTDevice {
   void set_binary_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::binary_sensor::BinarySensor *sensor);
   void set_switch(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSwitch *switch_);
   void set_number(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamNumber *number);
+  void set_select(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSelect *select);
+
 
   void process_incoming_byte(uint8_t c);
   void parse_buderus(uint8_t * buf, size_t len);

@@ -324,6 +324,11 @@ select:
             uint8_t command[] = {0x0C, 0x0E, (uint8_t)index.value(), 0x65, 0x65, 0x65, 0x65, 0x65};
             budoil->writer.enqueueTelegram(command, 8);
           }
+  - platform: km271_wifi
+    heating_circuit_1_operation_mode:
+      name: "Heizkreis 1 Betriebsmodus"
+
+
 
 sensor:
   - platform: km271_wifi

@@ -16,6 +16,7 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     binarySensor(nullptr),
     switch_(nullptr),
     number(nullptr),
+    select(nullptr),
     assembler(nullptr)
 {
 
@@ -27,6 +28,7 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     binarySensor(sensor),
     switch_(nullptr),
     number(nullptr),
+    select(nullptr),
     assembler(nullptr)
 {
 
@@ -38,17 +40,31 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
     binarySensor(nullptr),
     switch_(switch_),
     number(nullptr),
+    select(nullptr),
     assembler(nullptr)
 {
 
 }
 
 BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamNumber *paramNumber):
-   paramDesc(paramDesc),
+    paramDesc(paramDesc),
     sensor(nullptr),
     binarySensor(nullptr),
     switch_(nullptr),
     number(paramNumber),
+    select(nullptr),
+    assembler(nullptr)
+{
+
+}
+
+BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc *paramDesc, BuderusParamSelect *paramSelect):
+    paramDesc(paramDesc),
+    sensor(nullptr),
+    binarySensor(nullptr),
+    switch_(nullptr),
+    number(nullptr),
+    select(paramSelect),
     assembler(nullptr)
 {
 
@@ -56,11 +72,12 @@ BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramD
 
 BuderusValueHandler::BuderusValueHandler(const t_Buderus_R2017_ParamDesc *paramDesc, MultiParameterUnsignedIntegerAssembler *assembler):
     paramDesc(paramDesc),
-     sensor(nullptr),
-     binarySensor(nullptr),
-     switch_(nullptr),
-     number(nullptr),
-     assembler(assembler)
+    sensor(nullptr),
+    binarySensor(nullptr),
+    switch_(nullptr),
+    number(nullptr),
+    select(nullptr),
+    assembler(assembler)
 
 {
 
@@ -156,6 +173,17 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
             }
         } else {
             ESP_LOGE(TAG, "Sensor type %d NYI for number", paramDesc->sensorType);
+        }
+    } else if(select) {
+        if(paramDesc->sensorType == BYTE_AT_OFFSET) {
+            if (paramDesc->sensorTypeParam < len) {
+                uint8_t value = data[paramDesc->sensorTypeParam];
+                select->handleReceivedValue(value);
+            } else {
+                ESP_LOGE(TAG, "Offset for sensor type BYTE_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
+            }
+        } else {
+            ESP_LOGE(TAG, "Sensor type %d NYI for select", paramDesc->sensorType);
         }
     } else if(assembler) {
         if (paramDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
@@ -323,11 +351,66 @@ void MultiParameterUnsignedIntegerAssembler::handleReceivedValue(uint16_t sensor
     }
 }
 
+BuderusParamSelect::BuderusParamSelect():
+    writer(nullptr)
+{
 
 }
+
+void BuderusParamSelect::setupWriting(Writer3964R *writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType, uint16_t sensorTypeParam)
+{
+    this->writer = writer;
+    this->parameterId = parameterId;
+    this->sensorType = sensorType;
+    this->sensorTypeParam = sensorTypeParam;
 }
 
+void BuderusParamSelect::setSelectMappings(std::vector<uint8_t> mappings)
+{
+    this->mappings = std::move(mappings);
+}
 
+void BuderusParamSelect::handleReceivedValue(uint8_t value)
+{
+    auto it = std::find(mappings.cbegin(), mappings.cend(), value);
+    if (it == mappings.end()) {
+        ESP_LOGE(TAG, "Invalid value %u received for select of parameter %d", value, parameterId);
+        return;
+    }
+    size_t mapping_idx = std::distance(mappings.cbegin(), it);
+    auto selectValue = this->at(mapping_idx);
+    this->publish_state(selectValue.value());
+}
+
+void BuderusParamSelect::control(const std::string &value) {
+
+    const uint8_t keep = 0x65;
+    const uint8_t data_type_warm_water = 0x0c;
+    const uint8_t data_type_heating_circuit_1 = 0x07;
+
+    auto idx = this->index_of(value);
+
+    if (idx.has_value()) {
+        uint8_t numericValue= this->mappings.at(idx.value());
+        if (parameterId == CFG_HK1_Betriebsart && this->sensorTypeParam == 4) {
+            if (numericValue > 2) {
+                ESP_LOGE(TAG, "Invalid select value for parameter %d received: %d", parameterId, numericValue);
+                return;
+            }
+
+            const uint8_t message[] = { data_type_heating_circuit_1, 0x00, keep, keep, keep, keep, (uint8_t )numericValue, keep};
+            writer->enqueueTelegram(message, 8);
+            publish_state(value); // confirm for now without waiting for an ack from the heater
+        } else {
+            ESP_LOGE(TAG, "No write configuration for parameter %d found", parameterId);
+        }
+    } else {
+        ESP_LOGE(TAG, "No mapping for select value %s found", value.c_str());
+    }
+}
+
+} // namespace
+} // namespace
 
 
 

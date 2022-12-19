@@ -1,4 +1,5 @@
 #include "3964r.h"
+#include "km271_helpers.h"
 #include "esphome/core/log.h"
 #include <string.h>
 
@@ -117,6 +118,8 @@ bool Writer3964R::enqueueTelegram(const uint8_t *data, uint8_t length)
         ESP_LOGE(TAG, "Telegram too long %d", length);
         return false;
     }
+
+    log_hex_buffer("Sending Telegram", data, length);
 
     if(writerState != Idle) {
         return queue.enqueueTelegram(data, length);

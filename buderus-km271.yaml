@@ -207,6 +207,9 @@ binary_sensor:
 
 number:
 
+select:
+
+
 sensor:
   - platform: km271_wifi
     heating_circuit_1_flow_target_temperature:

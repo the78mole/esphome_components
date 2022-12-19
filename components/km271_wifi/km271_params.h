@@ -7,6 +7,7 @@
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/number/number.h"
+#include "esphome/components/select/select.h"
 #include <unordered_map>
 
 namespace esphome {
@@ -14,6 +15,7 @@ namespace KM271 {
 
 
 enum Buderus_R2017_ParameterId {
+    CFG_HK1_Betriebsart = 0x0000,
     CFG_HK1_Auslegungstemperatur = 0x000e,
     CFG_WW_Temperatur = 0x007e,
     CFG_WW_Aufbereitung = 0x0085,
@@ -154,6 +156,26 @@ private:
     float pendingWriteValue;
 };
 
+class BuderusParamSelect: public esphome::select::Select {
+public:
+    BuderusParamSelect();
+    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType, uint16_t sensorTypeParam);
+    void setSelectMappings(std::vector<uint8_t> mappings);
+    void handleReceivedValue(uint8_t value);
+
+protected:
+
+    void control(const std::string &value) override;
+
+private:
+    Writer3964R * writer;
+    Buderus_R2017_ParameterId parameterId;
+    SensorType sensorType;
+    uint16_t sensorTypeParam;
+    std::vector<uint8_t> mappings; // this stores the number to read/write for each select option
+};
+
+
 /** Helper class to reassemble values that span multiple buderus parameters */
 class MultiParameterUnsignedIntegerAssembler
 {
@@ -188,8 +210,8 @@ class BuderusValueHandler {
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::binary_sensor::BinarySensor * sensor);
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSwitch * paramSwitch);
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamNumber* paramNumber);
+        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSelect * paramSelect);
         BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, MultiParameterUnsignedIntegerAssembler *assembler);
-
         void parseAndTransmit(uint8_t *data, size_t len);
         void loop();
 
@@ -201,6 +223,7 @@ class BuderusValueHandler {
         esphome::binary_sensor::BinarySensor *binarySensor;
         BuderusParamSwitch *switch_;
         BuderusParamNumber *number;
+        BuderusParamSelect *select;
         MultiParameterUnsignedIntegerAssembler *assembler;
 };
 
@@ -210,6 +233,7 @@ typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *
 static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
+    {CFG_HK1_Betriebsart, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
     {CFG_HK1_Auslegungstemperatur, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
     {CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
     {CFG_WW_Aufbereitung, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", ""},
