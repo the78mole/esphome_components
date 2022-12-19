@@ -1,4 +1,5 @@
 #include "km271.h"
+#include "km271_helpers.h"
 #include <stdint.h>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
@@ -26,9 +27,13 @@ void KM271Component::parse_buderus(uint8_t * buf, size_t len) {
 
     const uint16_t parameterIdNumeric = (buf[0] << 8) | buf[1];
     auto parameterId = static_cast<Buderus_R2017_ParameterId>(parameterIdNumeric);
+    // filter out irrelevant noisy values
+    if (parameterId == 0x0400 || parameterId == 0x882E || parameterId == 0x882F ) {
+        return;
+    }
 
     char tmpBuf[4 * MAX_TELEGRAM_SIZE];
-    genDataString(tmpBuf, &buf[2], len - 2);
+    buffer_to_hex(tmpBuf, &buf[2], len - 2);
     ESP_LOGD(TAG, "Parameter 0x%04X: (Data: %d, 0x%s)", parameterId, len-2, tmpBuf);
 
     auto result = valueHandlerMap.equal_range(parameterId);
@@ -46,38 +51,7 @@ void KM271Component::send_NAK() {
     write_byte(NAK);
 }
 
-size_t KM271Component::genDataString(char* outbuf, uint8_t* inbuf, size_t len) {
-    char * pBuf = outbuf;
 
-    if(len < 1) {
-        ESP_LOGD(TAG, "Invalid conversion len < 1 (%d)", len);
-        return 0;
-    }
-    for(size_t i = 0; i < len; i++) {
-        pBuf += sprintf(pBuf, "%02X ", inbuf[i]);
-    }
-    pBuf--;
-    *pBuf = 0x00;
-    pBuf++;
-    return (pBuf - outbuf);
-}
-
-void KM271Component::print_hex_buffer(uint8_t* buf, size_t len) {
-    char tmpBuf[4 * MAX_TELEGRAM_SIZE];
-    char * pTmpBuf = &tmpBuf[0];
-    uint8_t * pBuf = &buf[0];
-
-    if(0x04 != buf[0]) {
-        memset(tmpBuf, 0, sizeof(tmpBuf));
-
-        for(size_t i = 0; i < len; i++) {
-            //ESP_LOGD(TAG, "BUF (%5d) PRINT %3d: 0x%02X", sizeof(tmpBuf), i, buf[i]);
-            pTmpBuf += sprintf(pTmpBuf, "%02X ", buf[i]);
-        }
-
-        ESP_LOGD(TAG, "RxBuf [%d]: 0x%s", len, tmpBuf);
-    }
-}
 
 void KM271Component::process_incoming_byte(uint8_t c) {
     const uint32_t now = millis();
@@ -269,6 +243,19 @@ void KM271Component::set_number(Buderus_R2017_ParameterId parameterId, uint16_t 
 
     number->setupWriting(&writer, parameterId, pDesc->sensorType);
     valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, number)));
+}
+
+void KM271Component::set_select(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSelect *select)
+{
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, true);
+    if (!pDesc) {
+        ESP_LOGE(TAG, "set_number: No available slot for parameter ID %d found", parameterId);
+        return;
+    }
+
+    select->setupWriting(&writer, parameterId, pDesc->sensorType, pDesc->sensorTypeParam);
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, select)));
+
 }
 
 float KM271Component::get_setup_priority() const {
