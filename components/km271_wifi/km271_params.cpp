@@ -338,13 +338,13 @@ void MultiParameterUnsignedIntegerAssembler::handleReceivedValue(uint16_t sensor
     }
     components[valueIndex] = value;
     component_known[valueIndex] = true;
+    if (valueIndex != 0) { // only update the sensor value on lsb updates to avoid jumps
+       return;
+    }
+
 
     bool all_components_known = component_known[0] && component_known[1] && component_known[2];
     if (all_components_known) {
-       /** @todo handle updates:
-        *  if lsb updates last, only send if lsb updates
-        *  if msb updates last, only send if msb updates
-        *  if not known, send after a cool down persiod */
        uint32_t result = (((components[2] << 8) + components[1]) << 8 )  + components[0];
        ESP_LOGD(TAG, "Assembling %d %d %d to %d", components[0], components[1], components[2], result);
        sensor->publish_state(result);
