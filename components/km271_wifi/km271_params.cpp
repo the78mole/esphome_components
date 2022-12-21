@@ -401,6 +401,15 @@ void BuderusParamSelect::control(const std::string &value) {
             const uint8_t message[] = { data_type_heating_circuit_1, 0x00, keep, keep, keep, keep, (uint8_t )numericValue, keep};
             writer->enqueueTelegram(message, 8);
             publish_state(value); // confirm for now without waiting for an ack from the heater
+        } else if (parameterId == CFG_WW_Aufbereitung && this->sensorTypeParam == 0) {
+            if (numericValue > 2) {
+                ESP_LOGE(TAG, "Invalid select value for parameter %d received: %d", parameterId, numericValue);
+                return;
+            }
+
+            const uint8_t message[] = { data_type_warm_water, 0x0e, (uint8_t)numericValue, keep, keep, keep, keep, keep};
+            writer->enqueueTelegram(message, 8);
+            publish_state(value); // confirm for now without waiting for an ack from the heater
         } else {
             ESP_LOGE(TAG, "No write configuration for parameter %d found", parameterId);
         }

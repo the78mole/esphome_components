@@ -162,7 +162,8 @@ class KM271Component : public Component, public uart::UARTDevice {
 
 
   GENERATE_SELECT_SETTER(heating_circuit_1_operation_mode, CFG_HK1_Betriebsart, 4);
-  GENERATE_SWITCH_SETTER(ww_heating_auto_off, CFG_WW_Aufbereitung, 0);
+  GENERATE_SELECT_SETTER(ww_operation_mode, CFG_WW_Aufbereitung, 0);
+
   GENERATE_NUMBER_SETTER(ww_temperature, CFG_WW_Temperatur, 3);
   GENERATE_NUMBER_SETTER(hc1_design_temperature, CFG_HK1_Auslegungstemperatur, 4);
 

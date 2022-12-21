@@ -14,7 +14,8 @@ from . import (
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "heating_circuit_1_operation_mode"
+    "heating_circuit_1_operation_mode",
+    "ww_operation_mode",
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -47,6 +48,10 @@ CONFIG_SCHEMA = (
             cv.Optional("heating_circuit_1_operation_mode"): select.SELECT_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
+            }),
+            cv.Optional("ww_operation_mode"): select.SELECT_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamSelect),
+                cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: 'Ein', 2: 'Auto'}): ensure_option_map
             })
 
         }
