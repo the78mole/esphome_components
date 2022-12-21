@@ -236,7 +236,7 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {CFG_HK1_Betriebsart, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
     {CFG_HK1_Auslegungstemperatur, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
     {CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
-    {CFG_WW_Aufbereitung, true, SensorType::TAG_NACHT_AUTO_SELECT, 0, "CFG_WW_Aufbereitung", ""},
+    {CFG_WW_Aufbereitung, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
     // Betriebswerte 1 HK1
     //{BW1HK1, false, SensorType::UNSIGNED_INT, 0, "Betriebswerte 1 HK1", ""},
     {BW1HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Ausschaltoptimierung", ""},
