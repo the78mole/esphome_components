@@ -134,7 +134,7 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
                 byteOffset += 1;
                 bitOffset -= 8;
                 if (byteOffset >= len) {
-                    ESP_LOGW(TAG, "Parameter %d has bit offset %d but message only has %d bytes", paramDesc->parameterId, paramDesc->sensorType, len);
+                    ESP_LOGW(TAG, "Parameter 0x%04x has bit offset %d but message only has %d bytes", paramDesc->parameterId, paramDesc->sensorType, len);
                     return;
                 }
             }
@@ -187,7 +187,7 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
         }
     } else if(assembler) {
         if (paramDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
-            ESP_LOGD(TAG, "Parameter: %d type param %d Len %d, data: %d %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0], data[1]);
+            ESP_LOGD(TAG, "Parameter: 0x%04x type param %d Len %d, data: %d %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0], data[1]);
             uint32_t value = parseUnsignedInteger(data, len);
             assembler->handleReceivedValue(paramDesc->sensorTypeParam, value);
         } else {
@@ -235,7 +235,7 @@ void BuderusParamSwitch::write_state(bool state)
         publish_state(state); // confirm for now without waiting for an ack from the heater
 
     } else {
-        ESP_LOGE(TAG, "No write configuration for parameter %d found", parameterId);
+        ESP_LOGE(TAG, "No write configuration for parameter 0x%04x found", parameterId);
     }
 }
 
@@ -282,7 +282,7 @@ void BuderusParamNumber::control(float value)
         this->pendingWriteValue = target_temperature;
         this->lastWriteRequest = millis();
     } else {
-        ESP_LOGE(TAG, "No write configuration for number parameter %d found", parameterId);
+        ESP_LOGE(TAG, "No write configuration for number parameter 0x%04x found", parameterId);
     }
 }
 
@@ -312,7 +312,7 @@ void BuderusParamNumber::loop()
 
                   }
             } else {
-                ESP_LOGE(TAG, "No support for writing parameter %d", parameterId);
+                ESP_LOGE(TAG, "No support for writing parameter 0x%04x", parameterId);
                 this->hasPendingWriteRequest = false;
 
             }
@@ -374,7 +374,7 @@ void BuderusParamSelect::handleReceivedValue(uint8_t value)
 {
     auto it = std::find(mappings.cbegin(), mappings.cend(), value);
     if (it == mappings.end()) {
-        ESP_LOGE(TAG, "Invalid value %u received for select of parameter %d", value, parameterId);
+        ESP_LOGE(TAG, "Invalid value %u received for select of parameter 0x%04x", value, parameterId);
         return;
     }
     size_t mapping_idx = std::distance(mappings.cbegin(), it);
@@ -394,7 +394,7 @@ void BuderusParamSelect::control(const std::string &value) {
         uint8_t numericValue= this->mappings.at(idx.value());
         if (parameterId == CFG_HK1_Betriebsart && this->sensorTypeParam == 4) {
             if (numericValue > 2) {
-                ESP_LOGE(TAG, "Invalid select value for parameter %d received: %d", parameterId, numericValue);
+                ESP_LOGE(TAG, "Invalid select value for parameter %d received: 0x%04x", parameterId, numericValue);
                 return;
             }
 
@@ -403,7 +403,7 @@ void BuderusParamSelect::control(const std::string &value) {
             publish_state(value); // confirm for now without waiting for an ack from the heater
         } else if (parameterId == CFG_WW_Aufbereitung && this->sensorTypeParam == 0) {
             if (numericValue > 2) {
-                ESP_LOGE(TAG, "Invalid select value for parameter %d received: %d", parameterId, numericValue);
+                ESP_LOGE(TAG, "Invalid select value for parameter %d received: 0x%04x", parameterId, numericValue);
                 return;
             }
 
@@ -411,7 +411,7 @@ void BuderusParamSelect::control(const std::string &value) {
             writer->enqueueTelegram(message, 8);
             publish_state(value); // confirm for now without waiting for an ack from the heater
         } else {
-            ESP_LOGE(TAG, "No write configuration for parameter %d found", parameterId);
+            ESP_LOGE(TAG, "No write configuration for parameter 0x%04x found", parameterId);
         }
     } else {
         ESP_LOGE(TAG, "No mapping for select value %s found", value.c_str());

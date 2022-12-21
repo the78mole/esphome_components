@@ -6,28 +6,12 @@ switch:
 
 #Alternative 2 with a select and lambda supporting all three values
 select:
-  - platform: template
-    name: "Warmwasser Betriebsart"
-    id: warmwasser_betriebsart
-    entity_category: config
-    optimistic: true
-    options:
-      - Dauerhaft aus (0)
-      - Dauerhaft ein (1)
-      - Automatik (2)
-    initial_option: Automatik (2)
-    set_action: 
-      - lambda:
-          auto index = id(warmwasser_betriebsart).index_of(x);
-          if (index.has_value()) {
-            uint8_t command[] = {0x0C, 0x0E, (uint8_t)index.value(), 0x65, 0x65, 0x65, 0x65, 0x65};
-            budoil->writer.enqueueTelegram(command, 8);
-          }
-select:
   - platform: km271_wifi
     heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
-
+    ww_operation_mode:
+      name: "Warmwasser Betriebsmodus"
+  
 
 number:
   - platform: km271_wifi

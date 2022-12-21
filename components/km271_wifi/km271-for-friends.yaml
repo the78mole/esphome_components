@@ -277,24 +277,25 @@ output:
 button:
   - platform: restart
     name: "KM271-WiFi Restart"
-  - platform: template
-    name: "KM271 WW-Bereitung Aus"
-    on_press:
-      - lambda:
-          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
-          budoil->writer.enqueueTelegram(command, 8);
-  - platform: template
-    name: "KM271 WW-Bereitung Ein"
-    on_press:
-      - lambda:
-          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
-          budoil->writer.enqueueTelegram(command, 8);
-  - platform: template
-    name: "KM271 WW-Bereitung Auto"
-    on_press:
-      - lambda:
-          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
-          budoil->writer.enqueueTelegram(command, 8);
+# Some older Example for sending raw telegrams, replaced by a select
+#  - platform: template
+#    name: "KM271 WW-Bereitung Aus"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
+#  - platform: template
+#    name: "KM271 WW-Bereitung Ein"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
+#  - platform: template
+#    name: "KM271 WW-Bereitung Auto"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
 
 
 number:
@@ -307,27 +308,12 @@ number:
       mode: slider
 
 select:
-  - platform: template
-    name: "Warmwasser Betriebsart"
-    id: warmwasser_betriebsart
-    entity_category: config
-    optimistic: true
-    options:
-      - Dauerhaft aus (0)
-      - Dauerhaft ein (1)
-      - Automatik (2)
-    initial_option: Automatik (2)
-    set_action: 
-      - lambda:
-          auto index = id(warmwasser_betriebsart).index_of(x);
-          if (index.has_value()) {
-            uint8_t command[] = {0x0C, 0x0E, (uint8_t)index.value(), 0x65, 0x65, 0x65, 0x65, 0x65};
-            budoil->writer.enqueueTelegram(command, 8);
-          }
   - platform: km271_wifi
     heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
-
+    ww_operation_mode:
+      name: "Warmwasser Betriebsmodus"
+  
 
 
 sensor:
