@@ -259,17 +259,65 @@ binary_sensor:
     solar_pump_lowering:
       name: "Solarpumpe Absenkung"
 
+
+
+output:
+  - platform: gpio
+    id: led3
+    #name: LED3_Yellow
+    pin: 
+      number: 23
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    id: led4
+    #name: LED4_Red
+    pin: 
+      number: 25
+      mode: OUTPUT
+      inverted: true
+
+button:
+  - platform: restart
+    name: "KM271-WiFi Restart"
+# Some older Example for sending raw telegrams, replaced by a select
+#  - platform: template
+#    name: "KM271 WW-Bereitung Aus"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
+#  - platform: template
+#    name: "KM271 WW-Bereitung Ein"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
+#  - platform: template
+#    name: "KM271 WW-Bereitung Auto"
+#    on_press:
+#      - lambda:
+#          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
+#          budoil->writer.enqueueTelegram(command, 8);
+
+
+number:
+  - platform: km271_wifi
+    ww_temperature:
+      name: "Warmwassersolltemperatur Tag"
+      mode: slider
+    hc1_design_temperature:
+      name: "Auslegungstemperatur"
+      mode: slider
+
 select:
   - platform: km271_wifi
     heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
     ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
- 
- number:
-  - platform: km271_wifi
-    ww_temperature:
-      name: "Warmwassersolltemperatur Tag" 
+  
+
 
 sensor:
   - platform: km271_wifi
