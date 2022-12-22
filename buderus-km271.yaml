@@ -195,6 +195,8 @@ binary_sensor:
       name: "Kessel Leistung hoch"
     boiler_2st_stage_operation:
       name: "Kessel Betrieb 2.Stufe"
+    boiler_actuation:
+      name: "Brenneransteuerung"
   #Alarmstatus
     alarm_exhaust_gas_sensor:
       name: "Alarm Abgasfuehler"
@@ -204,11 +206,17 @@ binary_sensor:
       name: "Alarm Brenner"
     alarm_heating_circuit_2_flow_sensor:
       name: "Alarm HK2 Vorlauffuehler"
+  #Other stuff
+    load_pump_running:
+      name: "Ladepumpenbetrieb"
+    circulation_pump_running:
+      name: "Zirkulationspumpenbetrieb"
+    solar_pump_lowering:
+      name: "Solarpumpe Absenkung"
 
 number:
 
 select:
-
 
 sensor:
   - platform: km271_wifi
@@ -263,7 +271,7 @@ sensor:
     exhaust_gas_temperature:
       name: "Abgastemperatur"
     outdoor_temperature:
-      name: "Außentemperatur"
+      name: "Aussentemperatur"
     attenuated_outdoor_temperature:
       name: "Gedaempfte Aussentemperatur"
     boiler_runtime_1:
