@@ -107,9 +107,10 @@ binary_sensor:
 ##################################################################
 
 ##################################################################
-# Below is the real examle stuff
+# Below is the real example stuff
 
   - platform: km271_wifi
+    # Betriebswerte 1 HK1
     heating_circuit_1_switch_off_optimization:
       name: "HK1 Ausschaltoptimierung"
     heating_circuit_1_switch_on_optimization:
@@ -239,6 +240,8 @@ binary_sensor:
       name: "Kessel Leistung hoch"
     boiler_2st_stage_operation:
       name: "Kessel Betrieb 2.Stufe"
+    boiler_actuation:
+      name: "Brenneransteuerung"
   #Alarmstatus
     alarm_exhaust_gas_sensor:
       name: "Alarm Abgasfuehler"
@@ -248,64 +251,13 @@ binary_sensor:
       name: "Alarm Brenner"
     alarm_heating_circuit_2_flow_sensor:
       name: "Alarm HK2 Vorlauffuehler"
-  # Other stuff
-    boiler_actuation:
-      name: "KM271 Kessel Ansteuerung"
+  #Other stuff
     load_pump_running:
-      name: "KM271 Ladepumpe"
+      name: "Ladepumpenbetrieb"
     circulation_pump_running:
-      name: "KM271 Zirkulationspumpenbetrieb"
-
-
-
-output:
-  - platform: gpio
-    id: led3
-    #name: LED3_Yellow
-    pin: 
-      number: 23
-      mode: OUTPUT
-      inverted: true
-  - platform: gpio
-    id: led4
-    #name: LED4_Red
-    pin: 
-      number: 25
-      mode: OUTPUT
-      inverted: true
-
-button:
-  - platform: restart
-    name: "KM271-WiFi Restart"
-# Some older Example for sending raw telegrams, replaced by a select
-#  - platform: template
-#    name: "KM271 WW-Bereitung Aus"
-#    on_press:
-#      - lambda:
-#          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
-#          budoil->writer.enqueueTelegram(command, 8);
-#  - platform: template
-#    name: "KM271 WW-Bereitung Ein"
-#    on_press:
-#      - lambda:
-#          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
-#          budoil->writer.enqueueTelegram(command, 8);
-#  - platform: template
-#    name: "KM271 WW-Bereitung Auto"
-#    on_press:
-#      - lambda:
-#          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
-#          budoil->writer.enqueueTelegram(command, 8);
-
-
-number:
-  - platform: km271_wifi
-    ww_temperature:
-      name: "Warmwassersolltemperatur Tag"
-      mode: slider
-    hc1_design_temperature:
-      name: "Auslegungstemperatur"
-      mode: slider
+      name: "Zirkulationspumpenbetrieb"
+    solar_pump_lowering:
+      name: "Solarpumpe Absenkung"
 
 select:
   - platform: km271_wifi
@@ -313,37 +265,68 @@ select:
       name: "Heizkreis 1 Betriebsmodus"
     ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
-  
-
+ 
+ number:
+  - platform: km271_wifi
+    ww_temperature:
+      name: "Warmwassersolltemperatur Tag" 
 
 sensor:
   - platform: km271_wifi
     heating_circuit_1_flow_target_temperature:
-      name: "KM271 Vorlaufsolltemperatur"
+      name: "HK1 Vorlaufsolltemperatur"
     heating_circuit_1_flow_temperature:
-      name: "KM271 Vorlauftemperatur"
-    ww_target_temperature:
-      name: "KM271 Warmwassersolltemperatur"
-    ww_temperature:
-      name: "KM271 Warmwassertemperatur"
-    boiler_target_temperature:
-      name: "KM271 Kesselvorlaufsolltemperatur"
-    boiler_temperature:
-      name: "KM271 Kesselvorlauftemperatur"
-    outdoor_temperature:
-      name: "KM271 Außentemperatur"
+      name: "HK1 Vorlaufisttemperatur"
     heating_circuit_1_room_target_temperature:
-      name: "KM271 Raumsolltemperatur"
-    heating_circuit_1_curve_n10:
-      name: "KM271 Heizkurve -10 °C"
-    heating_circuit_1_curve_0:
-      name: "KM271 Heizkurve 0 °C"
+      name: "HK1 Raumsolltemperatur"
+    heating_circuit_1_room_temperature:
+      name: "HK1 Raumisttemperatur"
+    heating_circuit_1_pump_power:
+      name: "HK1 Pumpenleistung"
+    heating_circuit_1_mixer_position:
+      name: "HK1 Mischerstellung"
     heating_circuit_1_curve_p10:
-      name: "KM271 Heizkurve +10 °C"
+      name: "HK1 Heizkurve +10 °C"
+    heating_circuit_1_curve_0:
+      name: "HK1 Heizkurve 0 °C"
+    heating_circuit_1_curve_n10:
+      name: "HK1 Heizkurve -10 °C"
+    heating_circuit_2_flow_target_temperature:
+      name: "HK2 Vorlaufsolltemperatur"
+    heating_circuit_2_flow_temperature:
+      name: "HK2 Vorlaufisttemperatur"
+    heating_circuit_2_room_target_temperature:
+      name: "HK2 Raumsolltemperatur"
+    heating_circuit_2_room_temperature:
+      name: "HK2 Raumisttemperatur"
+    heating_circuit_2_pump_power:
+      name: "HK2 Pumpenleistung"
+    heating_circuit_2_mixer_position:
+      name: "HK2 Mischerstellung"
+    heating_circuit_2_curve_p10:
+      name: "HK2 Heizkurve +10 °C"
+    heating_circuit_2_curve_0:
+      name: "HK2 Heizkurve 0 °C"
+    heating_circuit_2_curve_n10:
+      name: "HK2 Heizkurve -10 °C"
+    ww_target_temperature:
+      name: "Warmwassersolltemperatur"
+    ww_temperature:
+      name: "Warmwasseristtemperatur"
+    boiler_target_temperature:
+      name: "Kesselvorlaufsolltemperatur"
+    boiler_temperature:
+      name: "Kesselvorlaufisttemperatur"
     boiler_turn_on_temperature:
-      name: "KM271 Brennereinschalttemperatur"
+      name: "Brennereinschalttemperatur"
     boiler_turn_off_temperature:
-      name: "KM271 Brennerausschalttemperatur"
+      name: "Brennerausschalttemperatur"
+    exhaust_gas_temperature:
+      name: "Abgastemperatur"
+    outdoor_temperature:
+      name: "Aussentemperatur"
+    attenuated_outdoor_temperature:
+      name: "Gedaempfte Aussentemperatur"
     boiler_runtime_1:
       name: "Brennerlaufzeit 1"
     boiler_runtime_2:
@@ -372,4 +355,3 @@ switch:
       number: 22
       mode: OUTPUT
       inverted: true
-
