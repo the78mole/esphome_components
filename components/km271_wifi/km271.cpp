@@ -1,6 +1,5 @@
 #include "km271.h"
 #include "km271_helpers.h"
-#include <stdint.h>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "esphome/components/sensor/sensor.h"
@@ -10,7 +9,7 @@ namespace esphome {
 namespace KM271 {
 
 static const char * TAG = "km271";
-static const uint8_t SENSOR_LOOP_CALL_EVERY=5;
+static const uint8_t SENSOR_LOOP_CALL_EVERY = 5;
 
 #define lenof(X)   (sizeof(X) / sizeof(X[0]))
 
@@ -170,7 +169,7 @@ const t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Bude
         const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
         if(pDesc->parameterId == parameterId && pDesc->sensorTypeParam == sensorTypeParam) {
             if (writableRequired && !pDesc->writable) {
-                ESP_LOGE(TAG, "Parameter %d is not writable", parameterId);
+                ESP_LOGE(TAG, "Parameter 0x%04X is not writable", parameterId);
                 return nullptr;
             }
             return pDesc;
@@ -183,7 +182,7 @@ void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t 
 {
     const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, false);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_sensor: No available slot for parameter ID %d found", parameterId);
+        ESP_LOGE(TAG, "set_sensor: No available slot for parameter ID 0x%04X found", parameterId);
         return;
     }
 
@@ -197,7 +196,7 @@ void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t 
             if(pDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
                 uint8_t groupIdOfDesc = pDesc->sensorTypeParam >> 8;
                 if (groupIdOfDesc == groupId) {
-                    ESP_LOGE(TAG, "Adding sensor with type param %d to parameter %d", sensorTypeParam, pDesc->parameterId);
+                    ESP_LOGE(TAG, "Adding sensor with type param %d to parameter 0x%04X", sensorTypeParam, pDesc->parameterId);
                     valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(pDesc->parameterId, new BuderusValueHandler(pDesc, assembler)));
                 }
             }
@@ -205,57 +204,30 @@ void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t 
     } else {
         valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
     }
-
-
 }
 
 void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::binary_sensor::BinarySensor *sensor)
 {
     const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, false);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_binary_sensor: No available slot for parameter ID %d found", parameterId);
+        ESP_LOGE(TAG, "set_binary_sensor: No available slot for parameter ID 0x%04X found", parameterId);
         return;
     }
 
     valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
 }
 
-void KM271Component::set_switch(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSwitch *switch_)
+void KM271Component::set_communication_component(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, CommunicationComponent *component)
 {
     const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, true);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_switch: No available slot for parameter ID %d found", parameterId);
+        ESP_LOGE(TAG, "set_switch: No available slot for parameter ID 0x%04X found", parameterId);
         return;
     }
 
-    switch_->setupWriting(&writer, parameterId, pDesc->sensorType);
+    component->setupWriting(&writer, parameterId, pDesc->sensorType, pDesc->sensorTypeParam);
 
-    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, switch_)));
-}
-
-void KM271Component::set_number(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam,BuderusParamNumber *number)
-{
-    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, true);
-    if (!pDesc) {
-        ESP_LOGE(TAG, "set_number: No available slot for parameter ID %d found", parameterId);
-        return;
-    }
-
-    number->setupWriting(&writer, parameterId, pDesc->sensorType);
-    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, number)));
-}
-
-void KM271Component::set_select(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSelect *select)
-{
-    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, true);
-    if (!pDesc) {
-        ESP_LOGE(TAG, "set_number: No available slot for parameter ID %d found", parameterId);
-        return;
-    }
-
-    select->setupWriting(&writer, parameterId, pDesc->sensorType, pDesc->sensorTypeParam);
-    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, select)));
-
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, component)));
 }
 
 float KM271Component::get_setup_priority() const {

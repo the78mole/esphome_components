@@ -1,15 +1,13 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include <chrono>
-#include <iostream>
-#include <sys/time.h>
-#include <ctime>
-#include "3964r.h"
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/uart/uart.h"
+
+#include "3964r.h"
+#include "km271_communication_components.h"
 #include "km271_params.h"
 
 
@@ -18,12 +16,11 @@
 #define GENERATE_BINARY_SENSOR_SETTER(key, parameterId, sensorTypeParam) void set_##key##_binary_sensor(esphome::binary_sensor::BinarySensor *sensor) \
   { set_binary_sensor(parameterId, sensorTypeParam, sensor); }
 #define GENERATE_SWITCH_SETTER(key, parameterId, sensorTypeParam) void set_##key##_switch(BuderusParamSwitch *switch_) \
-  { set_switch(parameterId, sensorTypeParam, switch_); }
+  { set_communication_component(parameterId, sensorTypeParam, switch_); }
 #define GENERATE_NUMBER_SETTER(key, parameterId, sensorTypeParam) void set_##key##_number(BuderusParamNumber *number) \
-  { set_number(parameterId, sensorTypeParam, number); }
+  { set_communication_component(parameterId, sensorTypeParam, number); }
 #define GENERATE_SELECT_SETTER(key, parameterId, sensorTypeParam) void set_##key##_select(BuderusParamSelect *select) \
-  { set_select(parameterId, sensorTypeParam, select); }
-
+  { set_communication_component(parameterId, sensorTypeParam, select); }
 
 
 namespace esphome {
@@ -178,21 +175,15 @@ class KM271Component : public Component, public uart::UARTDevice {
 
   void set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::sensor::Sensor *sensor);
   void set_binary_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::binary_sensor::BinarySensor *sensor);
-  void set_switch(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSwitch *switch_);
-  void set_number(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamNumber *number);
-  void set_select(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, BuderusParamSelect *select);
-
+  void set_communication_component(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, CommunicationComponent *component);
 
   void process_incoming_byte(uint8_t c);
   void parse_buderus(uint8_t * buf, size_t len);
-
 
   // Helper function (for better readability of code)
   void send_ACK_DLE();
   void send_NAK();
   void writeRequestValues();
-  size_t genDataString(char* outbuf, uint8_t* inbuf, size_t len);
-  void print_hex_buffer(uint8_t* buf, size_t len);
 
   uint32_t last_received_byte_time;
   Parser3964R parser;

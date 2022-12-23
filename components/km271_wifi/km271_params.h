@@ -1,17 +1,16 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
-#include "esphome/components/switch/switch.h"
-#include "esphome/components/number/number.h"
-#include "esphome/components/select/select.h"
 #include <unordered_map>
+#include <functional>
 
 namespace esphome {
 namespace KM271 {
+
+class CommunicationComponent;
 
 
 enum Buderus_R2017_ParameterId {
@@ -125,71 +124,6 @@ enum SensorType {
 class Writer3964R;
 
 
-class BuderusParamSwitch: public esphome::switch_::Switch {
-public:
-    BuderusParamSwitch();
-    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType);
-protected:
-    void write_state(bool state) override;
-
-private:
-    Writer3964R * writer;
-    Buderus_R2017_ParameterId parameterId;
-    SensorType sensorType;
-};
-
-class BuderusParamNumber: public esphome::number::Number {
-public:
-    BuderusParamNumber();
-    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType);
-    void loop();
-
-protected:
-    void control(float value);
-
-private:
-    Writer3964R * writer;
-    Buderus_R2017_ParameterId parameterId;
-    SensorType sensorType;
-    uint32_t lastWriteRequest;
-    bool hasPendingWriteRequest;
-    float pendingWriteValue;
-};
-
-class BuderusParamSelect: public esphome::select::Select {
-public:
-    BuderusParamSelect();
-    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType, uint16_t sensorTypeParam);
-    void setSelectMappings(std::vector<uint8_t> mappings);
-    void handleReceivedValue(uint8_t value);
-
-protected:
-
-    void control(const std::string &value) override;
-
-private:
-    Writer3964R * writer;
-    Buderus_R2017_ParameterId parameterId;
-    SensorType sensorType;
-    uint16_t sensorTypeParam;
-    std::vector<uint8_t> mappings; // this stores the number to read/write for each select option
-};
-
-
-/** Helper class to reassemble values that span multiple buderus parameters */
-class MultiParameterUnsignedIntegerAssembler
-{
-public:
-
-    MultiParameterUnsignedIntegerAssembler(esphome::sensor::Sensor *targetSensor);
-    void handleReceivedValue(uint16_t sensorTypeParam, uint8_t value);
-private:
-    esphome::sensor::Sensor * sensor;
-    uint8_t components[3];
-    bool component_known[3];
-};
-
-
 
 struct t_Buderus_R2017_ParamDesc {
     Buderus_R2017_ParameterId parameterId;
@@ -206,27 +140,26 @@ typedef struct t_Buderus_R2017_ParamDesc t_Buderus_R2017_ParamDesc;
 /** A BuderusValueHandler handles a value that we received from the heater. It passes the data to the configured switches, sensors and so on. */
 class BuderusValueHandler {
     public:
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::sensor::Sensor * sensor);
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::binary_sensor::BinarySensor * sensor);
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSwitch * paramSwitch);
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamNumber* paramNumber);
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, BuderusParamSelect * paramSelect);
-        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, MultiParameterUnsignedIntegerAssembler *assembler);
+        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::sensor::Sensor *sensor);
+        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, esphome::binary_sensor::BinarySensor *binarySensor);
+        BuderusValueHandler(const t_Buderus_R2017_ParamDesc* paramDesc, CommunicationComponent * communicationComponent);
+
         void parseAndTransmit(uint8_t *data, size_t len);
         void loop();
+    private:
+        void handleReceivedSignedValue(uint16_t sensorTypeParam, int32_t value);
+        void handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value);
+        void handleReceivedFloatValue(uint16_t sensorTypeParam, float value);
 
     public:
        const t_Buderus_R2017_ParamDesc * paramDesc;
 
     private:
+        CommunicationComponent *communicationComponent;
         esphome::sensor::Sensor *sensor;
         esphome::binary_sensor::BinarySensor *binarySensor;
-        BuderusParamSwitch *switch_;
-        BuderusParamNumber *number;
-        BuderusParamSelect *select;
-        MultiParameterUnsignedIntegerAssembler *assembler;
-};
 
+};
 
 typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *, std::hash<int>> ValueHandlerMap;
 
