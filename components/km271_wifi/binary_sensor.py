@@ -408,7 +408,7 @@ async def setup_conf(config, key, hub):
         conf = config[key]
 
         sens = await binary_sensor.new_binary_sensor(conf)
-        cg.add(getattr(hub, f"set_{key}_binary_sensor")(sens))
+        cg.add(getattr(hub, f"set_binary_sensor")(cg.RawExpression("KM271:: " +key), sens))
 
 
 async def to_code(config):

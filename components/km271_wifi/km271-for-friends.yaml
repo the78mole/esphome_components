@@ -303,18 +303,18 @@ button:
 
 number:
   - platform: km271_wifi
-    ww_temperature:
+    config_ww_temperature:
       name: "Warmwassersolltemperatur Tag"
       mode: slider
-    hc1_design_temperature:
+    config_heating_circuit_1_design_temperature:
       name: "Auslegungstemperatur"
       mode: slider
 
 select:
   - platform: km271_wifi
-    heating_circuit_1_operation_mode:
+    config_heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
-    ww_operation_mode:
+    config_ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
   
 

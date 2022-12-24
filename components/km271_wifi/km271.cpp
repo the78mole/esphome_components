@@ -163,13 +163,13 @@ void KM271Component::on_shutdown() {
     ESP_LOGI(TAG, "Shutdown was called");
 }
 
-const t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, bool writableRequired)
+const t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(TransmissionParameter transmissionParameter, bool writableRequired)
 {
     for(int i = 0; i < lenof(buderusParamDesc); i++) {
         const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-        if(pDesc->parameterId == parameterId && pDesc->sensorTypeParam == sensorTypeParam) {
+        if(pDesc->transmissionParameter == transmissionParameter ) {
             if (writableRequired && !pDesc->writable) {
-                ESP_LOGE(TAG, "Parameter 0x%04X is not writable", parameterId);
+                ESP_LOGE(TAG, "Transmission value %d %s is not writable", transmissionParameter, pDesc->desc);
                 return nullptr;
             }
             return pDesc;
@@ -178,56 +178,56 @@ const t_Buderus_R2017_ParamDesc * KM271Component::findParameterForNewSensor(Bude
     return nullptr;
 }
 
-void KM271Component::set_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::sensor::Sensor *sensor)
+void KM271Component::set_sensor(TransmissionParameter transmissionParameter, esphome::sensor::Sensor *sensor)
 {
-    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, false);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(transmissionParameter, false);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_sensor: No available slot for parameter ID 0x%04X found", parameterId);
+        ESP_LOGE(TAG, "set_sensor: No available slot for transmission parameter %d found", transmissionParameter);
         return;
     }
 
     if(pDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
         auto *assembler = new MultiParameterUnsignedIntegerAssembler(sensor);
 
-        uint8_t groupId = sensorTypeParam >> 8;
+        uint8_t groupId = pDesc->sensorTypeParam >> 8;
         // we need to add value handlers to all group members
         for(int i = 0; i < lenof(buderusParamDesc); i++) {
-            const t_Buderus_R2017_ParamDesc * pDesc = &buderusParamDesc[i];
-            if(pDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
-                uint8_t groupIdOfDesc = pDesc->sensorTypeParam >> 8;
+            const t_Buderus_R2017_ParamDesc * otherPDesc = &buderusParamDesc[i];
+            if(otherPDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
+                uint8_t groupIdOfDesc = otherPDesc->sensorTypeParam >> 8;
                 if (groupIdOfDesc == groupId) {
-                    ESP_LOGE(TAG, "Adding sensor with type param %d to parameter 0x%04X", sensorTypeParam, pDesc->parameterId);
-                    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(pDesc->parameterId, new BuderusValueHandler(pDesc, assembler)));
+                    ESP_LOGE(TAG, "Adding sensor with type param %d to parameter 0x%04X", pDesc->sensorTypeParam, otherPDesc->parameterId);
+                    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(otherPDesc->parameterId, new BuderusValueHandler(otherPDesc, assembler)));
                 }
             }
         }
     } else {
-        valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
+        valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(pDesc->parameterId, new BuderusValueHandler(pDesc, sensor)));
     }
 }
 
-void KM271Component::set_binary_sensor(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, esphome::binary_sensor::BinarySensor *sensor)
+void KM271Component::set_binary_sensor(TransmissionParameter transmissionParameter, esphome::binary_sensor::BinarySensor *sensor)
 {
-    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, false);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(transmissionParameter, false);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_binary_sensor: No available slot for parameter ID 0x%04X found", parameterId);
+        ESP_LOGE(TAG, "set_binary_sensor: No available slot for transmission parameter %d found", transmissionParameter);
         return;
     }
 
-    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, sensor)));
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(pDesc->parameterId, new BuderusValueHandler(pDesc, sensor)));
 }
 
-void KM271Component::set_communication_component(Buderus_R2017_ParameterId parameterId, uint16_t sensorTypeParam, CommunicationComponent *component)
+void KM271Component::set_communication_component(TransmissionParameter transmissionParameter, CommunicationComponent *component)
 {
-    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(parameterId, sensorTypeParam, true);
+    const t_Buderus_R2017_ParamDesc* pDesc = findParameterForNewSensor(transmissionParameter, true);
     if (!pDesc) {
-        ESP_LOGE(TAG, "set_switch: No available slot for parameter ID 0x%04X found", parameterId);
+        ESP_LOGE(TAG, "set_switch: No available slot for transmission parameter %d found", transmissionParameter);
         return;
     }
 
-    component->setupWriting(&writer, parameterId, pDesc->sensorType, pDesc->sensorTypeParam);
+    component->setupWriting(&writer, transmissionParameter);
 
-    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(parameterId, new BuderusValueHandler(pDesc, component)));
+    valueHandlerMap.insert(std::pair<Buderus_R2017_ParameterId, BuderusValueHandler *>(pDesc->parameterId, new BuderusValueHandler(pDesc, component)));
 }
 
 float KM271Component::get_setup_priority() const {

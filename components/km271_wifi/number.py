@@ -16,8 +16,8 @@ from . import (
 CODEOWNERS = ["@jensgraef"]
 
 TYPES = [
-    "ww_temperature",
-    "hc1_design_temperature",
+    "config_ww_temperature",
+    "config_heating_circuit_1_design_temperature",
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -29,13 +29,13 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("ww_temperature"): number.NUMBER_SCHEMA.extend({
+            cv.Optional("config_ww_temperature"): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
-            cv.Optional("hc1_design_temperature"): number.NUMBER_SCHEMA.extend({
+            cv.Optional("config_heating_circuit_1_design_temperature"): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
@@ -51,7 +51,7 @@ async def setup_conf(config, key, hub):
         conf = config[key]
 
         sens = await number.new_number(conf, min_value=conf[CONF_MIN_VALUE], max_value=conf[CONF_MAX_VALUE], step=conf[CONF_STEP])
-        cg.add(getattr(hub, f"set_{key}_number")(sens))
+        cg.add(getattr(hub, f"set_communication_component")(cg.RawExpression("KM271::" + key), sens))
 
 
 async def to_code(config):

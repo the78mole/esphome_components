@@ -1,21 +1,14 @@
-# Alternative 1 with a switch, but only toggles between auto and off
-switch:
-  - platform: km271_wifi
-    ww_heating_auto_off:
-      name: "Warmwasserbereitung Auto/Nacht"
-
-#Alternative 2 with a select and lambda supporting all three values
 select:
   - platform: km271_wifi
-    heating_circuit_1_operation_mode:
+    config_heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
-    ww_operation_mode:
+    config_ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
   
 
 number:
   - platform: km271_wifi
-    ww_temperature:
+    config_ww_temperature:
       name: "Warmwassersolltemperatur Tag"
-#    hc1_design_temperature:
-#      name: "Heizkreis 1 Auslegungstemperatur"
+    config_heating_circuit_1_design_temperature:
+      name: "Heizkreis 1 Auslegungstemperatur"

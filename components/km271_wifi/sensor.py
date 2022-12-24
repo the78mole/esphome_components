@@ -269,7 +269,7 @@ async def setup_conf(config, key, hub):
         conf = config[key]
 
         sens = await sensor.new_sensor(conf)
-        cg.add(getattr(hub, f"set_{key}_sensor")(sens))
+        cg.add(getattr(hub, f"set_sensor")(cg.RawExpression("KM271::" + key), sens))
 
 
 async def to_code(config):
