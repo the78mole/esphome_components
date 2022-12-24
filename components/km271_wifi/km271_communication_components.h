@@ -16,7 +16,7 @@ class CommunicationComponent
 {
 public:
     CommunicationComponent();
-    void setupWriting(Writer3964R * writer, Buderus_R2017_ParameterId parameterId, SensorType sensorType, uint16_t sensorTypeParam);
+    void setupWriting(Writer3964R * writer, TransmissionParameter transmissionParameter);
 
     virtual void handleReceivedSignedValue(uint16_t sensorTypeParam, int32_t value);
     virtual void handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value);
@@ -25,9 +25,7 @@ public:
 
 protected:
     Writer3964R * writer;
-    Buderus_R2017_ParameterId parameterId;
-    SensorType sensorType;
-    uint16_t sensorTypeParam;
+    TransmissionParameter transmissionParameter;
 };
 
 class BuderusParamSwitch: public esphome::switch_::Switch, public CommunicationComponent {

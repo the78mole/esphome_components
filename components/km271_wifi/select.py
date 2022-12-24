@@ -14,8 +14,8 @@ from . import (
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "heating_circuit_1_operation_mode",
-    "ww_operation_mode",
+    "config_heating_circuit_1_operation_mode",
+    "config_ww_operation_mode",
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -45,11 +45,11 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("heating_circuit_1_operation_mode"): select.SELECT_SCHEMA.extend({
+            cv.Optional("config_heating_circuit_1_operation_mode"): select.SELECT_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
             }),
-            cv.Optional("ww_operation_mode"): select.SELECT_SCHEMA.extend({
+            cv.Optional("config_ww_operation_mode"): select.SELECT_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: 'Ein', 2: 'Auto'}): ensure_option_map
             })
@@ -65,7 +65,7 @@ async def setup_conf(config, key, hub):
         options_map = conf[CONF_OPTIONS]
         sens = await select.new_select(conf, options=list(options_map.values()))
         cg.add(sens.setSelectMappings(list(options_map.keys())))
-        cg.add(getattr(hub, f"set_{key}_select")(sens))
+        cg.add(getattr(hub, f"set_communication_component")(cg.RawExpression("KM271::" + key), sens))
 
 
 async def to_code(config):
