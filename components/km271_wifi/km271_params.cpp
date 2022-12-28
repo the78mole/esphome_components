@@ -69,7 +69,7 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
         handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
     } else if (paramDesc->sensorType == SIGNED_INT) {
         int32_t value = parseSignedInteger(data, len);
-        handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
+        handleReceivedSignedValue(paramDesc->sensorTypeParam, value);
     } else if (paramDesc->sensorType == UNSIGNED_INT_DIVIDED_BY_2) {
         uint32_t value = parseUnsignedInteger(data, len);
         handleReceivedFloatValue(paramDesc->sensorTypeParam, (float)value / 2.0f);
