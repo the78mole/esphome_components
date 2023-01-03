@@ -13,11 +13,13 @@ from . import (
     KM271
 )
 
-CODEOWNERS = ["@jensgraef"]
+from .const import *
+
+CODEOWNERS = ["@jensgraef", "@the78mole"]
 
 TYPES = [
-    "config_ww_temperature",
-    "config_heating_circuit_1_design_temperature",
+    CONF_WW_TEMP_TARGET,
+    CONF_HC1_DESIGN_TEMP,
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -29,13 +31,13 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("config_ww_temperature"): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_WW_TEMP_TARGET): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
-            cv.Optional("config_heating_circuit_1_design_temperature"): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_DESIGN_TEMP): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,

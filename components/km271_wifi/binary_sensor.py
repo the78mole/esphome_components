@@ -16,288 +16,289 @@ from . import (
     KM271
 )
 
+from .const import *
+
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "heating_circuit_1_switch_off_optimization",
-    "heating_circuit_1_switch_on_optimization",
-    "heating_circuit_1_automatic",
-    "heating_circuit_1_ww_priority_processing",
-    "heating_circuit_1_screed_drying",
-    "heating_circuit_1_holiday",
-    "heating_circuit_1_antifreeze",
-    "heating_circuit_1_manually",
-    "heating_circuit_1_summer",
-    "heating_circuit_1_day",
-    "heating_circuit_1_no_comm_with_rc",
-    "heating_circuit_1_rc_faulty",
-    "heating_circuit_1_flow_sensor_error",
-    "heating_circuit_1_max_flow",
-    "heating_circuit_1_external_fault_input",
+    HC1_IS_OPT_SWOFF,
+    HC1_IS_OPT_SWON,
+    HC1_IS_AUTO,
+    HC1_IS_PRIO_WW,
+    HC1_IS_SCREED_DRY,
+    HC1_IS_HOLIDAY,
+    HC1_IS_NOFREEZE,
+    HC1_IS_MANUALLY,
+    HC1_IS_SUMMER,
+    HC1_IS_DAY,
+    HC1_IS_RC_NOCOMM,
+    HC1_IS_RC_FAULTY,
+    HC1_IS_ERR_FLOWSENS,
+    HC1_IS_MAX_FLOW,
+    HC1_IS_EXT_FAULT,
 
-    "heating_circuit_2_switch_off_optimization",
-    "heating_circuit_2_switch_on_optimization",
-    "heating_circuit_2_automatic",
-    "heating_circuit_2_ww_priority_processing",
-    "heating_circuit_2_screed_drying",
-    "heating_circuit_2_holiday",
-    "heating_circuit_2_antifreeze",
-    "heating_circuit_2_manually",
-    "heating_circuit_2_summer",
-    "heating_circuit_2_day",
-    "heating_circuit_2_no_comm_with_rc",
-    "heating_circuit_2_rc_faulty",
-    "heating_circuit_2_flow_sensor_error",
-    "heating_circuit_2_max_flow",
-    "heating_circuit_2_external_fault_input",
+    HC2_IS_OPT_SWOFF,
+    HC2_IS_OPT_SWON,
+    HC2_IS_AUTO,
+    HC2_IS_PRIO_WW,
+    HC2_IS_SCREED_DRY,
+    HC2_IS_HOLIDAY,
+    HC2_IS_NOFREEZE,
+    HC2_IS_MANUALLY,
+    HC2_IS_SUMMER,
+    HC2_IS_DAY,
+    HC2_IS_RC_NOCOMM,
+    HC2_IS_RC_FAULTY,
+    HC2_IS_ERR_FLOWSENS,
+    HC2_IS_MAX_FLOW,
+    HC2_IS_EXT_FAULT,
 
-    "ww_automatic",
-    "ww_disinfection",
-    "ww_reload",
-    "ww_holiday",
-    "ww_error_disinfection",
-    "ww_error_sensor",
-    "ww_error_stays_cold",
-    "ww_error_anode",
-    "ww_loading",
-    "ww_manually",
-    "ww_reloading",
-    "ww_switch_off_optimization",
-    "ww_switch_on_optimization",
-    "ww_day_mode",
-    "ww_post_processing",
-    "ww_priority_processing",
+    WW_IS_AUTO,
+    WW_IS_DESINFECT,
+    WW_IS_RELOAD,
+    WW_IS_HOLIDAY,
+    WW_IS_ERR_DESINFECT,
+    WW_IS_ERR_SENSOR,
+    WW_IS_ERR_STAY_COLD,
+    WW_IS_ERR_ANODE,
+    WW_IS_LOADING,
+    WW_IS_MANUALLY,
+    WW_IS_RELOADING,
+    WW_IS_OPT_SWOFF,
+    WW_IS_OPT_SWON,
+    WW_IS_DAY,
+    WW_IS_POST_PROC,
+    WW_IS_PRIO_PROC,
 
-    "load_pump_running",
-    "circulation_pump_running",
-    "solar_pump_lowering",
+    PUMP_LOAD_RUN,
+    PUMP_CIRC_RUN,
+    PUMP_SOLAR_LOW,
 
-    "error_burner_malfunction",
-    "error_boiler_sensor",
-    "error_additional_sensor",
-    "error_boiler_stays_cold",
-    "error_exhaust_gas_sensor",
-    "error_exhaust_gas_over_limit",
-    "error_safety_chain_released",
-    "error_external_disturbance",
- 
-    "boiler_emission_test",
-    "boiler_1st_stage_operation",
-    "boiler_protection",
-    "boiler_under_operation",
-    "boiler_performance_free",
-    "boiler_performance_high",
-    "boiler_2st_stage_operation",
+    ERR_BURN_MALF,
+    ERR_BOIL_SENS,
+    ERR_ADD_SENS,
+    ERR_BOILD_STAY_COLD,
+    ERR_EXHAUST_GAS_SENS,
+    ERR_EXHAUST_GAS_OVL,
+    ERR_SAFETY_CHAIN,
+    ERR_EXT_DISTURBANCE,
 
-    "boiler_actuation",
+    BOIL_IS_TEST_EMMISSION,
+    BOIL_IS_OP_STAGE1,
+    BOIL_IS_PROTECTION,
+    BOIL_IS_UNDER_OP,
+    BOIL_IS_PERF_FREE,
+    BOIL_IS_PERF_HIGH,
+    BOIL_IS_OP_STAGE2,
 
-    "alarm_exhaust_gas_sensor",
-    "alarm_boiler_flow_sensor",
-    "alarm_burner",
-    "alarm_heating_circuit_2_flow_sensor"
+    BOIL_IS_ACT,
 
+    ALARM_EXHAUST_GASSENS,
+    ALARM_BOILER_FLOWSENS,
+    ALARM_BURNER,
+    ALARM_HC2_FLOWSENS
 ]
 
 CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("heating_circuit_1_switch_off_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_OPT_SWOFF): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_switch_on_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_OPT_SWON): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_automatic"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_AUTO): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_ww_priority_processing"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_PRIO_WW): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_screed_drying"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_SCREED_DRY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_holiday"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_HOLIDAY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_antifreeze"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_NOFREEZE): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_manually"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_MANUALLY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_summer"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_SUMMER): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_day"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_DAY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_no_comm_with_rc"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_RC_NOCOMM): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_rc_faulty"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_RC_FAULTY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_flow_sensor_error"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_ERR_FLOWSENS): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_max_flow"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_MAX_FLOW): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_1_external_fault_input"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_EXT_FAULT): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_switch_off_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_OPT_SWOFF): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_switch_on_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_OPT_SWON): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_automatic"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_AUTO): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_ww_priority_processing"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_PRIO_WW): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_screed_drying"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_SCREED_DRY): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_holiday"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_HOLIDAY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_antifreeze"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_NOFREEZE): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_manually"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_MANUALLY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_summer"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_SUMMER): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_day"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_DAY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_no_comm_with_rc"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_RC_NOCOMM): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_rc_faulty"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_RC_FAULTY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_flow_sensor_error"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_ERR_FLOWSENS): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_max_flow"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_MAX_FLOW): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("heating_circuit_2_external_fault_input"): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_EXT_FAULT): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
 
-            cv.Optional("ww_automatic"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_AUTO): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_disinfection"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_DESINFECT): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_reload"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_RELOAD): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_holiday"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_HOLIDAY): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_error_disinfection"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_ERR_DESINFECT): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_error_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_ERR_SENSOR): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_error_stays_cold"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_ERR_STAY_COLD): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_error_anode"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_ERR_ANODE): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_loading"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_LOADING): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_manually"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_MANUALLY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_reloading"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_RELOADING): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_switch_off_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_OPT_SWOFF): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_switch_on_optimization"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_OPT_SWON): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_day_mode"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_DAY): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_post_processing"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_POST_PROC): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("ww_priority_processing"): binary_sensor.binary_sensor_schema(
+            cv.Optional(WW_IS_PRIO_PROC): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
 
 
-            cv.Optional("load_pump_running"): binary_sensor.binary_sensor_schema(
+            cv.Optional(PUMP_LOAD_RUN): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("circulation_pump_running"): binary_sensor.binary_sensor_schema(
+            cv.Optional(PUMP_CIRC_RUN): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("solar_pump_lowering"): binary_sensor.binary_sensor_schema(
+            cv.Optional(PUMP_SOLAR_LOW): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_RUNNING,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -306,35 +307,35 @@ CONFIG_SCHEMA = (
             #                device_class=DEVICE_CLASS_PROBLEM,
             #                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             #            ),
-            cv.Optional("error_burner_malfunction"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_BURN_MALF): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_boiler_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_BOIL_SENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_additional_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_ADD_SENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_boiler_stays_cold"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_BOILD_STAY_COLD): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_exhaust_gas_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_EXHAUST_GAS_SENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_exhaust_gas_over_limit"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_EXHAUST_GAS_OVL): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_safety_chain_released"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_SAFETY_CHAIN): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("error_external_disturbance"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_EXT_DISTURBANCE): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -343,23 +344,23 @@ CONFIG_SCHEMA = (
             #                device_class=DEVICE_CLASS_RUNNING,
             #                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             #            ),
-            cv.Optional("boiler_emission_test"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_TEST_EMMISSION): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_1st_stage_operation"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_OP_STAGE1): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_protection"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_PROTECTION): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_under_operation"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_UNDER_OP): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_performance_free"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_PERF_FREE): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -367,34 +368,34 @@ CONFIG_SCHEMA = (
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_performance_high"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_PERF_HIGH): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("boiler_2st_stage_operation"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_OP_STAGE2): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
 
 
-            cv.Optional("boiler_actuation"): binary_sensor.binary_sensor_schema(
+            cv.Optional(BOIL_IS_ACT): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_POWER,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
 
-            cv.Optional("alarm_exhaust_gas_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_EXHAUST_GASSENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("alarm_boiler_flow_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_BOILER_FLOWSENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("alarm_burner"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_BURNER): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional("alarm_heating_circuit_2_flow_sensor"): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_HC2_FLOWSENS): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),

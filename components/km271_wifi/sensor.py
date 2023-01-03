@@ -20,38 +20,40 @@ from . import (
     KM271
 )
 
+from .const import *
+
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "heating_circuit_1_flow_target_temperature",
-    "heating_circuit_1_flow_temperature",
-    "heating_circuit_1_room_target_temperature",
-    "heating_circuit_1_room_temperature",
-    "heating_circuit_1_pump_power",
-    "heating_circuit_1_mixer_position",
-    "heating_circuit_1_curve_p10",
-    "heating_circuit_1_curve_0",
-    "heating_circuit_1_curve_n10",
-    "heating_circuit_2_flow_target_temperature",
-    "heating_circuit_2_flow_temperature",
-    "heating_circuit_2_room_target_temperature",
-    "heating_circuit_2_room_temperature",
-    "heating_circuit_2_pump_power",
-    "heating_circuit_2_mixer_position",
-    "heating_circuit_2_curve_p10",
-    "heating_circuit_2_curve_0",
-    "heating_circuit_2_curve_n10",
-    "ww_target_temperature",
-    "ww_temperature",
-    "boiler_target_temperature",
-    "boiler_temperature",
-    "boiler_turn_on_temperature",
-    "boiler_turn_off_temperature",
-    "exhaust_gas_temperature",
-    "outdoor_temperature",
-    "attenuated_outdoor_temperature",
-    "boiler_runtime_1",
-    "boiler_runtime_2"
+    HC1_FT_TARGET,
+    HC1_FT_CURRENT,
+    HC1_ROOMT_TARGET,
+    HC1_ROOMT_CURRENT,
+    HC1_PUMP_POWER,
+    HC1_MIX_POS,
+    HC1_CURVE_P10,
+    HC1_CURVE_0,
+    HC1_CURVE_N10,
+    HC2_FT_TARGET,
+    HC2_FT_CURRENT,
+    HC2_ROOMT_TARGET,
+    HC2_ROOMT_CURRENT,
+    HC2_PUMP_POWER,
+    HC2_MIX_POS,
+    HC2_CURVE_P10,
+    HC2_CURVE_0,
+    HC2_CURVE_N10,
+    WW_TEMP_TARGET,
+    WW_TEMP_CURRENT,
+    BOILER_TEMP_TARGET,
+    BOILER_TEMP_CURRENT,
+    BOILER_TEMP_TON,
+    BOILER_TEMP_TOFF,
+    EXHAUST_GAS_TEMP,
+    OUTDOOR_TEMP,
+    OUTDOOR_TEMP_ATT,
+    BOILER_RUNTIME_1,
+    BOILER_RUNTIME_2,
 ]
 
 
@@ -59,150 +61,150 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("heating_circuit_1_flow_target_temperature"): sensor.sensor_schema(
+            cv.Optional(HC1_FT_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  		
             ),
-            cv.Optional("heating_circuit_1_flow_temperature"): sensor.sensor_schema(
+            cv.Optional(HC1_FT_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_1_room_target_temperature"): sensor.sensor_schema(
+            cv.Optional(HC1_ROOMT_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,   	
             ),
-            cv.Optional("heating_circuit_1_room_temperature"): sensor.sensor_schema(
+            cv.Optional(HC1_ROOMT_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_1_pump_power"): sensor.sensor_schema(
+            cv.Optional(HC1_PUMP_POWER): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
                 accuracy_decimals=0,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_1_mixer_position"): sensor.sensor_schema(
+            cv.Optional(HC1_MIX_POS): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
                 accuracy_decimals=0,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_1_curve_p10"): sensor.sensor_schema(
+            cv.Optional(HC1_CURVE_P10): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_1_curve_0"): sensor.sensor_schema(
+            cv.Optional(HC1_CURVE_0): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_1_curve_n10"): sensor.sensor_schema(
+            cv.Optional(HC1_CURVE_N10): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_2_flow_target_temperature"): sensor.sensor_schema(
+            cv.Optional(HC2_FT_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_2_flow_temperature"): sensor.sensor_schema(
+            cv.Optional(HC2_FT_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_2_room_target_temperature"): sensor.sensor_schema(
+            cv.Optional(HC2_ROOMT_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_2_room_temperature"): sensor.sensor_schema(
+            cv.Optional(HC2_ROOMT_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_2_pump_power"): sensor.sensor_schema(
+            cv.Optional(HC2_PUMP_POWER): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
                 accuracy_decimals=0,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_2_mixer_position"): sensor.sensor_schema(
+            cv.Optional(HC2_MIX_POS): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
                 accuracy_decimals=0,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("heating_circuit_2_curve_p10"): sensor.sensor_schema(
+            cv.Optional(HC2_CURVE_P10): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("heating_circuit_2_curve_0"): sensor.sensor_schema(
+            cv.Optional(HC2_CURVE_0): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC, 	
             ),
-            cv.Optional("heating_circuit_2_curve_n10"): sensor.sensor_schema(
+            cv.Optional(HC2_CURVE_N10): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC, 	
             ),
-            cv.Optional("ww_target_temperature"): sensor.sensor_schema(
+            cv.Optional(WW_TEMP_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("ww_temperature"): sensor.sensor_schema(
+            cv.Optional(WW_TEMP_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("boiler_target_temperature"): sensor.sensor_schema(
+            cv.Optional(BOILER_TEMP_TARGET): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("boiler_temperature"): sensor.sensor_schema(
+            cv.Optional(BOILER_TEMP_CURRENT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
@@ -210,49 +212,49 @@ CONFIG_SCHEMA = (
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
 
-            cv.Optional("boiler_turn_on_temperature"): sensor.sensor_schema(
+            cv.Optional(BOILER_TEMP_TON): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC, 	
             ),
-            cv.Optional("boiler_turn_off_temperature"): sensor.sensor_schema(
+            cv.Optional(BOILER_TEMP_TOFF): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,  	
             ),
-            cv.Optional("exhaust_gas_temperature"): sensor.sensor_schema(
+            cv.Optional(EXHAUST_GAS_TEMP): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("outdoor_temperature"): sensor.sensor_schema(
+            cv.Optional(OUTDOOR_TEMP): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("attenuated_outdoor_temperature"): sensor.sensor_schema(
+            cv.Optional(OUTDOOR_TEMP_ATT): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
                 entity_category=ENTITY_CATEGORY_NONE, 	
             ),
-            cv.Optional("boiler_runtime_1"): sensor.sensor_schema(
+            cv.Optional(BOILER_RUNTIME_1): sensor.sensor_schema(
                 unit_of_measurement=UNIT_MINUTE,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_DURATION,
                 state_class=STATE_CLASS_TOTAL_INCREASING,
                 entity_category=ENTITY_CATEGORY_NONE,
             ),
-            cv.Optional("boiler_runtime_2"): sensor.sensor_schema(
+            cv.Optional(BOILER_RUNTIME_2): sensor.sensor_schema(
                 unit_of_measurement=UNIT_MINUTE,
                 accuracy_decimals=0,
                 device_class=DEVICE_CLASS_DURATION,

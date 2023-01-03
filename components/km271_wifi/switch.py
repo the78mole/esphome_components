@@ -10,10 +10,12 @@ from . import (
     KM271
 )
 
+from .const import *
+
 CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
-    "ww_heating_auto_off"
+    WW_OPMODE_AUTO_OFF
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -25,7 +27,7 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional("ww_heating_auto_off"): switch.switch_schema(BuderusParamSwitch),
+            cv.Optional(WW_OPMODE_AUTO_OFF): switch.switch_schema(BuderusParamSwitch),
         }
     )
 )
