@@ -33,7 +33,7 @@ TYPES = [
     HC1_IS_DAY,
     HC1_IS_RC_NOCOMM,
     HC1_IS_RC_FAULTY,
-    HC1_IS_ERR_FLOWSENS,
+    HC1_IS_ERR_FLOW_SENSOR,
     HC1_IS_MAX_FLOW,
     HC1_IS_EXT_FAULT,
 
@@ -49,7 +49,7 @@ TYPES = [
     HC2_IS_DAY,
     HC2_IS_RC_NOCOMM,
     HC2_IS_RC_FAULTY,
-    HC2_IS_ERR_FLOWSENS,
+    HC2_IS_ERR_FLOW_SENSOR,
     HC2_IS_MAX_FLOW,
     HC2_IS_EXT_FAULT,
 
@@ -74,12 +74,12 @@ TYPES = [
     PUMP_CIRC_RUN,
     PUMP_SOLAR_LOW,
 
-    ERR_BURN_MALF,
+    ERR_BURNER_MALFUNCTION,
     ERR_BOIL_SENS,
     ERR_ADD_SENS,
     ERR_BOILD_STAY_COLD,
-    ERR_EXHAUST_GAS_SENS,
-    ERR_EXHAUST_GAS_OVL,
+    ERR_EXHAUST_GAS_SENSOR,
+    ERR_EXHAUST_GAS_OVLIMIT,
     ERR_SAFETY_CHAIN,
     ERR_EXT_DISTURBANCE,
 
@@ -93,10 +93,10 @@ TYPES = [
 
     BOIL_IS_ACT,
 
-    ALARM_EXHAUST_GASSENS,
-    ALARM_BOILER_FLOWSENS,
+    ALARM_EXHAUST_GAS_SENSOR,
+    ALARM_BOILER_FLOW_SENSOR,
     ALARM_BURNER,
-    ALARM_HC2_FLOWSENS
+    ALARM_HC2_FLOW_SENSOR
 ]
 
 CONFIG_SCHEMA = (
@@ -151,7 +151,7 @@ CONFIG_SCHEMA = (
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(HC1_IS_ERR_FLOWSENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC1_IS_ERR_FLOW_SENSOR): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -211,7 +211,7 @@ CONFIG_SCHEMA = (
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(HC2_IS_ERR_FLOWSENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(HC2_IS_ERR_FLOW_SENSOR): binary_sensor.binary_sensor_schema(
 #                device_class=DEVICE_CLASS_NONE,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -307,7 +307,7 @@ CONFIG_SCHEMA = (
             #                device_class=DEVICE_CLASS_PROBLEM,
             #                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             #            ),
-            cv.Optional(ERR_BURN_MALF): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_BURNER_MALFUNCTION): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -323,11 +323,11 @@ CONFIG_SCHEMA = (
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(ERR_EXHAUST_GAS_SENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_EXHAUST_GAS_SENSOR): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(ERR_EXHAUST_GAS_OVL): binary_sensor.binary_sensor_schema(
+            cv.Optional(ERR_EXHAUST_GAS_OVLIMIT): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -383,11 +383,11 @@ CONFIG_SCHEMA = (
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
 
-            cv.Optional(ALARM_EXHAUST_GASSENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_EXHAUST_GAS_SENSOR): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(ALARM_BOILER_FLOWSENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_BOILER_FLOW_SENSOR): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
@@ -395,7 +395,7 @@ CONFIG_SCHEMA = (
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
-            cv.Optional(ALARM_HC2_FLOWSENS): binary_sensor.binary_sensor_schema(
+            cv.Optional(ALARM_HC2_FLOW_SENSOR): binary_sensor.binary_sensor_schema(
                 device_class=DEVICE_CLASS_PROBLEM,
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             ),
