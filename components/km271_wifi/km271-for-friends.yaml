@@ -309,6 +309,9 @@ number:
     config_heating_circuit_1_design_temperature:
       name: "Auslegungstemperatur"
       mode: slider
+    config_heating_circuit_1_target_room_temperature_day:
+      name: "HK1 Raumsolltemperatur Tag"
+      mode: slider
 
 select:
   - platform: km271_wifi

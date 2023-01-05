@@ -86,21 +86,19 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
         }
         bool value = !!(data[byteOffset] & (1 << bitOffset));
         handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
-    } else if (paramDesc->sensorType == TAG_NACHT_AUTO_SELECT) {
-        ESP_LOGD(TAG, "Found tag/nacht/auto select length %d: 0x%02x (0:Nacht, 1:Tag, 2: Auto) 0x%02x", len, data[0], data[1] );
-        if(data[0] == 0) { // nacht
-            handleReceivedUnsignedValue(paramDesc->sensorTypeParam, 0);
-        } else if(data[0] == 1 || data[0] == 2) { // tag, auto
-            handleReceivedUnsignedValue(paramDesc->sensorTypeParam, 1);
-        } else {
-            ESP_LOGW(TAG, "Invalid value for tag/nacht/auto select: %d 0x%02x 0x%02x ...", len, data[0], data[1]);
-        }
     } else if(paramDesc->sensorType == BYTE_AT_OFFSET) {
         if (paramDesc->sensorTypeParam < len) {
             uint8_t value = data[paramDesc->sensorTypeParam];
             handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
         } else {
             ESP_LOGE(TAG, "Offset for sensor type BYTE_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
+        }
+    } else if (paramDesc->sensorType == BYTE_DIVIDED_BY_2_AT_OFFSET) {
+        if (paramDesc->sensorTypeParam < len) {
+            uint8_t value = data[paramDesc->sensorTypeParam];
+            handleReceivedFloatValue(paramDesc->sensorTypeParam, (float)value * 0.5);
+        } else {
+            ESP_LOGE(TAG, "Offset for sensor type BYTE_DIVIDED_BY_2_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
         }
     } else if (paramDesc->sensorType == MULTI_PARAMETER_UNSIGNED_INTEGER) {
         ESP_LOGD(TAG, "Parameter: 0x%04x type param %d Len %d, data: %d %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0], data[1]);

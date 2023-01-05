@@ -5,8 +5,9 @@ CONF_HC1_OPMODE = "config_heating_circuit_1_operation_mode"
 CONF_WW_OPMODE  = "config_ww_operation_mode"
 
 # Numbers
-CONF_WW_TEMP_TARGET  = "config_ww_temperature"
-CONF_HC1_DESIGN_TEMP = "config_heating_circuit_1_design_temperature"
+CONF_WW_TEMP_TARGET        = "config_ww_temperature"
+CONF_HC1_DESIGN_TEMP       = "config_heating_circuit_1_design_temperature"
+CONF_HC1_ROOMT_TARGET_DAY  = "config_heating_circuit_1_target_room_temperature_day"
 
 # Sensors
 HC1_FT_TARGET       = "heating_circuit_1_flow_target_temperature"
