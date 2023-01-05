@@ -64,12 +64,7 @@ void BuderusParamNumber::control(float value)
             target_temperature = 60;
         }
 
-        // do not write directly, but instead wait until the value does not change for some time and write then
-        // this is to avoid writing to the heater each time the user clicks on the up arrow
-        this->hasPendingWriteRequest = true;
         this->pendingWriteValue = target_temperature;
-        this->lastWriteRequest = millis();
-
     } else if(transmissionParameter == config_heating_circuit_1_design_temperature) {
         float target_temperature = value;
         if (target_temperature < 30) {
@@ -78,14 +73,26 @@ void BuderusParamNumber::control(float value)
             target_temperature = 90;
         }
 
-        // do not write directly, but instead wait until the value does not change for some time and write then
-        // this is to avoid writing to the heater each time the user clicks on the up arrow
-        this->hasPendingWriteRequest = true;
         this->pendingWriteValue = target_temperature;
-        this->lastWriteRequest = millis();
+    } else if(transmissionParameter == config_heating_circuit_1_target_room_temperature_day) {
+        float target_temperature = value;
+        if (target_temperature < 10) {
+            target_temperature = 10;
+        } else if (target_temperature > 30) {
+            target_temperature = 30;
+        }
+
+        this->pendingWriteValue = target_temperature;
     } else {
         ESP_LOGE(TAG, "No write configuration for number transmission parameter %d found", transmissionParameter);
+        return;
     }
+
+    // Do not write directly, but instead wait until the value does not change for some time and write then.
+    // This is to avoid writing to the storage of the control unit each time the user clicks on the up arrow
+    this->hasPendingWriteRequest = true;
+    this->lastWriteRequest = millis();
+
 }
 
 void BuderusParamNumber::loop()
@@ -101,18 +108,23 @@ void BuderusParamNumber::loop()
 
             if (transmissionParameter == config_ww_temperature) {
               const uint8_t message[] = { data_type_warm_water, 0x07, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep};
+              if(writer->enqueueTelegram(message, 8)) {
+                  this->hasPendingWriteRequest = false;
+                  publish_state(this->pendingWriteValue);
+                }
+            } else if(transmissionParameter == config_heating_circuit_1_design_temperature) {
+                const uint8_t message[] = { data_type_heating_circuit_1, 0x0e, keep, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep};
                 if(writer->enqueueTelegram(message, 8)) {
                     this->hasPendingWriteRequest = false;
                     publish_state(this->pendingWriteValue);
 
                 }
-            } else if(transmissionParameter == config_heating_circuit_1_design_temperature) {
-                const uint8_t message[] = { data_type_heating_circuit_1, 0x0e, keep, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep};
-                  if(writer->enqueueTelegram(message, 8)) {
-                      this->hasPendingWriteRequest = false;
-                      publish_state(this->pendingWriteValue);
-
-                  }
+            } else if(transmissionParameter == config_heating_circuit_1_target_room_temperature_day) {
+                const uint8_t message[] = { data_type_heating_circuit_1, 0x0, keep, keep, keep, (uint8_t)(this->pendingWriteValue * 2 + 0.5), keep, keep};
+                if(writer->enqueueTelegram(message, 8)) {
+                    this->hasPendingWriteRequest = false;
+                    publish_state(this->pendingWriteValue);
+                }
             } else {
                 ESP_LOGE(TAG, "No support for writing transmission parameter %d", transmissionParameter);
                 this->hasPendingWriteRequest = false;
@@ -159,7 +171,6 @@ void MultiParameterUnsignedIntegerAssembler::handleReceivedUnsignedValue(uint16_
     if (valueIndex != 0) { // only update the sensor value on lsb updates to avoid jumps
        return;
     }
-
 
     bool all_components_known = component_known[0] && component_known[1] && component_known[2];
     if (all_components_known) {

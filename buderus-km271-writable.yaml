@@ -12,3 +12,5 @@ number:
       name: "Warmwassersolltemperatur Tag"
     config_heating_circuit_1_design_temperature:
       name: "Heizkreis 1 Auslegungstemperatur"
+    config_heating_circuit_1_target_room_temperature_day:
+      name: "HK1 Raumsolltemperatur Tag"

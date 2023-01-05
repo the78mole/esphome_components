@@ -15,10 +15,6 @@ class CommunicationComponent;
 
 /** a buderus R2017 parameter identfies a group of values sent from the control unit in one telegram */
 enum Buderus_R2017_ParameterId {
-    CFG_HK1_Betriebsart = 0x0000,
-    CFG_HK1_Auslegungstemperatur = 0x000e,
-    CFG_WW_Temperatur = 0x007e,
-    CFG_WW_Aufbereitung = 0x0085,
     BW1HK1    = 0x8000, //: "Betriebswerte 1 HK1"
     BW2HK1    = 0x8001, //: "Betriebswerte 2 HK1"
     VSTHK1    = 0x8002, //: "Vorlaufsolltemperatur HK1"       (Grad)
@@ -114,11 +110,10 @@ enum SensorType {
     UNSIGNED_INT_DIVIDED_BY_2,
     STRING,
     BYTE_AT_OFFSET, // a single byte, with offset in bytes specified in sensor param
+    BYTE_DIVIDED_BY_2_AT_OFFSET, // a single byte that needs to be divided by two after reading, with offset in bytes specified in sensor param
     BIT_AT_OFFSET, // a single bit, with offset in bits specified in sensor param
-    TAG_NACHT_AUTO_SELECT, //   [ 0 => "Nacht", 1=> "Tag", 2=> "Automatik" ],
     // an 24 bit unsigned integer that spans multiple parameters identified.
     // sensor type param msb identifies the group the value belongs to and sensor type param lsb determines the weight of the value: 0-2
-
     MULTI_PARAMETER_UNSIGNED_INTEGER
 };
 
@@ -151,6 +146,7 @@ enum TransmissionParameter
     circulation_pump_running,
     config_heating_circuit_1_operation_mode,
     config_heating_circuit_1_design_temperature,
+    config_heating_circuit_1_target_room_temperature_day,
     config_ww_operation_mode,
     config_ww_temperature,
     error_additional_sensor,
@@ -279,10 +275,11 @@ typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *
 static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
-    {config_heating_circuit_1_operation_mode, CFG_HK1_Betriebsart, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
-    {config_heating_circuit_1_design_temperature, CFG_HK1_Auslegungstemperatur, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
-    {config_ww_temperature, CFG_WW_Temperatur, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
-    {config_ww_operation_mode, CFG_WW_Aufbereitung, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
+    {config_heating_circuit_1_operation_mode, CFG1, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
+    {config_heating_circuit_1_design_temperature, CFG2, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
+    {config_heating_circuit_1_target_room_temperature_day, CFG1, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},  // (Grad)
+    {config_ww_temperature, CFG8, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
+    {config_ww_operation_mode, CFG9, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
     // Betriebswerte 1 HK1
     {heating_circuit_1_switch_off_optimization, BW1HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Ausschaltoptimierung", ""},
     {heating_circuit_1_switch_on_optimization, BW1HK1, false, SensorType::BIT_AT_OFFSET, 1, "HK1 Einschaltoptimierung", ""},
