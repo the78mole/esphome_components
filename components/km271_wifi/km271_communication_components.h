@@ -49,6 +49,9 @@ protected:
     void control(float value);
 
 private:
+    void sendAndConfirm(const uint8_t * message, uint8_t messageLength);
+private:
+
     uint32_t lastWriteRequest;
     bool hasPendingWriteRequest;
     float pendingWriteValue;
@@ -61,6 +64,9 @@ public:
 
 protected:
     void control(const std::string &value) override;
+
+private:
+    void sendAndConfirm(const uint8_t *message, uint8_t messageLength, const std::string &value);
 
 private:
     std::vector<uint8_t> mappings; // this stores the number to read/write for each select option
