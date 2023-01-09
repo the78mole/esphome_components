@@ -1,0 +1,56 @@
+alias: Warmwasser nachladen
+description: >-
+  Warmwasser erhitzen bei jedem Heizungs-Brennerstart oder wenn die
+  WW-Ist-Temperatur unter 35° gefallen ist. Die WW-Temperatur wird automatisch
+  zur gedämpften Aussentemperatur eingesetllt um doppelte Brennerstarts zu
+  vermeinden. Darüber hinaus wird am Sa/So bei einem Brennerstart zwischen 13
+  und 17 Uhr eine erhöhte Temperatur von 55° gefahren.
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.brenneransteuerung
+    from: "off"
+    to: "on"
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - platform: numeric_state
+    entity_id: sensor.warmwasseristtemperatur
+    below: 35
+condition: []
+action:
+  - if:
+      - condition: time
+        after: "13:00:00"
+        before: "17:00:00"
+        weekday:
+          - sat
+          - sun
+    then:
+      - service: number.set_value
+        data:
+          value: "55"
+        target:
+          entity_id: number.warmwassersolltemperatur_tag
+    else:
+      - service: number.set_value
+        data:
+          value: >-
+            {{ ([55.0, (10.5-(states('sensor.gedaempfte_aussentemperatur') |
+            float))*2+45, 45.0]|sort)[1] }}
+        target:
+          entity_id: number.warmwassersolltemperatur_tag
+        enabled: true
+      - service: number.set_value
+        data:
+          value: 48
+        target:
+          entity_id: number.warmwassersolltemperatur_tag
+        enabled: false
+  - service: automation.trigger
+    data: {}
+    target:
+      entity_id: automation.ww_push
+    enabled: true
+mode: single
