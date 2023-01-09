@@ -1,0 +1,27 @@
+alias: Warmwasser push
+description: Einmalige Warmwasserbereitung für max. 30 Minuten
+trigger: []
+condition: []
+action:
+  - if:
+      - condition: template
+        value_template: >-
+          {{ states('sensor.warmwasseristtemperatur') | float <
+          states('number.warmwassersolltemperatur_tag') | float }}
+    then:
+      - service: select.select_option
+        data:
+          option: Ein
+        target:
+          entity_id: select.warmwasser_betriebsmodus
+      - delay:
+          hours: 0
+          minutes: 30
+          seconds: 0
+          milliseconds: 0
+  - service: select.select_option
+    data:
+      option: Aus
+    target:
+      entity_id: select.warmwasser_betriebsmodus
+mode: restart
