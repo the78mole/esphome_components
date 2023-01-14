@@ -96,7 +96,7 @@ enum Buderus_R2017_ParameterId {
     CFG04D    = 0x004d, //: "#1 WW Vorrangschaltung -> 0x0015 ?"
     CFG070    = 0x0070, //: "#2 Gebäudeart"
     CFG07E    = 0x007e, //: "#3 WW Temperatur" CFG8
-    CFG085    = 0x0085, //: "#0 WW Betriebsart, #3 WW Aufbereitung, #5 WW Zirkulation"
+    CFG085    = 0x0085, //: "#0 WW Betriebsart, #3 WW Aufbereitung, #5 WW Zirkulation" CFG9
     CFG093    = 0x0093, //: "#0 Sprache, #1 Anzeige"
     CFG09A    = 0x009a, //: "#1 Brennerart, #3 Max Kesseltemperatur"
     CFG0A1    = 0x00a1, //: "#0 Pumplogik, #5 Abgastemperaturschwelle"
@@ -292,7 +292,7 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {config_heating_circuit_2_flow_target_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizkreistemperatur Maximal", ""},
     // Konfiguration WW
     {config_ww_temperature, CFG07E, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
-    {config_ww_operation_mode, CFG9, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
+    {config_ww_operation_mode, CFG085, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
     // Betriebswerte 1 HK1
     {heating_circuit_1_switch_off_optimization, BW1HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Ausschaltoptimierung", ""},
     {heating_circuit_1_switch_on_optimization, BW1HK1, false, SensorType::BIT_AT_OFFSET, 1, "HK1 Einschaltoptimierung", ""},
