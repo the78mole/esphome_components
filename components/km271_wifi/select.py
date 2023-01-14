@@ -17,6 +17,7 @@ CODEOWNERS = ["@the78mole", "@jensgraef"]
 
 TYPES = [
     CONF_HC1_OPMODE,
+    CONF_HC2_OPMODE,
     CONF_WW_OPMODE,
 ]
 
@@ -48,6 +49,10 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
             cv.Optional(CONF_HC1_OPMODE): select.SELECT_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamSelect),
+                cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
+            }),
+            cv.Optional(CONF_HC2_OPMODE): select.SELECT_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
             }),
