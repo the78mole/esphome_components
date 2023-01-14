@@ -98,6 +98,7 @@ void BuderusParamNumber::loop()
     const uint8_t keep = 0x65;
     const uint8_t data_type_warm_water = 0x0c;
     const uint8_t data_type_heating_circuit_1 = 0x07;
+    const uint8_t data_type_heating_circuit_2 = 0x08;
 
     if (this->hasPendingWriteRequest) {
         uint32_t now = millis();
@@ -112,7 +113,20 @@ void BuderusParamNumber::loop()
             } else if(transmissionParameter == config_heating_circuit_1_target_room_temperature_day) {
                 const uint8_t message[] = { data_type_heating_circuit_1, 0x0, keep, keep, keep, (uint8_t)(this->pendingWriteValue * 2 + 0.5), keep, keep};
                 sendAndConfirm(message, sizeof(message));
-            } else {
+
+            } else if(transmissionParameter == config_heating_circuit_2_design_temperature) {
+                const uint8_t message[] = { data_type_heating_circuit_2, 0x0e, keep, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep};
+                sendAndConfirm(message, sizeof(message));
+            } else if(transmissionParameter == config_heating_circuit_2_room_target_temperature_day) {
+                const uint8_t message[] = { data_type_heating_circuit_2, 0x0, keep, keep, keep, (uint8_t)(this->pendingWriteValue * 2 + 0.5), keep, keep};
+                sendAndConfirm(message, sizeof(message));
+            } else if(transmissionParameter == config_heating_circuit_2_room_target_temperature_offset) {
+                const uint8_t message[] = { data_type_heating_circuit_2, 0x0, keep, keep, keep, (uint8_t)(this->pendingWriteValue * 2), keep, keep};
+                sendAndConfirm(message, sizeof(message));
+            } else if(transmissionParameter == config_heating_circuit_2_flow_target_temperature_max) {
+                const uint8_t message[] = { data_type_heating_circuit_2, 0x0e, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep, keep};
+                sendAndConfirm(message, sizeof(message));
+          } else {
                 ESP_LOGE(TAG, "No support for writing transmission parameter %d", transmissionParameter);
                 this->hasPendingWriteRequest = false;
             }
@@ -209,6 +223,14 @@ void BuderusParamSelect::control(const std::string &value) {
             }
 
             const uint8_t message[] = { data_type_heating_circuit_1, 0x00, keep, keep, keep, keep, numericValue, keep};
+            sendAndConfirm(message, sizeof(message), value);
+        } else if (transmissionParameter == config_heating_circuit_2_operation_mode) {
+            if (numericValue > 2) {
+                ESP_LOGE(TAG, "Invalid select value for transmission parameter %d received: %d", transmissionParameter, numericValue);
+                return;
+            }
+
+            const uint8_t message[] = { data_type_heating_circuit_2, 0x00, keep, keep, keep, keep, numericValue, keep};
             sendAndConfirm(message, sizeof(message), value);
         } else if (transmissionParameter == config_ww_operation_mode) {
             if (numericValue > 2) {
