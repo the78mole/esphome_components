@@ -75,7 +75,7 @@ void BuderusParamNumber::control(float value)
         this->pendingWriteValue = limitValueToRange(value, 10, 30);
     } else if(transmissionParameter == config_heating_circuit_2_design_temperature) {
        this->pendingWriteValue = limitValueToRange(value, 30, 90);
-    } else if(transmissionParameter == config_heating_circuit_2_target_room_temperature_day) {
+    } else if(transmissionParameter == config_heating_circuit_2_room_target_temperature_day) {
         this->pendingWriteValue = limitValueToRange(value, 10, 30);
     } else if(transmissionParameter == config_heating_circuit_2_room_target_temperature_offset) {
        this->pendingWriteValue = limitValueToRange(value, -5, 5);
