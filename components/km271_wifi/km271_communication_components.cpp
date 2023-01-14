@@ -211,6 +211,7 @@ void BuderusParamSelect::control(const std::string &value) {
     const uint8_t keep = 0x65;
     const uint8_t data_type_warm_water = 0x0c;
     const uint8_t data_type_heating_circuit_1 = 0x07;
+    const uint8_t data_type_heating_circuit_2 = 0x08;
 
     auto idx = this->index_of(value);
 
