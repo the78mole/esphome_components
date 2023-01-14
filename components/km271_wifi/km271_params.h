@@ -20,7 +20,7 @@ enum Buderus_R2017_ParameterId {
     VSTHK1    = 0x8002, //: "Vorlaufsolltemperatur HK1"       (Grad)
     VITHK1    = 0x8003, //: "Vorlaufisttemperatur HK1"        (Grad)
     RSTHK1    = 0x8004, //: "Raumsolltemperatur HK1"          (Grad)
-    RITHK1    = 0x8005, //: "Raumisttemperatur HK1"           (Grad)   
+    RITHK1    = 0x8005, //: "Raumisttemperatur HK1"           (Grad)
     EOZHK1    = 0x8006, //: "Einschaltoptimierungszeit HK1"
     AOZHK1    = 0x8007, //: "Ausschaltoptimierungszeit HK1"
     PLHK1     = 0x8008, //: "Pumpenleistung HK1"              (Prozent)
@@ -88,19 +88,19 @@ enum Buderus_R2017_ParameterId {
 
     ALARM     = 0xaa42, //: "ERR_Alarmstatus"
 
-    CFG1      = 0x0000, //: "Sommer ab, HK1 Nacht-/Tag-/Urlaubstemperatur, Betriebsart"
-    CFG2      = 0x000E, //: "HK1 Max Temperatur, HK1 Auslegung"
-    CFG3      = 0x0015, //: "HK1 Aufschalttemperatur, HK1 Aussenhalt_ab"
-    CFG4      = 0x001c, //: "HK1 Absenkungsart, HK1 Heizsystem"
-    CFG5      = 0x0031, //: "HK1 Temperatur Offset, HK1 Fernbedienung, Frost ab"
-    CFG6      = 0x004d, //: "WW Vorgang"
-    CFG7      = 0x0070, //: "Gebäudeart"
-    CFG8      = 0x007e, //: "WW Temperatur"
-    CFG9      = 0x0085, //: "WW Betriebsart, WW Aufbereitung, WW Zirkulation"
-    CFG10     = 0x0093, //: "Sprache, Anzeige"
-    CFG11     = 0x009a, //: "Brennerart, Max Kesseltemperatur"
-    CFG12     = 0x00a1, //: "Pumplogik, Abgastemperaturschwelle"
-    CFG13     = 0x00a8, //: "Brenner Min Modulation, Brenner Mod Laufzeit"
+    CFG000    = 0x0000, //: "#1 Sommer ab, #2 HK1/2 Nachttemp, #3 HK1/2 Tagtemp, #4 HK1/2 Betriebsart, #5 HK1/2 Urlaubstemp" CFG1
+    CFG00E    = 0x000E, //: "#0 WW Betriebsart, #2 HK1/2 Max Temperatur, #4 HK1/2 Auslegungstemp" CFG2
+    CFG015    = 0x0015, //: "#0 HK1/2 Aufschalttemp, #1 WW Vorrangschaltung, #2 HK1/2 Aussenhalt_ab"
+    CFG01C    = 0x001c, //: "#1 HK1/2 Absenkungsart, #2 HK1/2 Heizsystem"
+    CFG031    = 0x0031, //: "#3 HK1/2 Temperatur Offset, #4 HK1/2 Fernbedienung, #5 Frost ab"
+    CFG04D    = 0x004d, //: "#1 WW Vorrangschaltung -> 0x0015 ?"
+    CFG070    = 0x0070, //: "#2 Gebäudeart"
+    CFG07E    = 0x007e, //: "#3 WW Temperatur" CFG8
+    CFG085    = 0x0085, //: "#0 WW Betriebsart, #3 WW Aufbereitung, #5 WW Zirkulation"
+    CFG093    = 0x0093, //: "#0 Sprache, #1 Anzeige"
+    CFG09A    = 0x009a, //: "#1 Brennerart, #3 Max Kesseltemperatur"
+    CFG0A1    = 0x00a1, //: "#0 Pumplogik, #5 Abgastemperaturschwelle"
+    CFG0A8    = 0x00a8, //: "#0 Brenner Minuten Modulation, #1 Brenner Modulation Laufzeit"
 };
 
 enum SensorType {
@@ -147,6 +147,11 @@ enum TransmissionParameter
     config_heating_circuit_1_operation_mode,
     config_heating_circuit_1_design_temperature,
     config_heating_circuit_1_target_room_temperature_day,
+    config_heating_circuit_2_operation_mode,
+    config_heating_circuit_2_design_temperature,
+    config_heating_circuit_2_room_target_temperature_day,
+    config_heating_circuit_2_room_target_temperature_offset,
+    config_heating_circuit_2_flow_target_temperature_max,
     config_ww_operation_mode,
     config_ww_temperature,
     error_additional_sensor,
@@ -275,10 +280,18 @@ typedef std::unordered_multimap<Buderus_R2017_ParameterId, BuderusValueHandler *
 static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
-    {config_heating_circuit_1_operation_mode, CFG1, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
-    {config_heating_circuit_1_design_temperature, CFG2, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
-    {config_heating_circuit_1_target_room_temperature_day, CFG1, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},  // (Grad)
-    {config_ww_temperature, CFG8, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
+    // Konfiguration HK1
+    {config_heating_circuit_1_operation_mode, CFG000, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
+    {config_heating_circuit_1_design_temperature, CFG00E, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
+    {config_heating_circuit_1_target_room_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},  // (Grad)
+    // Konfiguration HK2
+    {config_heating_circuit_2_operation_mode, CFG000, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Betriebsart", ""},
+    {config_heating_circuit_2_design_temperature, CFG00E, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Auslegungstemperatur", ""},
+    {config_heating_circuit_2_room_target_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Tag", "°C"},  // (Grad)
+    {config_heating_circuit_2_room_target_temperature_offset, CFG031, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Offset", "°C"}, // (Grad)
+    {config_heating_circuit_2_flow_target_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizkreistemperatur Maximal", ""},
+    // Konfiguration WW
+    {config_ww_temperature, CFG07E, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
     {config_ww_operation_mode, CFG9, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
     // Betriebswerte 1 HK1
     {heating_circuit_1_switch_off_optimization, BW1HK1, false, SensorType::BIT_AT_OFFSET, 0, "HK1 Ausschaltoptimierung", ""},
