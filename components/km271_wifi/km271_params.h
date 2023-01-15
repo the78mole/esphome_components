@@ -98,7 +98,7 @@ enum Buderus_R2017_ParameterId {
     CFG038    = 0x0038, //: "#1 Sommer ab, #2 HK2 Nachttemp, #3 HK2 Tagtemp, #4 HK2 Betriebsart, #5 HK2 Urlaubstemp"
     CFG046    = 0x0046, //: "#0 WW Betriebsart, #2 HK2 Max Temperatur, #4 HK2 Auslegungstemp"
     CFG04D    = 0x004D, //: "#0 HK2 Aufschalttemp, #1 WW Vorrangschaltung, #2 HK2 Aussenhalt_ab"
-    CFG054    = 0x001c, //: "#1 HK2 Absenkungsart, #2 HK2 Heizsystem"
+    CFG054    = 0x0054, //: "#1 HK2 Absenkungsart, #2 HK2 Heizsystem"
     CFG069    = 0x0069, //: "#3 HK2 Temperatur Offset, #4 HK2 Fernbedienung, #5 Frost ab"
 
     CFG070    = 0x0070, //: "#2 Gebäudeart"
@@ -293,8 +293,8 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {config_heating_circuit_1_operation_mode, CFG000, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
     {config_heating_circuit_1_design_temperature, CFG00E, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
     {config_heating_circuit_1_room_target_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},  // (Grad)
-    {config_heating_circuit_2_room_target_temperature_offset, CFG031, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Offset", "°C"}, // (Grad)
-    {config_heating_circuit_2_flow_target_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizkreistemperatur Maximal", ""},
+    {config_heating_circuit_1_room_target_temperature_offset, CFG031, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Offset", "°C"}, // (Grad)
+    {config_heating_circuit_1_flow_target_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizkreistemperatur Maximal", ""},
     // Konfiguration HK2
     {config_heating_circuit_2_operation_mode, CFG038, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Betriebsart", ""},
     {config_heating_circuit_2_design_temperature, CFG046, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Auslegungstemperatur", ""},
