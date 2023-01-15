@@ -73,6 +73,10 @@ void BuderusParamNumber::control(float value)
        this->pendingWriteValue = limitValueToRange(value, 30, 90);
     } else if(transmissionParameter == config_heating_circuit_1_room_target_temperature_day) {
         this->pendingWriteValue = limitValueToRange(value, 10, 30);
+    } else if(transmissionParameter == config_heating_circuit_1_room_target_temperature_offset) {
+       this->pendingWriteValue = limitValueToRange(value, -5, 5);
+    } else if(transmissionParameter == config_heating_circuit_1_flow_target_temperature_max) {
+        this->pendingWriteValue = limitValueToRange(value, 20, 90);
     } else if(transmissionParameter == config_heating_circuit_2_design_temperature) {
        this->pendingWriteValue = limitValueToRange(value, 30, 90);
     } else if(transmissionParameter == config_heating_circuit_2_room_target_temperature_day) {
@@ -126,7 +130,7 @@ void BuderusParamNumber::loop()
             } else if(transmissionParameter == config_heating_circuit_1_flow_target_temperature_max) {
                 const uint8_t message[] = { data_type_heating_circuit_1, 0x0e, keep, keep, (uint8_t)this->pendingWriteValue, keep, keep, keep};
                 sendAndConfirm(message, sizeof(message));
-                
+
             } else if(transmissionParameter == config_heating_circuit_2_design_temperature) {
                 const uint8_t message[] = { data_type_heating_circuit_2, 0x0e, keep, keep, keep, keep, (uint8_t)this->pendingWriteValue, keep};
                 sendAndConfirm(message, sizeof(message));
