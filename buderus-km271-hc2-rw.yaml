@@ -1,0 +1,79 @@
+select:
+  - platform: km271_wifi
+    config_heating_circuit_2_operation_mode:
+      name: "HK2 Betriebsmodus"
+
+number:
+  - platform: km271_wifi
+    config_heating_circuit_2_design_temperature:
+      name: "HK2 Auslegungstemperatur"
+      unit_of_measurement: "°C"
+      device_class: temperature
+    config_heating_circuit_2_room_target_temperature_day:
+      name: "HK2 Raumsolltemperatur Tag"
+      unit_of_measurement: "°C"
+      device_class: temperature
+    config_heating_circuit_2_room_target_temperature_offset:
+      name: "HK2 Raumsolltemperatur Offset"
+      unit_of_measurement: "°C"
+      device_class: temperature
+    config_heating_circuit_2_flow_target_temperature_max:
+      name: "HK2 Heizkreistemperatur Maximal"
+      unit_of_measurement: "°C"
+      device_class: temperature
+
+binary_sensor:
+  - platform: km271_wifi
+    # Betriebswerte 1 HK2
+    heating_circuit_2_switch_off_optimization:
+      name: "HK2 Ausschaltoptimierung"
+    heating_circuit_2_switch_on_optimization:
+      name: "HK2 Einschaltoptimierung"
+    heating_circuit_2_automatic:
+      name: "HK2 Automatik"
+    heating_circuit_2_ww_priority_processing:
+      name: "HK2 Warmwasservorrang"
+    heating_circuit_2_screed_drying:
+      name: "HK2 Estrichtrocknung"
+    heating_circuit_2_holiday:
+      name: "HK2 Ferien"
+    heating_circuit_2_antifreeze:
+      name: "HK2 Frostschutz"
+    heating_circuit_2_manually:
+      name: "HK2 Manuell"
+    # Betriebswerte 2 HK2
+    heating_circuit_2_summer:
+      name: "HK2 Sommer-Modus"
+    heating_circuit_2_day:
+      name: "HK2 Tag-Modus"
+    heating_circuit_2_no_comm_with_rc:
+      name: "HK2 Keine Kommunikation mit FB"
+    heating_circuit_2_rc_faulty:
+      name: "HK2 FB fehlerhaft"
+    heating_circuit_2_flow_sensor_error:
+      name: "HK2 Fehler Vorlauffuehler"
+    heating_circuit_2_max_flow:
+      name: "HK2 Maximaler Vorlauf"
+    heating_circuit_2_external_fault_input:
+      name: "HK2 Externer Stoereingang"
+
+sensor:
+  - platform: km271_wifi
+    heating_circuit_2_flow_target_temperature:
+      name: "HK2 Vorlaufsolltemperatur"
+    heating_circuit_2_flow_temperature:
+      name: "HK2 Vorlaufisttemperatur"
+    heating_circuit_2_room_target_temperature:
+      name: "HK2 Raumsolltemperatur"
+    heating_circuit_2_room_temperature:
+      name: "HK2 Raumisttemperatur"
+    heating_circuit_2_pump_power:
+      name: "HK2 Pumpenleistung"
+    heating_circuit_2_mixer_position:
+      name: "HK2 Mischerstellung"
+    heating_circuit_2_curve_p10:
+      name: "HK2 Heizkurve +10 °C"
+    heating_circuit_2_curve_0:
+      name: "HK2 Heizkurve 0 °C"
+    heating_circuit_2_curve_n10:
+      name: "HK2 Heizkurve -10 °C"
