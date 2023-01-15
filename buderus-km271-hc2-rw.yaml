@@ -1,3 +1,6 @@
+# Read and write entities only needed if hc2 aka Heizkreis2 is present in your system
+# For that Module FM241 should be installed https://the78mole.de/wp-content/uploads/2021/07/67903492.pdf
+
 select:
   - platform: km271_wifi
     config_heating_circuit_2_operation_mode:
