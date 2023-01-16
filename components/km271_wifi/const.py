@@ -9,11 +9,11 @@ CONF_WW_OPMODE  = "config_ww_operation_mode"
 CONF_WW_TEMP_TARGET             = "config_ww_temperature"
 CONF_HC1_DESIGN_TEMP            = "config_heating_circuit_1_design_temperature"
 CONF_HC1_ROOMT_TARGET_DAY       = "config_heating_circuit_1_room_target_temperature_day"
-CONF_HC1_ROOMT_TARGET_OFFSET    = "config_heating_circuit_1_room_target_temperature_offset"
+CONF_HC1_ROOMT_OFFSET           = "config_heating_circuit_1_room_temperature_offset"
 CONF_HC1_FT_TARGET_MAX          = "config_heating_circuit_1_flow_target_temperature_max"
 CONF_HC2_DESIGN_TEMP            = "config_heating_circuit_2_design_temperature"
 CONF_HC2_ROOMT_TARGET_DAY       = "config_heating_circuit_2_room_target_temperature_day"
-CONF_HC2_ROOMT_TARGET_OFFSET    = "config_heating_circuit_2_room_target_temperature_offset"
+CONF_HC2_ROOMT_OFFSET           = "config_heating_circuit_2_room_temperature_offset"
 CONF_HC2_FT_TARGET_MAX          = "config_heating_circuit_2_flow_target_temperature_max"
 
 # Sensors
