@@ -155,12 +155,12 @@ enum TransmissionParameter
     config_heating_circuit_1_design_temperature,
     config_heating_circuit_1_room_target_temperature_day,
     config_heating_circuit_1_room_temperature_offset,
-    config_heating_circuit_1_flow_target_temperature_max,
+    config_heating_circuit_1_flow_temperature_max,
     config_heating_circuit_2_operation_mode,
     config_heating_circuit_2_design_temperature,
     config_heating_circuit_2_room_target_temperature_day,
     config_heating_circuit_2_room_temperature_offset,
-    config_heating_circuit_2_flow_target_temperature_max,
+    config_heating_circuit_2_flow_temperature_max,
     config_ww_operation_mode,
     config_ww_temperature,
     error_additional_sensor,
@@ -294,13 +294,13 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {config_heating_circuit_1_design_temperature, CFG00E, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", ""},
     {config_heating_circuit_1_room_target_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},  // (Grad)
     {config_heating_circuit_1_room_temperature_offset, CFG031, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumtemperatur Offset", "°C"}, // (Grad)
-    {config_heating_circuit_1_flow_target_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizkreistemperatur Maximal", ""},
+    {config_heating_circuit_1_flow_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizkreistemperatur Maximal", ""},
     // Konfiguration HK2
     {config_heating_circuit_2_operation_mode, CFG038, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Betriebsart", ""},
     {config_heating_circuit_2_design_temperature, CFG046, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Auslegungstemperatur", ""},
     {config_heating_circuit_2_room_target_temperature_day, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Tag", "°C"},  // (Grad)
     {config_heating_circuit_2_room_temperature_offset, CFG069, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumtemperatur Offset", "°C"}, // (Grad)
-    {config_heating_circuit_2_flow_target_temperature_max, CFG046, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizkreistemperatur Maximal", ""},
+    {config_heating_circuit_2_flow_temperature_max, CFG046, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizkreistemperatur Maximal", ""},
     // Konfiguration WW
     {config_ww_temperature, CFG07E, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_WW_Temperatur", ""},
     {config_ww_operation_mode, CFG085, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_WW_Aufbereitung", ""},
