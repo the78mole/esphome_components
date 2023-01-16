@@ -84,7 +84,7 @@ CONFIG_SCHEMA = (
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
-                cv.Optional(CONF_STEP, default=1): cv.float_,
+                cv.Optional(CONF_STEP, default=0.5): cv.float_,
             }),
             cv.Optional(CONF_HC2_FT_TARGET_MAX): number.NUMBER_SCHEMA.extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
