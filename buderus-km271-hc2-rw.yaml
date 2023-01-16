@@ -16,8 +16,8 @@ number:
       name: "HK2 Raumsolltemperatur Tag"
       unit_of_measurement: "°C"
       device_class: temperature
-    config_heating_circuit_2_room_target_temperature_offset:
-      name: "HK2 Raumsolltemperatur Offset"
+    config_heating_circuit_2_room_temperature_offset:
+      name: "HK2 Raumtemperatur Offset"
       unit_of_measurement: "°C"
       device_class: temperature
     config_heating_circuit_2_flow_target_temperature_max:
