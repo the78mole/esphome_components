@@ -21,6 +21,12 @@ TYPES = [
     CONF_WW_TEMP_TARGET,
     CONF_HC1_DESIGN_TEMP,
     CONF_HC1_ROOMT_TARGET_DAY,
+    CONF_HC1_ROOMT_OFFSET,
+    CONF_HC1_FT_MAX,
+    CONF_HC2_DESIGN_TEMP,
+    CONF_HC2_ROOMT_TARGET_DAY,
+    CONF_HC2_ROOMT_OFFSET,
+    CONF_HC2_FT_MAX,
 ]
 
 km271_ns = cg.esphome_ns.namespace("KM271")
@@ -50,8 +56,42 @@ CONFIG_SCHEMA = (
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            
-
+            cv.Optional(CONF_HC1_ROOMT_OFFSET): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
+                cv.Optional(CONF_STEP, default=0.5): cv.float_,
+            }),
+            cv.Optional(CONF_HC1_FT_MAX): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=20): cv.float_,
+                cv.Optional(CONF_STEP, default=1): cv.positive_float,
+            }),
+            cv.Optional(CONF_HC2_DESIGN_TEMP): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
+                cv.Optional(CONF_STEP, default=1): cv.positive_float,
+            }),
+            cv.Optional(CONF_HC2_ROOMT_TARGET_DAY): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
+                cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
+            }),
+            cv.Optional(CONF_HC2_ROOMT_OFFSET): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
+                cv.Optional(CONF_STEP, default=0.5): cv.float_,
+            }),
+            cv.Optional(CONF_HC2_FT_MAX): number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
+                cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
+                cv.Optional(CONF_MIN_VALUE, default=20): cv.float_,
+                cv.Optional(CONF_STEP, default=1): cv.positive_float,
+            }),
         }
     )
 )

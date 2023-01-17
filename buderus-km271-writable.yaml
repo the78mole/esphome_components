@@ -4,7 +4,7 @@ select:
       name: "Heizkreis 1 Betriebsmodus"
     config_ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
-  
+
 
 number:
   - platform: km271_wifi
@@ -12,5 +12,9 @@ number:
       name: "Warmwassersolltemperatur Tag"
     config_heating_circuit_1_design_temperature:
       name: "Heizkreis 1 Auslegungstemperatur"
-    config_heating_circuit_1_target_room_temperature_day:
-      name: "HK1 Raumsolltemperatur Tag"
+    config_heating_circuit_1_room_target_temperature_day:
+      name: "Heizkreis1 Raumsolltemperatur Tag"
+    config_heating_circuit_1_room_temperature_offset:
+      name: "Heizkreis 1 Raumtemperatur Offset"
+    config_heating_circuit_1_flow_temperature_max:
+      name: "Heizkreis 1 Heizkreistemperatur Maximal"

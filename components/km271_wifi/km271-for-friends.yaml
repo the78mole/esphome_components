@@ -47,8 +47,8 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Fallback Hotspot"
-    password: "Z8zfajgxVvNw"
+    ssid: "KM271 Fallback Hotspot"
+    password: ""
 
 dashboard_import:
   package_import_url: github://the78mole/esphome_components/components/km271_wifi/km271-for-friends.yaml@main
@@ -65,24 +65,25 @@ uart:
 external_components:
   - source: github://the78mole/esphome_components@main
     components: [ km271_wifi ]
+    refresh:    1sec
 #  - source:
 #    type: local
 #      path: my_components/components
 #    components: [ km271_wifi ]
 
- 
-esp32_improv:
-  authorizer: improvble
-  authorized_duration: 120s
-  status_indicator: led3
-  identify_duration: 60s
 
-improv_serial: 
+#esp32_improv:
+#  authorizer: improvble
+#  authorized_duration: 120s
+#  status_indicator: led3
+#  identify_duration: 60s
+
+#improv_serial:
 
 
 status_led:
   id: ledgn1
-  pin: 
+  pin:
     number: GPIO21
     inverted: true
 
@@ -102,7 +103,7 @@ binary_sensor:
         pullup: true
 
 # Above is all the "give-away hardware suggestion stuff"
-# It is the place for cleanup of to reduce flash footprint, like: 
+# It is the place for cleanup of to reduce flash footprint, like:
 # improv, captive portal, dashboard_import,...)
 ##################################################################
 
@@ -265,14 +266,14 @@ output:
   - platform: gpio
     id: led3
     #name: LED3_Yellow
-    pin: 
+    pin:
       number: 23
       mode: OUTPUT
       inverted: true
   - platform: gpio
     id: led4
     #name: LED4_Red
-    pin: 
+    pin:
       number: 25
       mode: OUTPUT
       inverted: true
@@ -309,18 +310,37 @@ number:
     config_heating_circuit_1_design_temperature:
       name: "Auslegungstemperatur"
       mode: slider
-    config_heating_circuit_1_target_room_temperature_day:
-      name: "HK1 Raumsolltemperatur Tag"
+    config_heating_circuit_1_room_target_temperature_day:
+      name: "Heizkreis1 Raumsolltemperatur Tag"
+      mode: slider
+    config_heating_circuit_1_room_temperature_offset:
+      name: "Heizkreis 1 Raumtemperatur Offset"
+      mode: slider
+    config_heating_circuit_1_flow_temperature_max:
+      name: "Heizkreis 1 Heizkreistemperatur Maximal"
       mode: slider
 
+    config_heating_circuit_2_design_temperature:
+      name: "HK2 Auslegungstemperatur"
+      mode: slider
+    config_heating_circuit_2_room_target_temperature_day:
+      name: "HK2 Raumsolltemperatur Tag"
+      mode: slider
+    config_heating_circuit_2_room_temperature_offset:
+      name: "HK2 Raumtemperatur Offset"
+      mode: slider
+    config_heating_circuit_2_flow_temperature_max:
+      name: "HK2 Heizkreistemperatur Maximal"
+      mode: slider
+      
 select:
   - platform: km271_wifi
     config_heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
     config_ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
-  
-
+    config_heating_circuit_2_operation_mode:
+      name: "HK2 Betriebsmodus"
 
 sensor:
   - platform: km271_wifi
@@ -398,11 +418,11 @@ sensor:
     filters:
       - multiply: 28.1826
       - throttle_average: 60s
-      
+
 switch:
   - platform: gpio
     name: LED2_Green
-    pin: 
+    pin:
       number: 22
       mode: OUTPUT
       inverted: true
