@@ -426,3 +426,8 @@ switch:
       number: 22
       mode: OUTPUT
       inverted: true
+
+text_sensor:
+  - platform: km271_wifi
+    firmware_version:
+      name: "Firmwareversion Steuerung"

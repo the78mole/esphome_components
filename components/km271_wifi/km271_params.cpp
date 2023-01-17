@@ -104,6 +104,10 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
         ESP_LOGD(TAG, "Parameter: 0x%04x type param %d Len %d, data: %d %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0], data[1]);
         uint32_t value = parseUnsignedInteger(data, len);
         handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
+    } else if (paramDesc->sensorType == FIRMWARE_VERSION) {
+        ESP_LOGD(TAG, "Parameter: 0x%04x type param %d Len %d, data: %d", paramDesc->parameterId, paramDesc->sensorTypeParam, len, data[0]);
+        uint32_t value = parseUnsignedInteger(data, len);
+        handleReceivedUnsignedValue(paramDesc->sensorTypeParam, value);
     } else {
         ESP_LOGW(TAG, "Sensor type %d NYI", paramDesc->sensorType);
     }

@@ -9,7 +9,8 @@ namespace KM271 {
 static const char * TAG = "km271";
 
 
-CommunicationComponent::CommunicationComponent():
+CommunicationComponent::CommunicationComponent(bool writable):
+    writable(writable),
     writer(nullptr)
 {
 
@@ -37,6 +38,16 @@ void CommunicationComponent::handleReceivedFloatValue(uint16_t sensorTypeParam, 
     ESP_LOGW(TAG, "handleReceivedFloatValue NI for for transmission parameter %d", transmissionParameter);
 }
 
+bool CommunicationComponent::isWritable() const
+{
+    return writable;
+}
+
+
+BuderusParamSwitch::BuderusParamSwitch(): CommunicationComponent(true)
+{
+
+}
 
 void BuderusParamSwitch::handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value)
 {
@@ -49,6 +60,7 @@ void BuderusParamSwitch::write_state(bool state)
 }
 
 BuderusParamNumber::BuderusParamNumber():
+    CommunicationComponent(true),
     hasPendingWriteRequest(false)
 {
 }
@@ -169,6 +181,7 @@ void BuderusParamNumber::handleReceivedFloatValue(uint16_t sensorTypeParam, floa
 
 
 MultiParameterUnsignedIntegerAssembler::MultiParameterUnsignedIntegerAssembler(esphome::sensor::Sensor *targetSensor):
+    CommunicationComponent(false),
     sensor(targetSensor),
     component_known{false, false, false}
 {
@@ -196,6 +209,11 @@ void MultiParameterUnsignedIntegerAssembler::handleReceivedUnsignedValue(uint16_
        ESP_LOGD(TAG, "Assembling %d %d %d to %d", components[0], components[1], components[2], result);
        sensor->publish_state(result);
     }
+}
+
+BuderusParamSelect::BuderusParamSelect(): CommunicationComponent(true)
+{
+
 }
 
 void BuderusParamSelect::setSelectMappings(std::vector<uint8_t> mappings)
@@ -266,6 +284,36 @@ void BuderusParamSelect::control(const std::string &value) {
     }
 }
 
+FirmwareVersionSensor::FirmwareVersionSensor(): CommunicationComponent(false), major_known(false), minor_known(false)
+{
+
 }
 
+
+void FirmwareVersionSensor::handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value)
+{
+    ESP_LOGD(TAG, "Received value for st param %d: %d", sensorTypeParam, value);
+
+    int valueIndex = sensorTypeParam & 0x0f;
+
+    if (valueIndex == 0) {
+        major = value;
+        major_known = true;
+    } else if (valueIndex == 1) {
+        minor = value;
+        minor_known = true;
+    } else {
+        ESP_LOGE(TAG, "Invalid sensor type param: %d", sensorTypeParam);
+        return;
+    }
+
+    if(major_known && minor_known) {
+        char result[20];
+        snprintf(result, sizeof(result), "%d.%d", major, minor);
+        publish_state(result);
+    }
+}
+
+
+}
 }
