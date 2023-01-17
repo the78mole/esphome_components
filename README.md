@@ -3,7 +3,7 @@ ESPhome Components from the little digger and Jens
 
 We collected some (currently one) of our ESPhome components here to share with other diggers:
 
-- KM271-WiFi is also described in detail in one of my [blog posts](https://the78mole.de/reverse-engineering-the-buderus-km217/) and it received a [how-to page](https://the78mole.de/projects/km271-wifi-howto/) to take it into action e.g. with the default ESPhome firmeare.
+- KM271-WiFi is also described in detail in one of my [blog posts](https://the78mole.de/reverse-engineering-the-buderus-km217/) and it received a [how-to page](https://the78mole.de/projects/km271-wifi-howto/) to take it into action e.g. with the default ESPhome firmware.
 
 You will find some precompiled bin-files to upload to your hardware in the [gh-pages-branch](https://github.com/the78mole/esphome_components/tree/gh-pages).
 
@@ -14,7 +14,7 @@ This component uses the hardware designed by the78mole to read interesting value
 
 ![image](components/km271_wifi/IMG/Buderus-KM217-Clone_0.0.5.jpg)
 
-Here is just small prtion of what information you can get from the logamatic:
+Here is just a short overview of the information you can get from the logamatic:
 
  ![image](images/home-assistant-values.png)
  ![image](images/home-assistant-values-2.png)
@@ -23,7 +23,7 @@ Here is just small prtion of what information you can get from the logamatic:
 
  
 ### Usage
-See https://esphome.io/components/external_components.html for information about integrating this into your esphome environemnt
+See https://esphome.io/components/external_components.html for information about integrating this into your esphome environemnt.
 
 To configure the component, see the included file buderus-km271.yaml.
 If you are not interested in some of the provided values, just remove the respective entry in the the section "sensor" or "binary_sensor", but leave the empty sections in place to avoid comiler errors with missing headers.
