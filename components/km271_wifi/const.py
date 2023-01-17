@@ -127,3 +127,6 @@ ALARM_EXHAUST_GAS_SENSOR = "alarm_exhaust_gas_sensor"
 ALARM_BOILER_FLOW_SENSOR = "alarm_boiler_flow_sensor"
 ALARM_BURNER             = "alarm_burner"
 ALARM_HC2_FLOW_SENSOR    = "alarm_heating_circuit_2_flow_sensor"
+
+# Text Sensors
+FIRMWARE_VERSION = "firmware_version"

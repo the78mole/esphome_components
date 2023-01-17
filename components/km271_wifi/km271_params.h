@@ -119,9 +119,8 @@ enum SensorType {
     BYTE_AT_OFFSET, // a single byte, with offset in bytes specified in sensor param
     BYTE_DIVIDED_BY_2_AT_OFFSET, // a single byte that needs to be divided by two after reading, with offset in bytes specified in sensor param
     BIT_AT_OFFSET, // a single bit, with offset in bits specified in sensor param
-    // an 24 bit unsigned integer that spans multiple parameters identified.
-    // sensor type param msb identifies the group the value belongs to and sensor type param lsb determines the weight of the value: 0-2
-    MULTI_PARAMETER_UNSIGNED_INTEGER
+    MULTI_PARAMETER_UNSIGNED_INTEGER,  // a 24 bit unsigned integer that spans multiple parameters. sensor type determines the weight of the value: 0-2
+    FIRMWARE_VERSION // two bytes that spans two parameters. sensor type param 0 => major version, sensors type param 1 => minor version
 };
 
 
@@ -172,6 +171,7 @@ enum TransmissionParameter
     error_external_disturbance,
     error_safety_chain_released,
     exhaust_gas_temperature,
+    firmware_version,
     heating_circuit_1_antifreeze,
     heating_circuit_1_automatic,
     heating_circuit_1_curve_0,
@@ -423,16 +423,16 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {exhaust_gas_temperature, ABTMP, false, SensorType::UNSIGNED_INT, 0, "Abgastemperatur", "°C"},  // (Grad)
     {no_transmission, MODBSTELL, false, SensorType::UNSIGNED_INT, 0, "modulare Brenner Stellwert", ""},
     {no_transmission, NB11, false, SensorType::NONE, 0, "nicht belegt", ""},
-    {no_transmission, BLZ1S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0102, "Brennerlaufzeit 1 Minuten 2", "m"},
-    {no_transmission, BLZ1S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0101, "Brennerlaufzeit 1 Minuten 1", "m"},
-    {boiler_runtime_1, BLZ1S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0100, "Brennerlaufzeit 1 Minuten 0", "m"},
-    {no_transmission, BLZ2S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0202, "Brennerlaufzeit 2 Minuten 2", "m"},
-    {no_transmission, BLZ2S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0201, "Brennerlaufzeit 2 Minuten 1", "m"},
-    {boiler_runtime_2, BLZ2S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0x0200, "Brennerlaufzeit 2 Minuten 0", "m"},
+    {boiler_runtime_1, BLZ1S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 2, "Brennerlaufzeit 1 Minuten 2", "m"},
+    {boiler_runtime_1, BLZ1S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 1, "Brennerlaufzeit 1 Minuten 1", "m"},
+    {boiler_runtime_1, BLZ1S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0, "Brennerlaufzeit 1 Minuten 0", "m"},
+    {boiler_runtime_2, BLZ2S2, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 2, "Brennerlaufzeit 2 Minuten 2", "m"},
+    {boiler_runtime_2, BLZ2S1, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 1, "Brennerlaufzeit 2 Minuten 1", "m"},
+    {boiler_runtime_2, BLZ2S0, false, SensorType::MULTI_PARAMETER_UNSIGNED_INTEGER, 0, "Brennerlaufzeit 2 Minuten 0", "m"},
     {outdoor_temperature, AT, false, SensorType::SIGNED_INT, 0, "Aussentemperatur", "°C"},             // (Grad)
     {attenuated_outdoor_temperature, ATD, false, SensorType::SIGNED_INT, 0, "Gedaempfte Aussentemperatur", "°C"}, // (Grad)
-    {no_transmission, VVK, false, SensorType::UNSIGNED_INT, 0, "Versionsnummer VK", ""},
-    {no_transmission, VNK, false, SensorType::UNSIGNED_INT, 0, "Versionsnummer NK", ""},
+    {firmware_version, VVK, false, SensorType::FIRMWARE_VERSION, 0, "Versionsnummer VK", ""},
+    {firmware_version, VNK, false, SensorType::FIRMWARE_VERSION, 1, "Versionsnummer NK", ""},
     {no_transmission, MODKENN, false, SensorType::UNSIGNED_INT, 0, "Modulkennung", ""},
     {no_transmission, NB12, false, SensorType::NONE, 0, "nicht belegt", ""},
     // Alarmstatus

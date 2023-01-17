@@ -33,7 +33,7 @@ class KM271Component : public Component, public uart::UARTDevice {
 
 
  protected:
-  const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(TransmissionParameter transmissionParameter, bool writableRequired);
+  const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(TransmissionParameter transmissionParameter);
 
   void process_incoming_byte(uint8_t c);
   void parse_buderus(uint8_t * buf, size_t len);

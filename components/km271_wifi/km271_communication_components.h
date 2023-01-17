@@ -5,7 +5,7 @@
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/number/number.h"
 #include "esphome/components/select/select.h"
-
+#include "esphome/components/text_sensor/text_sensor.h"
 
 namespace esphome {
 namespace KM271 {
@@ -15,7 +15,7 @@ class Writer3964R;
 class CommunicationComponent
 {
 public:
-    CommunicationComponent();
+    CommunicationComponent(bool writable);
     void setupWriting(Writer3964R * writer, TransmissionParameter transmissionParameter);
 
     virtual void handleReceivedSignedValue(uint16_t sensorTypeParam, int32_t value);
@@ -23,13 +23,17 @@ public:
     virtual void handleReceivedFloatValue(uint16_t sensorTypeParam, float value);
     virtual void loop() {}
 
+    bool isWritable() const;
+
 protected:
+    bool writable;
     Writer3964R * writer;
     TransmissionParameter transmissionParameter;
 };
 
 class BuderusParamSwitch: public esphome::switch_::Switch, public CommunicationComponent {
 public:
+    BuderusParamSwitch();
     void handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value) override;
 
 protected:
@@ -59,6 +63,7 @@ private:
 
 class BuderusParamSelect: public esphome::select::Select, public CommunicationComponent {
 public:
+    BuderusParamSelect();
     void setSelectMappings(std::vector<uint8_t> mappings);
     void handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value) override;
 
@@ -70,6 +75,19 @@ private:
 
 private:
     std::vector<uint8_t> mappings; // this stores the number to read/write for each select option
+};
+
+
+class FirmwareVersionSensor: public esphome::text_sensor::TextSensor, public CommunicationComponent {
+public:
+    FirmwareVersionSensor();
+    void handleReceivedUnsignedValue(uint16_t sensorTypeParam, uint32_t value) override;
+
+private:
+    uint8_t major;
+    bool major_known;
+    uint8_t minor;
+    bool minor_known;
 };
 
 

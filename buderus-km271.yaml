@@ -233,3 +233,8 @@ sensor:
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
     update_interval: 60s
+
+text_sensor:
+  - platform: km271_wifi
+    firmware_version:
+      name: "Firmwareversion Steuerung"
