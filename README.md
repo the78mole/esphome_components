@@ -3,7 +3,7 @@ ESPhome Components from the little digger and Jens
 
 We collected some (currently one) of our ESPhome components here to share with other diggers:
 
-- KM271-WiFi is also described in detail in one of my [blog posts](https://the78mole.de/reverse-engineering-the-buderus-km217/) and it received a [how-to page](https://the78mole.de/projects/km271-wifi-howto/) to take it into action e.g. with the default ESPhome firmeare.
+- KM271-WiFi is also described in detail in one of my [blog posts](https://the78mole.de/reverse-engineering-the-buderus-km217/) and it received a [how-to page](https://the78mole.de/projects/km271-wifi-howto/) to take it into action e.g. with the default ESPhome firmware.
 
 You will find some precompiled bin-files to upload to your hardware in the [gh-pages-branch](https://github.com/the78mole/esphome_components/tree/gh-pages).
 
