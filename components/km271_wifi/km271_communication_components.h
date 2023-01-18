@@ -53,7 +53,7 @@ protected:
     void control(float value);
 
 private:
-    void sendAndConfirm(const uint8_t * message, uint8_t messageLength);
+    void sendAndConfirm(const uint8_t * message, uint8_t messageLength, float valueToConfirm);
 private:
 
     uint32_t lastWriteRequest;
