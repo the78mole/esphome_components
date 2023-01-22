@@ -11,8 +11,6 @@ namespace KM271 {
 static const char * TAG = "km271";
 static const uint8_t SENSOR_LOOP_CALL_EVERY = 5;
 
-#define lenof(X)   (sizeof(X) / sizeof(X[0]))
-
 KM271Component::KM271Component()
 {
 }

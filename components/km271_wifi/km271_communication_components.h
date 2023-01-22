@@ -54,6 +54,7 @@ protected:
 
 private:
     void sendAndConfirm(const uint8_t * message, uint8_t messageLength, float valueToConfirm);
+    void buildTelegramSendAndConfirm(uint8_t telegramDataType, uint8_t telegramOffset, uint8_t telegramValuePosition, uint8_t telegramValue, float valueToConfirm);
 private:
 
     uint32_t lastWriteRequest;
@@ -72,6 +73,7 @@ protected:
 
 private:
     void sendAndConfirm(const uint8_t *message, uint8_t messageLength, const std::string &value);
+    void buildTelegramSendAndConfirm(uint8_t telegramDataType, uint8_t telegramOffset, uint8_t telegramValuePosition, uint8_t selectIndex, const std::string &value);
 
 private:
     std::vector<uint8_t> mappings; // this stores the number to read/write for each select option

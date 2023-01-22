@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define lenof(X)   (sizeof(X) / sizeof(X[0]))
+
 namespace esphome {
 namespace KM271 {
 

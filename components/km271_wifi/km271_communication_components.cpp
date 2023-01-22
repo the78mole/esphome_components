@@ -1,5 +1,6 @@
 #include "km271_communication_components.h"
 #include "3964r.h"
+#include "km271_helpers.h"
 #include "esphome/core/hal.h"
 
 
@@ -99,6 +100,53 @@ void BuderusParamNumber::sendAndConfirm(const uint8_t * message, uint8_t message
     }
 }
 
+void BuderusParamNumber::buildTelegramSendAndConfirm(uint8_t telegramDataType, uint8_t telegramOffset, uint8_t telegramValuePosition, uint8_t telegramValue, float valueToConfirm)
+{
+    uint8_t message[] = { telegramDataType, telegramOffset, keep, keep, keep, keep, keep, keep};
+    message[telegramValuePosition+2] = telegramValue;
+    sendAndConfirm(message, sizeof(message), valueToConfirm);
+}
+
+enum TelegramBuilderRule
+{
+    UseSpecialBuilder, // use hard-coded behavior
+    UseSelectValue, // use the select builder
+    UseFloatValue,  // use the write value directly as byte
+    UseFloatValueTimesTwo, // use the write value times two as byte
+};
+
+struct TelegramBuilderConfiguration
+{
+    TransmissionParameter transmissionParameter;
+    TelegramBuilderRule builderRule;
+    float minValue;
+    float maxValue;
+    uint8_t maxSelectIndex;
+    uint8_t telegramDataType;
+    uint8_t telegramOffset;
+    uint8_t telegramValuePosition;
+};
+
+static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] = {
+    {config_ww_temperature,                                UseFloatValue,         30, 60, 0, data_type_warm_water,        0x07, 3},
+    {config_heating_circuit_1_design_temperature,          UseFloatValue,         30, 90, 0, data_type_heating_circuit_1, 0x0e, 4},
+    {config_heating_circuit_1_room_target_temperature_day, UseFloatValueTimesTwo, 10, 30, 0, data_type_heating_circuit_1, 0x00, 3},
+    {config_heating_circuit_1_operation_mode,              UseSelectValue,         0,  0, 3, data_type_heating_circuit_1, 0x00, 4}
+};
+
+
+const struct TelegramBuilderConfiguration * findTelegramBuilderConfiguration(TransmissionParameter transmissionParameter)
+{
+    for(int i = 0; i < lenof(telegramBuilderConfiguration); i++) {
+        const TelegramBuilderConfiguration * conf = &telegramBuilderConfiguration[i];
+        if(conf->transmissionParameter == transmissionParameter ) {
+            return conf;
+        }
+    }
+    return nullptr;
+}
+
+
 void BuderusParamNumber::loop()
 {
     uint32_t writeConsolidationPeriod = 1000;
@@ -106,18 +154,19 @@ void BuderusParamNumber::loop()
     if (this->hasPendingWriteRequest) {
         uint32_t now = millis();
         if (now - lastWriteRequest > writeConsolidationPeriod) {
-            if (transmissionParameter == config_ww_temperature) {
-                const float limitedValue = limitValueToRange(this->pendingWriteValue, 30, 60);
-                const uint8_t message[] = { data_type_warm_water, 0x07, keep, keep, keep, (uint8_t)limitedValue, keep, keep};
-                sendAndConfirm(message, sizeof(message), limitedValue);
-            } else if(transmissionParameter == config_heating_circuit_1_design_temperature) {
-                const float limitedValue = limitValueToRange(this->pendingWriteValue, 30, 90);
-                const uint8_t message[] = { data_type_heating_circuit_1, 0x0e, keep, keep, keep, keep, (uint8_t)limitedValue, keep};
-                sendAndConfirm(message, sizeof(message), limitedValue);
-            } else if(transmissionParameter == config_heating_circuit_1_room_target_temperature_day) {
-                const float limitedValue = limitValueToRange(this->pendingWriteValue, 10, 30);
-                const uint8_t message[] = { data_type_heating_circuit_1, 0x00, keep, keep, keep, (uint8_t)(limitedValue * 2 + 0.5), keep, keep};
-                sendAndConfirm(message, sizeof(message), limitedValue);
+            /** @todo use a map */
+            /** @todo perform lookup only once on startup */
+            /** @todo convert remaineder */
+            const struct TelegramBuilderConfiguration * bc = findTelegramBuilderConfiguration(transmissionParameter);
+            if(bc && bc->builderRule == UseFloatValue) {
+                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
+                buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
+                                            limitedValue, limitedValue);
+            }  else if(bc && bc->builderRule == UseFloatValueTimesTwo) {
+                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
+                buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
+                                            (limitedValue * 2 + 0.5), limitedValue);
+
             } else if(transmissionParameter == config_heating_circuit_1_room_temperature_offset) {
                 const float limitedValue = limitValueToRange(this->pendingWriteValue, -5, 5);
                 const uint8_t message[] = { data_type_heating_circuit_1, 0x31, keep, keep, keep, (uint8_t)(limitedValue * 2 + 0.5), keep, keep};
@@ -215,8 +264,8 @@ void BuderusParamSelect::handleReceivedUnsignedValue(uint16_t sensorTypeParam, u
         ESP_LOGE(TAG, "Invalid value %u received for select of transmission parameter %d", value, transmissionParameter);
         return;
     }
-    size_t mapping_idx = std::distance(mappings.cbegin(), it);
-    auto selectValue = this->at(mapping_idx);
+    const size_t mapping_idx = std::distance(mappings.cbegin(), it);
+    const auto selectValue = this->at(mapping_idx);
     this->publish_state(selectValue.value());
 }
 
@@ -227,20 +276,29 @@ void BuderusParamSelect::sendAndConfirm(const uint8_t * message, uint8_t message
     }
 }
 
+void BuderusParamSelect::buildTelegramSendAndConfirm(uint8_t telegramDataType, uint8_t telegramOffset, uint8_t telegramValuePosition,
+                                                     uint8_t selectIndex, const std::string &value)
+{
+    uint8_t message[] = { telegramDataType, telegramOffset, keep, keep, keep, keep, keep, keep};
+    message[telegramValuePosition+2] = selectIndex;
+    sendAndConfirm(message, sizeof(message), value);
+}
+
+
 
 void BuderusParamSelect::control(const std::string &value) {
-    auto idx = this->index_of(value);
+    const auto idx = this->index_of(value);
 
     if (idx.has_value()) {
         uint8_t numericValue= this->mappings.at(idx.value());
-        if (transmissionParameter == config_heating_circuit_1_operation_mode) {
-            if (numericValue > 2) {
+
+        const struct TelegramBuilderConfiguration * bc = findTelegramBuilderConfiguration(transmissionParameter);
+        if(bc && bc->builderRule == UseSelectValue) {
+            if (numericValue > bc->maxSelectIndex) {
                 ESP_LOGE(TAG, "Invalid select value for transmission parameter %d received: %d", transmissionParameter, numericValue);
                 return;
             }
-
-            const uint8_t message[] = { data_type_heating_circuit_1, 0x00, keep, keep, keep, keep, numericValue, keep};
-            sendAndConfirm(message, sizeof(message), value);
+            buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition, numericValue, value);
         } else if (transmissionParameter == config_heating_circuit_2_operation_mode) {
             if (numericValue > 2) {
                 ESP_LOGE(TAG, "Invalid select value for transmission parameter %d received: %d", transmissionParameter, numericValue);
@@ -275,7 +333,7 @@ void FirmwareVersionSensor::handleReceivedUnsignedValue(uint16_t sensorTypeParam
 {
     ESP_LOGD(TAG, "Received value for st param %d: %d", sensorTypeParam, value);
 
-    int valueIndex = sensorTypeParam & 0x0f;
+    const int valueIndex = sensorTypeParam & 0x0f;
 
     if (valueIndex == 0) {
         major = value;
