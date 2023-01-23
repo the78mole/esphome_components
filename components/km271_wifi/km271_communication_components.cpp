@@ -131,7 +131,7 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
     {config_ww_temperature,                                UseFloatValue,         30, 60, 0, data_type_warm_water,        0x07, 3},
     {config_heating_circuit_1_design_temperature,          UseFloatValue,         30, 90, 0, data_type_heating_circuit_1, 0x0e, 4},
     {config_heating_circuit_1_room_target_temperature_day, UseFloatValueTimesTwo, 10, 30, 0, data_type_heating_circuit_1, 0x00, 3},
-    {config_heating_circuit_1_operation_mode,              UseSelectValue,         0,  0, 3, data_type_heating_circuit_1, 0x00, 4}
+    {config_heating_circuit_1_operation_mode,              UseSelectValue,         0,  0, 2, data_type_heating_circuit_1, 0x00, 4}
 };
 
 
