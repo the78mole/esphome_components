@@ -163,11 +163,11 @@ void BuderusParamNumber::loop()
             /** @todo convert remaineder */
             const struct TelegramBuilderConfiguration * bc = findTelegramBuilderConfiguration(transmissionParameter);
             if(bc && bc->builderRule == UseFloatValue) {
-                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
+                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->minValue, bc->maxValue);
                 buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
                                             convertFloatToByte(limitedValue), limitedValue);
             }  else if(bc && bc->builderRule == UseFloatValueTimesTwo) {
-                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
+                const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->minValue, bc->maxValue);
                 buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
                                             convertFloatToByte(limitedValue * 2), limitedValue);
 
