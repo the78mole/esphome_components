@@ -14,6 +14,10 @@ const uint8_t data_type_warm_water = 0x0c;
 const uint8_t data_type_heating_circuit_1 = 0x07;
 const uint8_t data_type_heating_circuit_2 = 0x08;
 
+uint8_t convertFloatToByte(float value)
+{
+    return (uint8_t)(value + 0.5);
+}
 
 CommunicationComponent::CommunicationComponent(bool writable):
     writable(writable),
@@ -161,11 +165,11 @@ void BuderusParamNumber::loop()
             if(bc && bc->builderRule == UseFloatValue) {
                 const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
                 buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
-                                            limitedValue, limitedValue);
+                                            convertFloatToByte(limitedValue), limitedValue);
             }  else if(bc && bc->builderRule == UseFloatValueTimesTwo) {
                 const float limitedValue = limitValueToRange(this->pendingWriteValue, bc->maxValue, bc->maxValue);
                 buildTelegramSendAndConfirm(bc->telegramDataType, bc->telegramOffset, bc->telegramValuePosition,
-                                            (limitedValue * 2 + 0.5), limitedValue);
+                                            convertFloatToByte(limitedValue * 2), limitedValue);
 
             } else if(transmissionParameter == config_heating_circuit_1_room_temperature_offset) {
                 const float limitedValue = limitValueToRange(this->pendingWriteValue, -5, 5);
