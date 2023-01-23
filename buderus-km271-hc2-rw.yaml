@@ -5,25 +5,45 @@ select:
   - platform: km271_wifi
     config_heating_circuit_2_operation_mode:
       name: "HK2 Betriebsmodus"
+    config_heating_circuit_2_lowering_type:
+      name: "HK2 Absenkungsart"
+    config_heating_circuit_2_heating_system_type:
+      name: "HK2 Heizsystem"
+    config_heating_circuit_2_heating_program:
+      name: "HK2 Heizprogramm"
 
 number:
   - platform: km271_wifi
-    config_heating_circuit_2_design_temperature:
-      name: "HK2 Auslegungstemperatur"
+    config_heating_circuit_2_room_target_temperature_night:
+      name: "HK2 Raumsolltemperatur Nacht"
       unit_of_measurement: "°C"
       device_class: temperature
     config_heating_circuit_2_room_target_temperature_day:
       name: "HK2 Raumsolltemperatur Tag"
       unit_of_measurement: "°C"
       device_class: temperature
-    config_heating_circuit_2_room_temperature_offset:
-      name: "HK2 Raumtemperatur Offset"
+    config_heating_circuit_2_holiday_target_temperature:
+      name: "Urlaubstemperatur"
       unit_of_measurement: "°C"
       device_class: temperature
     config_heating_circuit_2_flow_temperature_max:
       name: "HK2 Heizkreistemperatur Maximal"
       unit_of_measurement: "°C"
       device_class: temperature
+    config_heating_circuit_2_design_temperature:
+      unit_of_measurement: "°C"
+      device_class: temperature
+      name: "HK2 Auslegungstemperatur"
+    config_heating_circuit_2_outdoor_switch_temperature:
+      unit_of_measurement: "°C"
+      device_class: temperature
+      name: "HK2 Aussenhalt Umschalttemperatur"
+    config_heating_circuit_2_room_temperature_offset:
+      name: "HK2 Raumtemperatur Offset"
+      unit_of_measurement: "°C"
+      device_class: temperature
+    config_heating_circuit_2_holiday_days:
+      name: "HK2 Urlaubstage"
 
 binary_sensor:
   - platform: km271_wifi

@@ -307,40 +307,86 @@ number:
     config_ww_temperature:
       name: "Warmwassersolltemperatur Tag"
       mode: slider
-    config_heating_circuit_1_design_temperature:
-      name: "Auslegungstemperatur"
+    config_frost_switch_temperature:
+      name: "Frost Umschalttemperatur"
+      mode: slider
+
+    config_heating_circuit_1_room_target_temperature_night:
+      name: "Heizkreis 1 Raumsolltemperatur Nacht"
       mode: slider
     config_heating_circuit_1_room_target_temperature_day:
-      name: "Heizkreis1 Raumsolltemperatur Tag"
+      name: "Heizkreis 1 Raumsolltemperatur Tag"
       mode: slider
-    config_heating_circuit_1_room_temperature_offset:
-      name: "Heizkreis 1 Raumtemperatur Offset"
+    config_heating_circuit_1_holiday_target_temperature:
+      name: "Urlaubstemperatur"
       mode: slider
     config_heating_circuit_1_flow_temperature_max:
       name: "Heizkreis 1 Heizkreistemperatur Maximal"
       mode: slider
+    config_heating_circuit_1_design_temperature:
+      name: "Heizkreis 1 Auslegungstemperatur"
+      mode: slider
+    config_heating_circuit_1_outdoor_switch_temperature:
+      name: "Heizkreis 1 Aussenhalt Umschalttemperatur"
+      mode: slider
+    config_heating_circuit_1_room_temperature_offset:
+      name: "Heizkreis 1 Raumtemperatur Offset"
+      mode: slider
+    config_heating_circuit_1_holiday_days:
+      name: "Heizkreis 1 Urlaubstage"
+      mode: slider
 
-    config_heating_circuit_2_design_temperature:
-      name: "HK2 Auslegungstemperatur"
+    config_heating_circuit_2_room_target_temperature_night:
+      name: "HK2 Raumsolltemperatur Nacht"
       mode: slider
     config_heating_circuit_2_room_target_temperature_day:
       name: "HK2 Raumsolltemperatur Tag"
       mode: slider
-    config_heating_circuit_2_room_temperature_offset:
-      name: "HK2 Raumtemperatur Offset"
+    config_heating_circuit_2_holiday_target_temperature:
+      name: "Urlaubstemperatur"
       mode: slider
     config_heating_circuit_2_flow_temperature_max:
       name: "HK2 Heizkreistemperatur Maximal"
       mode: slider
-      
+    config_heating_circuit_2_design_temperature:
+      unit_of_measurement: "°C"
+      mode: slider
+    config_heating_circuit_2_outdoor_switch_temperature:
+      mode: slider
+      name: "HK2 Aussenhalt Umschalttemperatur"
+    config_heating_circuit_2_room_temperature_offset:
+      name: "HK2 Raumtemperatur Offset"
+      mode: slider
+    config_heating_circuit_2_holiday_days:
+      name: "HK2 Urlaubstage"
+      mode: slider
+
 select:
   - platform: km271_wifi
-    config_heating_circuit_1_operation_mode:
-      name: "Heizkreis 1 Betriebsmodus"
     config_ww_operation_mode:
       name: "Warmwasser Betriebsmodus"
+    config_ww_circular_pump_interval:
+      name: "Warmwasser Zirkulationspumpenintervall"
+    config_summer_winter_switch_temperature:
+      name: "Sommer Winter Umschalttemperatur"
+
+    config_heating_circuit_1_operation_mode:
+      name: "Heizkreis 1 Betriebsmodus"
+    config_heating_circuit_1_lowering_type:
+      name: "Heizkreis 1 Absenkungsart"
+    config_heating_circuit_1_heating_system_type:
+      name: "Heizkreis 1 Heizsystem"
+    config_heating_circuit_1_heating_program:
+      name: "Heizkreis 1 Heizprogramm"
+
     config_heating_circuit_2_operation_mode:
       name: "HK2 Betriebsmodus"
+    config_heating_circuit_2_lowering_type:
+      name: "HK2 Absenkungsart"
+    config_heating_circuit_2_heating_system_type:
+      name: "HK2 Heizsystem"
+    config_heating_circuit_2_heating_program:
+      name: "HK2 Heizprogramm"
 
 sensor:
   - platform: km271_wifi
