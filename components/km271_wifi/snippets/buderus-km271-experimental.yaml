@@ -1,0 +1,139 @@
+## universal km271 writer v1.0.0
+# write to any known goal and defined register
+
+# use it with caution and on your own risk!
+# with great power - comes great responsibility
+
+select:
+  - platform: template
+    name: "Telegram goal"
+    id: telegram_goal
+    optimistic: true
+    options:
+      - "0x01"
+      - "0x07"
+      - "0x08"
+      - "0x0c"
+      - "0x10"
+      - "0x11"
+      - "0x12"
+    initial_option: "0x01"
+    on_value:
+      then:
+        - logger.log:
+            format: "Chosen option: %s (index %d)"
+            args: ["x.c_str()", "i"]
+
+  - platform: template
+    name: "Telegram register"
+    id: telegram_register
+    optimistic: true
+    options:
+      - "0x01"
+      - "0x0e"
+      - "0x15"
+      - "0x1c"
+      - "0x31"
+      - "0x3f"
+      # extend to even more register if you need them
+      #      - "0x07"
+      #      - "0x23"
+      #      - "0x2a"
+      #      - "0x38"
+      #      - "0x46"
+      #      - "0x4d"
+      #      - "0x54"
+      #      - "0x5b"
+      #      - "0x62"
+      #      - "0x69"
+      #      - "0x70"
+      #      - "0x77"
+      #      - "0x7e"
+      #      - "0x85"
+      #      - "0x8c"
+      #      - "0x93"
+      #      - "0x9a"
+      #      - "0xa1"
+      #      - "0xa8"
+      #      - "0xaf"
+      #      - "0xb6"
+    initial_option: "0x01"
+    on_value:
+      then:
+        - logger.log:
+            format: "Chosen option: %s (index %d)"
+            args: ["x.c_str()", "i"]
+
+number:
+  - platform: template
+    name: "Telegram value 0"
+    id: telegram_value_byte0
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+  - platform: template
+    name: "Telegram value 1"
+    id: telegram_value_byte1
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+  - platform: template
+    name: "Telegram value 2"
+    id: telegram_value_byte2
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+  - platform: template
+    name: "Telegram value 3"
+    id: telegram_value_byte3
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+  - platform: template
+    name: "Telegram value 4"
+    id: telegram_value_byte4
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+  - platform: template
+    name: "Telegram value 5"
+    id: telegram_value_byte5
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    initial_value: 101
+    step: 1
+    mode: slider #box
+
+button:
+  - platform: template
+    name: "Telegramm Send"
+    on_press:
+      - lambda:
+          uint8_t telegram_goal_int     = strtoul( id(telegram_goal).state.c_str(), NULL, 0);
+          uint8_t telegram_register_int = strtoul( id(telegram_register).state.c_str(), NULL, 0);
+          uint8_t telegram_byte0_int    = id(telegram_value_byte0).state;
+          uint8_t telegram_byte1_int    = id(telegram_value_byte1).state;
+          uint8_t telegram_byte2_int    = id(telegram_value_byte2).state;
+          uint8_t telegram_byte3_int    = id(telegram_value_byte3).state;
+          uint8_t telegram_byte4_int    = id(telegram_value_byte4).state;
+          uint8_t telegram_byte5_int    = id(telegram_value_byte5).state;
+
+          uint8_t command[] = {telegram_goal_int, telegram_register_int, telegram_byte0_int, telegram_byte1_int, telegram_byte2_int, telegram_byte3_int, telegram_byte4_int, telegram_byte5_int};
+          budoil->writer.enqueueTelegram(command, 8);
+#          ESP_LOGD("main", "telegram values to send -> 0x%02x %02x %02x %02x %02x %02x %02x %02x", telegram_goal_int, telegram_register_int, telegram_byte0_int, telegram_byte1_int, telegram_byte2_int, telegram_byte3_int, telegram_byte4_int, telegram_byte5_int);

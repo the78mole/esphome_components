@@ -31,13 +31,14 @@ number:
       unit_of_measurement: "°C"
       device_class: temperature
     config_heating_circuit_2_design_temperature:
-      unit_of_measurement: "°C"
-      device_class: temperature
       name: "HK2 Auslegungstemperatur"
-    config_heating_circuit_2_outdoor_switch_temperature:
       unit_of_measurement: "°C"
       device_class: temperature
-      name: "HK2 Aussenhalt Umschalttemperatur"
+#     handled by config_frost_switch_temperature
+#    config_heating_circuit_2_outdoor_switch_temperature:
+#      unit_of_measurement: "°C"
+#      device_class: temperature
+#      name: "HK2 Aussenhalt Umschalttemperatur"
     config_heating_circuit_2_room_temperature_offset:
       name: "HK2 Raumtemperatur Offset"
       unit_of_measurement: "°C"

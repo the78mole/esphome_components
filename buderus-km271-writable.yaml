@@ -33,8 +33,9 @@ number:
       name: "Heizkreis 1 Heizkreistemperatur Maximal"
     config_heating_circuit_1_design_temperature:
       name: "Heizkreis 1 Auslegungstemperatur"
-    config_heating_circuit_1_outdoor_switch_temperature:
-      name: "Heizkreis 1 Aussenhalt Umschalttemperatur"
+#     handled by config_frost_switch_temperature
+#    config_heating_circuit_1_outdoor_switch_temperature:
+#      name: "Heizkreis 1 Aussenhalt Umschalttemperatur"
     config_heating_circuit_1_room_temperature_offset:
       name: "Heizkreis 1 Raumtemperatur Offset"
     config_heating_circuit_1_holiday_days:

@@ -141,7 +141,7 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
     {config_heating_circuit_1_holiday_target_temperature,       UseFloatValueTimesTwo,  10, 30, 0, data_type_heating_circuit_1,     0x00, 5},
     {config_heating_circuit_1_flow_temperature_max,             UseFloatValue,          20, 90, 0, data_type_heating_circuit_1,     0x0e, 2},
     {config_heating_circuit_1_design_temperature,               UseFloatValue,          30, 90, 0, data_type_heating_circuit_1,     0x0e, 4},
-    {config_heating_circuit_1_outdoor_switch_temperature,       UseFloatValueTimesTwo,  -20, 10, 0, data_type_heating_circuit_1,    0x15, 2},
+//    {config_heating_circuit_1_outdoor_switch_temperature,       UseFloatValue,          -20, 10, 0, data_type_heating_circuit_1,    0x15, 2}, // handled by config_frost_switch_temperature
     {config_heating_circuit_1_room_temperature_offset,          UseFloatValueTimesTwo,  -5, 5, 0, data_type_heating_circuit_1,      0x31, 3},
     {config_heating_circuit_1_holiday_days,                     UseFloatValue,          0, 99, 0, data_type_hc1_program,            0x00, 3},
 
@@ -150,12 +150,15 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
     {config_heating_circuit_2_holiday_target_temperature,       UseFloatValueTimesTwo,  10, 30, 0, data_type_heating_circuit_2,     0x00, 5},
     {config_heating_circuit_2_flow_temperature_max,             UseFloatValue,          20, 90, 0, data_type_heating_circuit_2,     0x0e, 2},
     {config_heating_circuit_2_design_temperature,               UseFloatValue,          30, 90, 0, data_type_heating_circuit_2,     0x0e, 4},
-    {config_heating_circuit_2_outdoor_switch_temperature,       UseFloatValueTimesTwo,  -20, 10, 0, data_type_heating_circuit_2,    0x15, 2},
+//    {config_heating_circuit_2_outdoor_switch_temperature,       UseFloatValue,          -20, 10, 0, data_type_heating_circuit_2,    0x15, 2}, // handled by config_frost_switch_temperature
     {config_heating_circuit_2_room_temperature_offset,          UseFloatValueTimesTwo,  -5, 5, 0, data_type_heating_circuit_2,      0x31, 3},
     {config_heating_circuit_2_holiday_days,                     UseFloatValue,          0, 99, 0, data_type_hc2_program,            0x00, 3},
 
-    {config_ww_temperature,                                     UseFloatValue,            30, 60, 0, data_type_warm_water,        0x07, 3},
-    {config_frost_switch_temperature,                           UseFloatValueTimesTwo,  -20, 10, 0, data_type_heating_circuit_1,    0x31, 5},
+    {config_ww_temperature,                                     UseFloatValue,          30, 60, 0, data_type_warm_water,            0x07, 3},
+    {config_frost_switch_temperature,                           UseFloatValue,          -20, 10, 0, data_type_heating_circuit_1,    0x31, 5},
+//    {config_blr_temperature_max,                                UseFloatValue,          70, 99, 0, data_type_boiler,                0x00, 0}, //qs fake telegramOffset and telegramValuePosition
+//    {config_blr_pump_turn_on_temperature,                       UseFloatValue,          15, 60, 0, data_type_boiler,                0x00, 0}, //qs fake telegramOffset and telegramValuePosition
+//    {config_time_offset,                                        UseFloatValueTimesTwo,  -5, 5, 0,  data_type_boiler,                0x00, 0}, //qs fake telegramOffset and telegramValuePosition
 
     {config_heating_circuit_1_operation_mode,                   UseSelectValue,           0,  0,  2, data_type_heating_circuit_1, 0x00, 4},
     {config_heating_circuit_1_lowering_type,                    UseSelectValue,           0,  0,  3, data_type_heating_circuit_1, 0x1c, 1},
@@ -170,6 +173,7 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
     {config_ww_operation_mode,                                  UseSelectValue,           0,  0,  2, data_type_warm_water,        0x0e, 0},
     {config_ww_circular_pump_interval,                          UseSelectValue,           0,  0,  7, data_type_warm_water,        0x0e, 5},
     {config_summer_winter_switch_temperature,                   UseSelectValue,           0,  0, 31, data_type_heating_circuit_1, 0x00, 1},
+//    {config_blr_building_type,                                  UseSelectValue,           0,  0, 2,  data_type_boiler,            0x00, 0}, //qs fake telegramOffset and telegramValuePosition
 };
 
 
