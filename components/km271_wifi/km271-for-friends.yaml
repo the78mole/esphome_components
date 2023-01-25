@@ -326,9 +326,6 @@ number:
     config_heating_circuit_1_design_temperature:
       name: "Heizkreis 1 Auslegungstemperatur"
       mode: slider
-    config_heating_circuit_1_outdoor_switch_temperature:
-      name: "Heizkreis 1 Aussenhalt Umschalttemperatur"
-      mode: slider
     config_heating_circuit_1_room_temperature_offset:
       name: "Heizkreis 1 Raumtemperatur Offset"
       mode: slider
@@ -349,11 +346,8 @@ number:
       name: "HK2 Heizkreistemperatur Maximal"
       mode: slider
     config_heating_circuit_2_design_temperature:
-      unit_of_measurement: "°C"
+      name: "HK2 Auslegungstemperatur"
       mode: slider
-    config_heating_circuit_2_outdoor_switch_temperature:
-      mode: slider
-      name: "HK2 Aussenhalt Umschalttemperatur"
     config_heating_circuit_2_room_temperature_offset:
       name: "HK2 Raumtemperatur Offset"
       mode: slider

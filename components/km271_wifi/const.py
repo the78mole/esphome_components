@@ -12,7 +12,7 @@ CONF_HC2_HEATINGS_TYPE      = "config_heating_circuit_2_heating_system_type"
 CONF_HC2_HEATING_PROGRAM    = "config_heating_circuit_2_heating_program"
 CONF_WW_OPMODE              = "config_ww_operation_mode"
 CONF_WW_CIRC_PUMP_INTERVALL = "config_ww_circular_pump_interval"
-#CONF_BLR_BUILDING_TYPE      = "config_blr_building_type")
+CONF_BLR_BUILDING_TYPE      = "config_blr_building_type"
 
 # Numbers
 #CONF_DT_DATE_TIME = "config_date_time")
@@ -24,7 +24,7 @@ CONF_HC1_ROOMT_TARGET_DAY   = "config_heating_circuit_1_room_target_temperature_
 CONF_HC1_HOLIDAYT           = "config_heating_circuit_1_holiday_target_temperature"
 CONF_HC1_FT_MAX             = "config_heating_circuit_1_flow_temperature_max"
 CONF_HC1_DESIGN_TEMP        = "config_heating_circuit_1_design_temperature"
-CONF_HC1_OUTDOORT_SWITCH    = "config_heating_circuit_1_outdoor_switch_temperature"
+#CONF_HC1_OUTDOORT_SWITCH    = "config_heating_circuit_1_outdoor_switch_temperature" # handled by CONF_FROSTT_SWITCH
 CONF_HC1_ROOMT_OFFSET       = "config_heating_circuit_1_room_temperature_offset"
 CONF_HC1_HOLIDAY_DAYS       = "config_heating_circuit_1_holiday_days"
 
@@ -33,15 +33,16 @@ CONF_HC2_ROOMT_TARGET_DAY   = "config_heating_circuit_2_room_target_temperature_
 CONF_HC2_HOLIDAYT           = "config_heating_circuit_2_holiday_target_temperature"
 CONF_HC2_FT_MAX             = "config_heating_circuit_2_flow_temperature_max"
 CONF_HC2_DESIGN_TEMP        = "config_heating_circuit_2_design_temperature"
-CONF_HC2_OUTDOORT_SWITCH    = "config_heating_circuit_2_outdoor_switch_temperature"
+#CONF_HC2_OUTDOORT_SWITCH    = "config_heating_circuit_2_outdoor_switch_temperature" # handled by CONF_FROSTT_SWITCH
 CONF_HC2_ROOMT_OFFSET       = "config_heating_circuit_2_room_temperature_offset"
 CONF_HC2_HOLIDAY_DAYS       = "config_heating_circuit_2_holiday_days"
 
 CONF_WW_TEMP_TARGET         = "config_ww_temperature"
 CONF_WW_PRIORITY            = "config_ww_priority_mode"
 
-#CONF_BLR_TEMP_MAX           = "config_blr_temperature_max"
-#CONF_BLR_PUMPT_TURN_ON      = "config_blr_pump_turn_on_temperature"
+CONF_BLR_TEMP_MAX           = "config_blr_temperature_max"
+CONF_BLR_PUMPT_TURN_ON      = "config_blr_pump_turn_on_temperature"
+CONF_TIME_OFFSET            = "config_time_offset"
 
 # Sensors
 HC1_FT_TARGET       = "heating_circuit_1_flow_target_temperature"
