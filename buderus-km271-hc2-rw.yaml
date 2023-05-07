@@ -3,6 +3,8 @@
 
 select:
   - platform: km271_wifi
+    config_heating_circuit_2_summer_winter_switch_temperature:
+      name: "HK2 Sommer Winter Umschalttemperatur"
     config_heating_circuit_2_operation_mode:
       name: "HK2 Betriebsmodus"
     config_heating_circuit_2_lowering_type:
