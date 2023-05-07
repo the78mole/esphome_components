@@ -157,7 +157,7 @@ enum TransmissionParameter
     boiler_turn_on_temperature,
     boiler_under_operation,
     circulation_pump_running,
-    config_summer_winter_switch_temperature,
+    config_heating_circuit_1_summer_winter_switch_temperature,
     config_heating_circuit_1_room_target_temperature_night,
     config_heating_circuit_1_room_target_temperature_day,
     config_heating_circuit_1_operation_mode,
@@ -171,6 +171,7 @@ enum TransmissionParameter
     config_heating_circuit_1_room_temperature_offset,
     config_heating_circuit_1_remote_control,
     config_frost_switch_temperature,
+    config_heating_circuit_2_summer_winter_switch_temperature,
     config_heating_circuit_2_room_target_temperature_night,
     config_heating_circuit_2_room_target_temperature_day,
     config_heating_circuit_2_operation_mode,
@@ -328,6 +329,7 @@ static ValueHandlerMap valueHandlerMap;
 
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     // Konfiguration HK1
+    {config_heating_circuit_1_summer_winter_switch_temperature, CFG000, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK1_Sommer_Winter Umschalttemperatur", "°C"},
     {config_heating_circuit_1_room_target_temperature_night, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK1_Raumsolltemperatur Nacht", "°C"},
     {config_heating_circuit_1_room_target_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},
     {config_heating_circuit_1_operation_mode, CFG000, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
@@ -345,6 +347,7 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     {config_heating_circuit_1_heating_program, CFG100, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_HK1_Heizprogramm", ""},
     {config_heating_circuit_1_holiday_days, CFG100, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_HK1_Urlaubstage", ""},
     // Konfiguration HK2
+    {config_heating_circuit_2_summer_winter_switch_temperature, CFG000, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK2_Sommer_Winter Umschalttemperatur", "°C"},
     {config_heating_circuit_2_room_target_temperature_night, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK2_Raumsolltemperatur Nacht", "°C"},
     {config_heating_circuit_2_room_target_temperature_day, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Tag", "°C"},
     {config_heating_circuit_2_operation_mode, CFG038, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Betriebsart", ""},
@@ -372,7 +375,6 @@ static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     // {config_blr_burner_modulation_min, CFG0A8, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_BLR_Brennermodulationsleistung Minimal", ""},
     // {config_blr_burner_runtime_min, CFG0A8, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_BLR_Brennerlaufzeit Minimal", ""},
     // Konfiguration Sonstiges
-    {config_summer_winter_switch_temperature, CFG000, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_Sommer_Winter Umschalttemperatur", "°C"},
     //{config_blr_building_type, CFG070, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_BLR_Gebaeudeart", ""},
     //{config_time_offset, CFG1E0, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_Uhrzeit offset", ""},
     // Betriebswerte 1 HK1
