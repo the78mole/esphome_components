@@ -166,7 +166,7 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
     {config_heating_circuit_1_heating_system_type,              UseSelectValue,           0,  0,  1, data_type_heating_circuit_1, 0x1c, 2},
     {config_heating_circuit_1_heating_program,                  UseSelectValue,           0,  0,  8, data_type_hc1_program,       0x00, 0},
 
-    {config_heating_circuit_1_summer_winter_switch_temperature, UseSelectValue,           0,  0, 31, data_type_heating_circuit_2, 0x00, 1},
+    {config_heating_circuit_2_summer_winter_switch_temperature, UseSelectValue,           0,  0, 31, data_type_heating_circuit_2, 0x00, 1},
     {config_heating_circuit_2_operation_mode,                   UseSelectValue,           0,  0,  2, data_type_heating_circuit_2, 0x00, 4},
     {config_heating_circuit_2_lowering_type,                    UseSelectValue,           0,  0,  3, data_type_heating_circuit_2, 0x1c, 1},
     {config_heating_circuit_2_heating_system_type,              UseSelectValue,           0,  0,  3, data_type_heating_circuit_2, 0x1c, 2},
