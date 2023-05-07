@@ -1,11 +1,12 @@
 """Constants used by km271 component"""
 
 # Selects
-CONF_SWT_SWITCH             = "config_summer_winter_switch_temperature" #Alternative to number
+CONF_HC1_SWT_SWITCH         = "config_heating_circuit_1_summer_winter_switch_temperature" #Alternative to number
 CONF_HC1_OPMODE             = "config_heating_circuit_1_operation_mode"
 CONF_HC1_LOWERING_TYPE      = "config_heating_circuit_1_lowering_type"
 CONF_HC1_HEATINGS_TYPE      = "config_heating_circuit_1_heating_system_type"
 CONF_HC1_HEATING_PROGRAM    = "config_heating_circuit_1_heating_program"
+CONF_HC2_SWT_SWITCH         = "config_heating_circuit_2_summer_winter_switch_temperature"
 CONF_HC2_OPMODE             = "config_heating_circuit_2_operation_mode"
 CONF_HC2_LOWERING_TYPE      = "config_heating_circuit_2_lowering_type"
 CONF_HC2_HEATINGS_TYPE      = "config_heating_circuit_2_heating_system_type"
@@ -16,9 +17,9 @@ CONF_BLR_BUILDING_TYPE      = "config_blr_building_type"
 
 # Numbers
 #CONF_DT_DATE_TIME = "config_date_time")
-#CONF_SWT_SWITCH             = "config_summer_winter_switch_temperature"  #Alternative to switch
 CONF_FROSTT_SWITCH          = "config_frost_switch_temperature"
 
+#CONF_HC1_SWT_SWITCH             = "config_heating_circuit_1_summer_winter_switch_temperature"  #Alternative to switch
 CONF_HC1_ROOMT_TARGET_NIGHT = "config_heating_circuit_1_room_target_temperature_night"
 CONF_HC1_ROOMT_TARGET_DAY   = "config_heating_circuit_1_room_target_temperature_day"
 CONF_HC1_HOLIDAYT           = "config_heating_circuit_1_holiday_target_temperature"
