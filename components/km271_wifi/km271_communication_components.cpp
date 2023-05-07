@@ -160,11 +160,13 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
 //    {config_blr_pump_turn_on_temperature,                       UseFloatValue,          15, 60, 0, data_type_boiler,                0x00, 0}, //qs fake telegramOffset and telegramValuePosition
 //    {config_time_offset,                                        UseFloatValueTimesTwo,  -5, 5, 0,  data_type_boiler,                0x00, 0}, //qs fake telegramOffset and telegramValuePosition
 
+    {config_heating_circuit_1_summer_winter_switch_temperature, UseSelectValue,           0,  0, 31, data_type_heating_circuit_1, 0x00, 1},
     {config_heating_circuit_1_operation_mode,                   UseSelectValue,           0,  0,  2, data_type_heating_circuit_1, 0x00, 4},
     {config_heating_circuit_1_lowering_type,                    UseSelectValue,           0,  0,  3, data_type_heating_circuit_1, 0x1c, 1},
     {config_heating_circuit_1_heating_system_type,              UseSelectValue,           0,  0,  1, data_type_heating_circuit_1, 0x1c, 2},
     {config_heating_circuit_1_heating_program,                  UseSelectValue,           0,  0,  8, data_type_hc1_program,       0x00, 0},
 
+    {config_heating_circuit_1_summer_winter_switch_temperature, UseSelectValue,           0,  0, 31, data_type_heating_circuit_2, 0x00, 1},
     {config_heating_circuit_2_operation_mode,                   UseSelectValue,           0,  0,  2, data_type_heating_circuit_2, 0x00, 4},
     {config_heating_circuit_2_lowering_type,                    UseSelectValue,           0,  0,  3, data_type_heating_circuit_2, 0x1c, 1},
     {config_heating_circuit_2_heating_system_type,              UseSelectValue,           0,  0,  3, data_type_heating_circuit_2, 0x1c, 2},
@@ -172,7 +174,6 @@ static const struct TelegramBuilderConfiguration telegramBuilderConfiguration[] 
 
     {config_ww_operation_mode,                                  UseSelectValue,           0,  0,  2, data_type_warm_water,        0x0e, 0},
     {config_ww_circular_pump_interval,                          UseSelectValue,           0,  0,  7, data_type_warm_water,        0x0e, 5},
-    {config_summer_winter_switch_temperature,                   UseSelectValue,           0,  0, 31, data_type_heating_circuit_1, 0x00, 1},
 //    {config_blr_building_type,                                  UseSelectValue,           0,  0, 2,  data_type_boiler,            0x00, 0}, //qs fake telegramOffset and telegramValuePosition
 };
 
