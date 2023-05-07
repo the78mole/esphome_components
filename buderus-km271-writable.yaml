@@ -4,9 +4,9 @@ select:
       name: "Warmwasser Betriebsmodus"
     config_ww_circular_pump_interval:
       name: "Warmwasser Zirkulationspumpenintervall"
-    config_summer_winter_switch_temperature:
-      name: "Sommer Winter Umschalttemperatur"
-
+      
+    config_heating_circuit_1_summer_winter_switch_temperature:
+      name: "Heizkreis 1 Sommer Winter Umschalttemperatur"
     config_heating_circuit_1_operation_mode:
       name: "Heizkreis 1 Betriebsmodus"
     config_heating_circuit_1_lowering_type:
