@@ -1,0 +1,310 @@
+# This is a configuration with only heating circuit 1 and domestic
+# hot water. You need to add your wifi credentials to make the esp
+# join your home WiFi.
+substitutions:
+  name: "km271-for-friends"
+
+esphome:
+  name: "${name}"
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  name_add_mac_suffix: true
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+#  password: "xxx"
+
+wifi:
+  ssid: "<YOUR_WIFI_SSID>"
+  password: "<YOUR_WIFI_PASS>"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "KM271 Fallback Hotspot"
+    password: ""
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO2
+  rx_pin: GPIO4
+  baud_rate: 2400
+
+external_components:
+  - source: github://the78mole/esphome_components@main
+    components: [ km271_wifi ]
+    refresh:    1sec
+
+status_led:
+  id: ledgn1
+  pin:
+    number: GPIO21
+    inverted: true
+
+km271_wifi:
+  - id: budoil
+    uart_id: uart_bus
+
+binary_sensor:
+  - platform: km271_wifi
+    # Betriebswerte 1 HK1
+    heating_circuit_1_switch_off_optimization:
+      name: "HK1 Ausschaltoptimierung"
+    heating_circuit_1_switch_on_optimization:
+      name: "HK1 Einschaltoptimierung"
+    heating_circuit_1_automatic:
+      name: "HK1 Automatik"
+    heating_circuit_1_ww_priority_processing:
+      name: "HK1 Warmwasservorrang"
+    heating_circuit_1_screed_drying:
+      name: "HK1 Estrichtrocknung"
+    heating_circuit_1_holiday:
+      name: "HK1 Ferien"
+    heating_circuit_1_antifreeze:
+      name: "HK1 Frostschutz"
+    heating_circuit_1_manually:
+      name: "HK1 Manuell"
+    # Betriebswerte 2 HK1
+    heating_circuit_1_summer:
+      name: "HK1 Sommer-Modus"
+    heating_circuit_1_day:
+      name: "HK1 Tag-Modus"
+    heating_circuit_1_no_comm_with_rc:
+      name: "HK1 Keine Kommunikation mit FB"
+    heating_circuit_1_rc_faulty:
+      name: "HK1 FB fehlerhaft"
+    heating_circuit_1_flow_sensor_error:
+      name: "HK1 Fehler Vorlauffuehler"
+    heating_circuit_1_max_flow:
+      name: "HK1 Maximaler Vorlauf"
+    heating_circuit_1_external_fault_input:
+      name: "HK1 Externer Stoereingang"
+    # Betriebswerte 1 WW
+    ww_automatic:
+      name: "WW Automatik"
+    ww_disinfection:
+      name: "WW Desinfektion"
+    ww_reload:
+      name: "WW Nachladung"
+    ww_holiday:
+      name: "WW Ferien"
+    ww_error_disinfection:
+      name: "WW Fehler Desinfektion"
+    ww_error_sensor:
+      name: "WW Fehler Fuehler"
+    ww_error_stays_cold:
+      name: "WW Fehler WW bleibt kalt"
+    ww_error_anode:
+      name: "WW Fehler Anode"
+    # Betriebswerte 2 WW
+    ww_loading:
+      name: "WW Laden"
+    ww_manually:
+      name: "WW Manuell"
+    ww_reloading:
+      name: "WW Nachladen"
+    ww_switch_off_optimization:
+      name: "WW Ausschaltoptimierung"
+    ww_switch_on_optimization:
+      name: "WW Einschaltoptimierung"
+    ww_day_mode:
+      name: "WW Tag Modus"
+    ww_post_processing:
+      name: "WW Nachbereitung"
+    ww_priority_processing:
+      name: "WW Vorrangschaltung"
+    # Kesselfehler
+    error_burner_malfunction:
+      name: "Fehler Brennerstoerung"
+    error_boiler_sensor:
+      name: "Fehler Kesselfuehler"
+    error_additional_sensor:
+      name: "Fehler Zusatzfuehler"
+    error_boiler_stays_cold:
+      name: "Fehler Kessel bleibt kalt"
+    error_exhaust_gas_sensor:
+      name: "Fehler Abgasfuehler"
+    error_exhaust_gas_over_limit:
+      name: "Fehler Abgas ueber Grenzwert"
+    error_safety_chain_released:
+      name: "Fehler Sicherungskette ausgeloest"
+    error_external_disturbance:
+      name: "Fehler Externe Stoerung"
+    # Kesselbetrieb
+    boiler_emission_test:
+      name: "Kessel Abgastest"
+    boiler_1st_stage_operation:
+      name: "Kessel Betrieb 1.Stufe"
+    boiler_protection:
+      name: "Kessel Schutz"
+    boiler_under_operation:
+      name: "Kessel unter Betrieb"
+    boiler_actuation:
+      name: "Brenneransteuerung"
+  #Alarmstatus
+    alarm_exhaust_gas_sensor:
+      name: "Alarm Abgasfuehler"
+    alarm_boiler_flow_sensor:
+      name: "Alarm Kesselvorlauffuehler"
+    alarm_burner:
+      name: "Alarm Brenner"
+    alarm_heating_circuit_2_flow_sensor:
+      name: "Alarm HK2 Vorlauffuehler"
+  #Other stuff
+    load_pump_running:
+      name: "Ladepumpenbetrieb"
+    circulation_pump_running:
+      name: "Zirkulationspumpenbetrieb"
+    solar_pump_lowering:
+      name: "Solarpumpe Absenkung"
+
+
+
+output:
+  - platform: gpio
+    id: led3
+    #name: LED3_Yellow
+    pin:
+      number: 23
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    id: led4
+    #name: LED4_Red
+    pin:
+      number: 25
+      mode: OUTPUT
+      inverted: true
+
+button:
+  - platform: restart
+    name: "KM271-WiFi Restart"
+
+number:
+  - platform: km271_wifi
+    config_ww_temperature:
+      name: "Warmwassersolltemperatur Tag"
+      mode: slider
+    config_frost_switch_temperature:
+      name: "Frost Umschalttemperatur"
+      mode: slider
+
+    config_heating_circuit_1_room_target_temperature_night:
+      name: "Heizkreis 1 Raumsolltemperatur Nacht"
+      mode: slider
+    config_heating_circuit_1_room_target_temperature_day:
+      name: "Heizkreis 1 Raumsolltemperatur Tag"
+      mode: slider
+    config_heating_circuit_1_holiday_target_temperature:
+      name: "Urlaubstemperatur"
+      mode: slider
+    config_heating_circuit_1_flow_temperature_max:
+      name: "Heizkreis 1 Heizkreistemperatur Maximal"
+      mode: slider
+    config_heating_circuit_1_design_temperature:
+      name: "Heizkreis 1 Auslegungstemperatur"
+      mode: slider
+    config_heating_circuit_1_room_temperature_offset:
+      name: "Heizkreis 1 Raumtemperatur Offset"
+      mode: slider
+    config_heating_circuit_1_holiday_days:
+      name: "Heizkreis 1 Urlaubstage"
+      mode: slider
+
+select:
+  - platform: km271_wifi
+    config_ww_operation_mode:
+      name: "Warmwasser Betriebsmodus"
+    config_ww_circular_pump_interval:
+      name: "Warmwasser Zirkulationspumpenintervall"
+    config_heating_circuit_1_summer_winter_switch_temperature:
+      name: "Heizkreis 1 Sommer Winter Umschalttemperatur"
+    config_heating_circuit_1_operation_mode:
+      name: "Heizkreis 1 Betriebsmodus"
+    config_heating_circuit_1_lowering_type:
+      name: "Heizkreis 1 Absenkungsart"
+    config_heating_circuit_1_heating_system_type:
+      name: "Heizkreis 1 Heizsystem"
+    config_heating_circuit_1_heating_program:
+      name: "Heizkreis 1 Heizprogramm"
+
+sensor:
+  - platform: km271_wifi
+    heating_circuit_1_flow_target_temperature:
+      name: "HK1 Vorlaufsolltemperatur"
+    heating_circuit_1_flow_temperature:
+      name: "HK1 Vorlaufisttemperatur"
+    heating_circuit_1_room_target_temperature:
+      name: "HK1 Raumsolltemperatur"
+    heating_circuit_1_room_temperature:
+      name: "HK1 Raumisttemperatur"
+    heating_circuit_1_pump_power:
+      name: "HK1 Pumpenleistung"
+    heating_circuit_1_mixer_position:
+      name: "HK1 Mischerstellung"
+    heating_circuit_1_curve_p10:
+      name: "HK1 Heizkurve +10 °C"
+    heating_circuit_1_curve_0:
+      name: "HK1 Heizkurve 0 °C"
+    heating_circuit_1_curve_n10:
+      name: "HK1 Heizkurve -10 °C"
+    ww_target_temperature:
+      name: "Warmwassersolltemperatur"
+    ww_temperature:
+      name: "Warmwasseristtemperatur"
+    boiler_target_temperature:
+      name: "Kesselvorlaufsolltemperatur"
+    boiler_temperature:
+      name: "Kesselvorlaufisttemperatur"
+    boiler_turn_on_temperature:
+      name: "Brennereinschalttemperatur"
+    boiler_turn_off_temperature:
+      name: "Brennerausschalttemperatur"
+    exhaust_gas_temperature:
+      name: "Abgastemperatur"
+    outdoor_temperature:
+      name: "Aussentemperatur"
+    attenuated_outdoor_temperature:
+      name: "Gedaempfte Aussentemperatur"
+    boiler_runtime_1:
+      name: "Brennerlaufzeit 1"
+    boiler_runtime_2:
+      name: "Brennerlaufzeit 2"
+
+
+  - platform: wifi_signal
+    name: "KM217 WiFi Signal Sensor"
+    update_interval: 60s
+
+  - platform: adc
+    pin: 36
+    unit_of_measurement: "V"
+    name: "KM217 5V Supply"
+    accuracy_decimals: 2
+    update_interval: 5s
+    attenuation: 6dB
+    filters:
+      - multiply: 28.1826
+      - throttle_average: 60s
+
+switch:
+  - platform: gpio
+    name: LED2_Green
+    pin:
+      number: 22
+      mode: OUTPUT
+      inverted: true
+
+text_sensor:
+  - platform: km271_wifi
+    firmware_version:
+      name: "Firmwareversion Steuerung"
