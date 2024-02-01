@@ -9,7 +9,7 @@ An example yaml could be also found in this GIT repo.
 
     external_components:
       - source: github://the78mole/esphome_components@main
-      components: [ km271_wifi ]
+        components: [ km271_wifi ]
 
     km271_wifi:
     - id: budoil
