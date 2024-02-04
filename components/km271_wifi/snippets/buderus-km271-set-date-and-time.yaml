@@ -1,0 +1,110 @@
+number:
+  - platform: template
+    name: "Jahr"
+    id: year_to_set
+    optimistic: true
+    min_value: 1900
+    max_value: 2155
+    initial_value: 2023
+    step: 1
+    mode: box
+  - platform: template
+    name: "Monat"
+    id: month_to_set
+    optimistic: true
+    min_value: 1
+    max_value: 12
+    initial_value: 6
+    step: 1
+    mode: box
+  - platform: template
+    name: "Tag"
+    id: day_to_set
+    optimistic: true
+    min_value: 1
+    max_value: 31
+    initial_value: 15
+    step: 1
+    mode: box
+  - platform: template
+    name: "Stunden"
+    id: hours_to_set
+    optimistic: true
+    min_value: 0
+    max_value: 23
+    initial_value: 12
+    step: 1
+    mode: box
+  - platform: template
+    name: "Minuten"
+    id: minutes_to_set
+    optimistic: true
+    min_value: 0
+    max_value: 59
+    initial_value: 30
+    step: 1
+    mode: box
+  - platform: template
+    name: "Sekunden"
+    id: seconds_to_set
+    optimistic: true
+    min_value: 0
+    max_value: 59
+    initial_value: 0
+    step: 1
+    mode: box
+
+
+select:
+  - platform: template
+    name: "Wochentag"
+    id: day_of_week_to_set
+    optimistic: true
+    options:
+      - "Sonntag"
+      - "Montag"
+      - "Dienstag"
+      - "Mittwoch"
+      - "Donnerstag"
+      - "Freitag"
+      - "Samstag"
+  - platform: template
+    name: "Sommerzeit"
+    id: daylight_savings_time_to_set
+    optimistic: true
+    options:
+      - "Winterzeit"
+      - "Sommerzeit"
+      
+
+button:
+  - platform: template
+    name: "Datum und Zeit setzen"
+    on_press:
+      - lambda:
+      
+          auto dayOfWeekToSetIndex = id(day_of_week_to_set).active_index();
+          auto isDaylightSavingsTimeIndex = id(daylight_savings_time_to_set).active_index(); 
+      
+          if(!dayOfWeekToSetIndex.has_value()) {
+            ESP_LOGE("main", "No day of week set");
+            return;
+          }
+              
+          if(!isDaylightSavingsTimeIndex.has_value()) {
+            ESP_LOGE("main", "No daylight savings time option selected");
+            return;
+          }
+      
+          uint16_t fullYear = id(year_to_set).state;
+          uint8_t monthStartingAt0 = id(month_to_set).state -1;
+          uint8_t dayOfMonthStartingAt1 = id(day_to_set).state;
+          uint8_t weekDaySundayIs0 = dayOfWeekToSetIndex.value();
+          uint8_t hours0To23 = id(hours_to_set).state;
+          uint8_t minutes = id(minutes_to_set).state;
+          uint8_t seconds = id(seconds_to_set).state;
+          bool isDaylightSavingsTime = isDaylightSavingsTimeIndex.value();
+
+          budoil->set_heater_datetime(fullYear, monthStartingAt0, dayOfMonthStartingAt1,
+                                      weekDaySundayIs0, hours0To23, minutes, seconds, isDaylightSavingsTime);
+                                      

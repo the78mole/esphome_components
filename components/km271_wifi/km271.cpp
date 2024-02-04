@@ -226,6 +226,23 @@ void KM271Component::set_communication_component(TransmissionParameter transmiss
     }
 }
 
+void KM271Component::set_heater_datetime(uint16_t fullYear, uint8_t monthStartingAt0, uint8_t dayOfMonthStartingAt1,
+                                         uint8_t weekDaySundayIs0,
+                                         uint8_t hours0To23, uint8_t minutes, uint8_t seconds, bool isDaylightSavingsTime)
+{
+    uint8_t message[] = { 0x01,
+                          0x00,
+                          seconds,
+                          minutes,
+                          (uint8_t) (hours0To23 | ((isDaylightSavingsTime ? 1 : 0) << 6)),
+                          dayOfMonthStartingAt1,
+                          (uint8_t) ((monthStartingAt0+1) | (((weekDaySundayIs0 +6 ) % 7) << 4)),
+                          (uint8_t) (fullYear-1900)
+                        };
+
+    writer.enqueueTelegram(message, sizeof(message));
+}
+
 float KM271Component::get_setup_priority() const {
     return setup_priority::DATA;
 }
