@@ -31,6 +31,11 @@ class KM271Component : public Component, public uart::UARTDevice {
   void set_binary_sensor(TransmissionParameter transmissionParameter, esphome::binary_sensor::BinarySensor *sensor);
   void set_communication_component(TransmissionParameter transmissionParameter, CommunicationComponent *component);
 
+  void set_heater_datetime(uint16_t fullYear, uint8_t monthStartingAt0, uint8_t dayOfMonthStartingAt1,
+                           uint8_t weekDaySundayIs0,
+                           uint8_t hours0To23, uint8_t minutes, uint8_t seconds, bool isDaylightSavingsTime);
+
+
 
  protected:
   const t_Buderus_R2017_ParamDesc *findParameterForNewSensor(TransmissionParameter transmissionParameter);

@@ -9,7 +9,7 @@ An example yaml could be also found in this GIT repo.
 
     external_components:
       - source: github://the78mole/esphome_components@main
-      components: [ km271_wifi ]
+        components: [ km271_wifi ]
 
     km271_wifi:
     - id: budoil
@@ -86,3 +86,26 @@ An example yaml could be also found in this GIT repo.
     switch:
 
     number:
+
+## How do I?
+This section explains how certain features of the software can be used.
+
+
+### How do I set the time / day of week of the heater via Home Assistant?
+
+This is currently a little clunky.
+First, have a look at ./snippets/buderus-km271-set-date-and-time.yaml and
+merge the three sections into your ESPhome yaml file. Compile and install.
+
+Now Home Assistant should show new entities to input the hours, minutes and
+so on.
+After setting those entities to the desired values, push the button "Datum
+und Zeit setzen". This writes the settings to the controller.
+
+While it seems that we can write a full date time object, only the fields
+for hour, minute and day of week seem to have any effect on the Logamatic
+2107. These three values are also the only values changeable using the
+physical control interface.
+
+Reading of the current time is not supported at the moment. If somebody has
+an idea on how to this, please come forward!
