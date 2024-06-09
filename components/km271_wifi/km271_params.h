@@ -124,7 +124,8 @@ enum SensorType {
     UNSIGNED_INT_DIVIDED_BY_2,
     STRING,
     BYTE_AT_OFFSET, // a single byte, with offset in bytes specified in sensor param
-    BYTE_DIVIDED_BY_2_AT_OFFSET, // a single byte that needs to be divided by two after reading, with offset in bytes specified in sensor param
+    UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, // a single unsigned byte that needs to be divided by two after reading, with offset in bytes specified in sensor param
+    SIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, // a single signed byte that needs to be divided by two after reading, with offset in bytes specified in sensor param
     BIT_AT_OFFSET, // a single bit, with offset in bits specified in sensor param
     MULTI_PARAMETER_UNSIGNED_INTEGER,  // a 24 bit unsigned integer that spans multiple parameters. sensor type determines the weight of the value: 0-2
     FIRMWARE_VERSION // two bytes that spans two parameters. sensor type param 0 => major version, sensors type param 1 => minor version
@@ -330,35 +331,35 @@ static ValueHandlerMap valueHandlerMap;
 static const t_Buderus_R2017_ParamDesc buderusParamDesc[] = {
     // Konfiguration HK1
     {config_heating_circuit_1_summer_winter_switch_temperature, CFG000, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK1_Sommer_Winter Umschalttemperatur", "°C"},
-    {config_heating_circuit_1_room_target_temperature_night, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK1_Raumsolltemperatur Nacht", "°C"},
-    {config_heating_circuit_1_room_target_temperature_day, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},
+    {config_heating_circuit_1_room_target_temperature_night, CFG000, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK1_Raumsolltemperatur Nacht", "°C"},
+    {config_heating_circuit_1_room_target_temperature_day, CFG000, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumsolltemperatur Tag", "°C"},
     {config_heating_circuit_1_operation_mode, CFG000, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Betriebsart", ""},
-    {config_heating_circuit_1_holiday_target_temperature, CFG000, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 5, "CFG_HK1_Urlaubstemperatur", "°C"},
+    {config_heating_circuit_1_holiday_target_temperature, CFG000, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 5, "CFG_HK1_Urlaubstemperatur", "°C"},
     {config_heating_circuit_1_flow_temperature_max, CFG00E, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizkreistemperatur Maximal", "°C"},
     {config_heating_circuit_1_design_temperature, CFG00E, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Auslegungstemperatur", "°C"},
-    {config_heating_circuit_1_room_temperature_correction, CFG015, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 0, "CFG_HK1_Raumtemperaturkorrektur Maximal", "°C"},
+    {config_heating_circuit_1_room_temperature_correction, CFG015, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 0, "CFG_HK1_Raumtemperaturkorrektur Maximal", "°C"},
     // {config_ww_priority_mode, CFG015, true, SensorType::, 1, "CFG_WW_Vorrangschaltung", ""},
     //{config_heating_circuit_1_outdoor_switch_temperature, CFG015, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Aussenhalt Umschalttemperatur", "°C"},
     {config_heating_circuit_1_lowering_type, CFG01C, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK1_Absenkungsart", ""},
     {config_heating_circuit_1_heating_system_type, CFG01C, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK1_Heizsystem", ""},
-    {config_heating_circuit_1_room_temperature_offset, CFG031, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumtemperatur Offset", "°C"},
+    {config_heating_circuit_1_room_temperature_offset, CFG031, true, SensorType::SIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK1_Raumtemperatur Offset", "°C"},
     {config_heating_circuit_1_remote_control, CFG031, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK1_Fernbedienung", ""},
     {config_frost_switch_temperature, CFG031, true, SensorType::BYTE_AT_OFFSET, 5, "CFG_Frost Umschalttemperatur", "°C"},
     {config_heating_circuit_1_heating_program, CFG100, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_HK1_Heizprogramm", ""},
     {config_heating_circuit_1_holiday_days, CFG100, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_HK1_Urlaubstage", ""},
     // Konfiguration HK2
     {config_heating_circuit_2_summer_winter_switch_temperature, CFG038, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK2_Sommer_Winter Umschalttemperatur", "°C"},
-    {config_heating_circuit_2_room_target_temperature_night, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK2_Raumsolltemperatur Nacht", "°C"},
-    {config_heating_circuit_2_room_target_temperature_day, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Tag", "°C"},
+    {config_heating_circuit_2_room_target_temperature_night, CFG038, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 2, "CFG_HK2_Raumsolltemperatur Nacht", "°C"},
+    {config_heating_circuit_2_room_target_temperature_day, CFG038, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumsolltemperatur Tag", "°C"},
     {config_heating_circuit_2_operation_mode, CFG038, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Betriebsart", ""},
-    {config_heating_circuit_2_holiday_target_temperature, CFG038, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 5, "CFG_HK2_Urlaubstemperatur", "°C"},
+    {config_heating_circuit_2_holiday_target_temperature, CFG038, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 5, "CFG_HK2_Urlaubstemperatur", "°C"},
     {config_heating_circuit_2_flow_temperature_max, CFG046, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizkreistemperatur Maximal", "°C"},
     {config_heating_circuit_2_design_temperature, CFG046, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Auslegungstemperatur", "°C"},
-    {config_heating_circuit_2_room_temperature_correction, CFG04D, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 0, "CFG_HK2_Raumtemperaturkorrektur Maximal", "°C"},
+    {config_heating_circuit_2_room_temperature_correction, CFG04D, true, SensorType::UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 0, "CFG_HK2_Raumtemperaturkorrektur Maximal", "°C"},
     //{config_heating_circuit_2_outdoor_switch_temperature, CFG04D, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Aussenhalt Umschalttemperatur", "°C"},
     {config_heating_circuit_2_lowering_type, CFG054, true, SensorType::BYTE_AT_OFFSET, 1, "CFG_HK2_Absenkungsart", ""},
     {config_heating_circuit_2_heating_system_type, CFG054, true, SensorType::BYTE_AT_OFFSET, 2, "CFG_HK2_Heizsystem", ""},
-    {config_heating_circuit_2_room_temperature_offset, CFG069, true, SensorType::BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumtemperatur Offset", "°C"},
+    {config_heating_circuit_2_room_temperature_offset, CFG069, true, SensorType::SIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET, 3, "CFG_HK2_Raumtemperatur Offset", "°C"},
     {config_heating_circuit_2_remote_control, CFG069, true, SensorType::BYTE_AT_OFFSET, 4, "CFG_HK2_Fernbedienung", ""},
     {config_heating_circuit_2_heating_program, CFG169, true, SensorType::BYTE_AT_OFFSET, 0, "CFG_HK1_Heizprogramm", ""},
     {config_heating_circuit_2_holiday_days, CFG169, true, SensorType::BYTE_AT_OFFSET, 3, "CFG_HK1_Urlaubstage", ""},

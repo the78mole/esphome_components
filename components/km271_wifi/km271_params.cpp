@@ -93,9 +93,16 @@ void BuderusValueHandler::parseAndTransmit(uint8_t *data, size_t len)
         } else {
             ESP_LOGE(TAG, "Offset for sensor type BYTE_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
         }
-    } else if (paramDesc->sensorType == BYTE_DIVIDED_BY_2_AT_OFFSET) {
+    } else if (paramDesc->sensorType == UNSIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET) {
         if (paramDesc->sensorTypeParam < len) {
             uint8_t value = data[paramDesc->sensorTypeParam];
+            handleReceivedFloatValue(paramDesc->sensorTypeParam, (float)value * 0.5);
+        } else {
+            ESP_LOGE(TAG, "Offset for sensor type BYTE_DIVIDED_BY_2_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
+        }
+    } else if (paramDesc->sensorType == SIGNED_BYTE_DIVIDED_BY_2_AT_OFFSET) {
+        if (paramDesc->sensorTypeParam < len) {
+            int8_t value = (int8_t) data[paramDesc->sensorTypeParam];
             handleReceivedFloatValue(paramDesc->sensorTypeParam, (float)value * 0.5);
         } else {
             ESP_LOGE(TAG, "Offset for sensor type BYTE_DIVIDED_BY_2_AT_OFFSET %d > data len %d", paramDesc->sensorTypeParam, len);
