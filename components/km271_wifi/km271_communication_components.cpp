@@ -20,7 +20,11 @@ const uint8_t keep = 0x65;
 
 uint8_t convertFloatToByte(float value)
 {
-    return (uint8_t)(value + 0.5);
+    if (value >= 0) {
+        return (uint8_t)(value + 0.5);
+    } else {
+        return (uint8_t)(value - 0.5);
+    }
 }
 
 CommunicationComponent::CommunicationComponent(bool writable):
