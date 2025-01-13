@@ -1,17 +1,94 @@
+# This is the configuration, I've put on the board.
+# If you apply voltage to it, the green LED D! serves as status led2
+# usually blinking with around 1 Hz. If you press button USER 1, it will
+# toggle green led D2.
+# To upload a new firmware, search for the "Fallback Hotspot" WiFi and
+# log in with password "Z8zfajgxVvNw". It could take up to a minute for
+# the fallack AP to be enabled when not able to connect to the "test"
+# wifi network. So, if status is blinking, give it a minute to show up.
 substitutions:
-  name: km271-for-friends-21c160
-packages:
-  the78mole.km271-wifi: github://the78mole/esphome_components/components/km271_wifi/km271-for-friends.yaml@main
+  name: "km271-for-friends"
+
 esphome:
-  name: ${name}
-  name_add_mac_suffix: false
+  name: "${name}"
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  name_add_mac_suffix: true
+
+  platformio_options:
+    upload_speed: 921600
+    #board_build.f_flash: 80000000L
+    #board_build.partitions: "default_8MB.csv
+    #upload_flash_size: "8MB"
+
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: the78mole.km271-wifi
+    version: "1.0"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
 api:
-  encryption:
-    key: ___redacted___
+
+ota:
+  platform: esphome
+#  password: "xxx"
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+#  ssid: "test"
+#  password: "testtest"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Fallback Hotspot"
+    password: "Z8zfajgxVvNw"
+
+dashboard_import:
+  package_import_url: github://the78mole/esphome_components/components/km271_wifi/km271-for-friends.yaml@main
+
+captive_portal:
+#  keep_user_credentials: true
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO2
+  rx_pin: GPIO4
+  baud_rate: 2400
+
+external_components:
+#  - source:
+#      type: local
+#      path: my_components/components
+#    components: [ km271_wifi ]
+  - source: github://the78mole/esphome_components@main
+    components: [ km271_wifi ]
+ 
+esp32_improv:
+  authorizer: improvble
+  authorized_duration: 120s
+  status_indicator: led3
+  identify_duration: 60s
+
+improv_serial: 
+
+
+status_led:
+  id: ledgn1
+  pin: 
+    number: GPIO21
+    inverted: true
+
+km271_wifi:
+  - id: budoil
+    uart_id: uart_bus
 
 binary_sensor:
   - platform: gpio
@@ -23,6 +100,14 @@ binary_sensor:
       mode:
         input: true
         pullup: true
+
+# Above is all the "give-away hardware suggestion stuff"
+# It is the place for cleanup of to reduce flash footprint, like: 
+# improv, captive portal, dashboard_import,...)
+##################################################################
+
+##################################################################
+# Below is the real examle stuff
 
   - platform: km271_wifi
     # Betriebswerte 1 HC1
@@ -176,18 +261,19 @@ binary_sensor:
 
 
 
+
 output:
   - platform: gpio
     id: led3
     #name: LED3_Yellow
-    pin:
+    pin: 
       number: 23
       mode: OUTPUT
       inverted: true
   - platform: gpio
     id: led4
     #name: LED4_Red
-    pin:
+    pin: 
       number: 25
       mode: OUTPUT
       inverted: true
@@ -195,6 +281,24 @@ output:
 button:
   - platform: restart
     name: "KM271-WiFi Restart"
+  - platform: template
+    name: "KM271 WW-Bereitung Aus"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x00, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Ein"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x01, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
+  - platform: template
+    name: "KM271 WW-Bereitung Auto"
+    on_press:
+      - lambda:
+          uint8_t command[] = {0x0C, 0x0E, 0x02, 0x65, 0x65, 0x65, 0x65, 0x65};
+          budoil->writer.enqueueTelegram(command, 8);
 
 
 number:
@@ -340,7 +444,6 @@ sensor:
     boiler_runtime_2:
       name: "Burner Runtime 2"
 
-
   - platform: wifi_signal
     name: "KM217 WiFi Signal Sensor"
     update_interval: 60s
@@ -353,13 +456,13 @@ sensor:
     update_interval: 5s
     attenuation: 6dB
     filters:
-      - multiply: 3.3125
+      - multiply: 28.1826
       - throttle_average: 60s
-
+      
 switch:
   - platform: gpio
     name: LED2_Green
-    pin:
+    pin: 
       number: 22
       mode: OUTPUT
       inverted: true
