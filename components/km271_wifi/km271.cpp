@@ -244,7 +244,7 @@ void KM271Component::set_heater_datetime(uint16_t fullYear, uint8_t monthStartin
 }
 
 float KM271Component::get_setup_priority() const {
-    return setup_priority::DATA;
+    return setup_priority::AFTER_CONNECTION;
 }
 
 } // namespace KM271
