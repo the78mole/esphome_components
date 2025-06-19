@@ -59,67 +59,67 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
 #            cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-#            cv.Optional(CONF_BLR_BUILDING_TYPE): select.SELECT_SCHEMA.extend({
+#            cv.Optional(CONF_BLR_BUILDING_TYPE): select.select_schema(BuderusParamSelect).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamSelect),
 #                cv.Optional(CONF_OPTIONS, default={0: 'Leicht', 1: 'Mittel', 2: 'Schwer'}): ensure_option_map
 #            }),
 
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC1_SWT_SWITCH): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC1_SWT_SWITCH): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={9: 'Sommer', 10: '10°C', 11: '11°C', 12: '12°C', 13: '13°C', 14: '14°C', 15: '15°C', 16: '16°C', 17: '17°C', 18: '18°C', 19: '19°C', 20: '20°C', 21: '21°C', 22: '22°C', 23: '23°C', 24: '24°C', 25: '25°C', 26: '26°C', 27: '27°C', 28: '28°C', 29: '29°C', 30: '30°C', 31: 'Winter'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC1_HEATING_PROGRAM): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC1_HEATING_PROGRAM): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Eigen', 1: 'Familie', 2: 'Früh', 3: 'Spät', 4: 'Vormittag', 5: 'Nachmittag', 6: 'Mittag', 7: 'Single', 8: 'Früh'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC1_OPMODE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC1_OPMODE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC1_LOWERING_TYPE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC1_LOWERING_TYPE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Abschalt', 1: 'Reduziert', 2: 'Raumhalt (nur mit FB)', 3: 'Aussenhalt'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC1_HEATINGS_TYPE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC1_HEATINGS_TYPE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: 'Heizkörper'}): ensure_option_map
             }),
 
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC2_SWT_SWITCH): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC2_SWT_SWITCH): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={9: 'Sommer', 10: '10°C', 11: '11°C', 12: '12°C', 13: '13°C', 14: '14°C', 15: '15°C', 16: '16°C', 17: '17°C', 18: '18°C', 19: '19°C', 20: '20°C', 21: '21°C', 22: '22°C', 23: '23°C', 24: '24°C', 25: '25°C', 26: '26°C', 27: '27°C', 28: '28°C', 29: '29°C', 30: '30°C', 31: 'Winter'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC2_HEATING_PROGRAM): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC2_HEATING_PROGRAM): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Eigen', 1: 'Familie', 2: 'Früh', 3: 'Spät', 4: 'Vormittag', 5: 'Nachmittag', 6: 'Mittag', 7: 'Single', 8: 'Früh'}): ensure_option_map
             }),
-            cv.Optional(CONF_HC2_OPMODE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC2_OPMODE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Nacht', 1: 'Tag', 2: 'Auto'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC2_LOWERING_TYPE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC2_LOWERING_TYPE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Abschalt', 1: 'Reduziert', 2: 'Raumhalt (nur mit FB)', 3: 'Aussenhalt'}): ensure_option_map
             }),
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_HC2_HEATINGS_TYPE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_HC2_HEATINGS_TYPE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: 'Heizkörper', 3: 'Fußboden'}): ensure_option_map
             }),
 
-            cv.Optional(CONF_WW_OPMODE): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_WW_OPMODE): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: 'Ein', 2: 'Auto'}): ensure_option_map
             }),
-            cv.Optional(CONF_WW_CIRC_PUMP_INTERVALL): select.SELECT_SCHEMA.extend({
+            cv.Optional(CONF_WW_CIRC_PUMP_INTERVALL): select.select_schema(BuderusParamSelect).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamSelect),
                 cv.Optional(CONF_OPTIONS, default={0: 'Aus', 1: '1 Start/h', 2: '2 Starts/h', 3: '3 Starts/h', 4: '4 Starts/h', 5: '5 Starts/h', 6: '6 Starts/h', 7: 'An'}): ensure_option_map
             })

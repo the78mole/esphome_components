@@ -1,6 +1,7 @@
 esphome:
   name: buderus-km271
-  platform: ESP32
+
+esp32:
   board: esp32dev
 
 # Enable logging
@@ -10,6 +11,7 @@ logger:
 api:
 
 ota:
+  platform: esphome
   password: "put-your-ota-passphrase-here"  # Should be auto generated, when device is first created
 
 wifi:
