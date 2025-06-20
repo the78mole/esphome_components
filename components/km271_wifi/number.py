@@ -54,107 +54,107 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_FROSTT_SWITCH): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_FROSTT_SWITCH): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=-20): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
 
-            cv.Optional(CONF_HC1_ROOMT_TARGET_NIGHT): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_ROOMT_TARGET_NIGHT): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC1_ROOMT_TARGET_DAY): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_ROOMT_TARGET_DAY): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC1_HOLIDAYT): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_HOLIDAYT): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC1_FT_MAX): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_FT_MAX): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=20): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
-            cv.Optional(CONF_HC1_DESIGN_TEMP): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_DESIGN_TEMP): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
 #             handled by CONF_FROSTT_SWITCH
-#            cv.Optional(CONF_HC1_OUTDOORT_SWITCH): number.NUMBER_SCHEMA.extend({
+#            cv.Optional(CONF_HC1_OUTDOORT_SWITCH): number.number_schema(BuderusParamNumber).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
 #                cv.Optional(CONF_MAX_VALUE, default=10): cv.float_,
 #                cv.Optional(CONF_MIN_VALUE, default=-20): cv.float_,
 #                cv.Optional(CONF_STEP, default=1): cv.positive_float,
 #            }),
-            cv.Optional(CONF_HC1_ROOMT_OFFSET): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_ROOMT_OFFSET): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.float_,
             }),
-            cv.Optional(CONF_HC1_HOLIDAY_DAYS): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC1_HOLIDAY_DAYS): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=99): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=0): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
 
-            cv.Optional(CONF_HC2_ROOMT_TARGET_NIGHT): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_ROOMT_TARGET_NIGHT): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC2_ROOMT_TARGET_DAY): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_ROOMT_TARGET_DAY): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC2_HOLIDAYT): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_HOLIDAYT): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=10): cv.float_,
                 cv.Optional(CONF_STEP, default=0.5): cv.positive_float,
             }),
-            cv.Optional(CONF_HC2_FT_MAX): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_FT_MAX): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=20): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
-            cv.Optional(CONF_HC2_DESIGN_TEMP): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_DESIGN_TEMP): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=90): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
 #             handled by CONF_FROSTT_SWITCH
-#            cv.Optional(CONF_HC2_OUTDOORT_SWITCH): number.NUMBER_SCHEMA.extend({
+#            cv.Optional(CONF_HC2_OUTDOORT_SWITCH): number.number_schema(BuderusParamNumber).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
 #                cv.Optional(CONF_MAX_VALUE, default=10): cv.float_,
 #                cv.Optional(CONF_MIN_VALUE, default=-20): cv.float_,
 #                cv.Optional(CONF_STEP, default=1): cv.positive_float,
 #            }),
-            cv.Optional(CONF_HC2_ROOMT_OFFSET): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_ROOMT_OFFSET): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.float_,
             }),
-            cv.Optional(CONF_HC2_HOLIDAY_DAYS): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_HC2_HOLIDAY_DAYS): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=99): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=0): cv.float_,
@@ -162,26 +162,26 @@ CONFIG_SCHEMA = (
             }),
 
             cv.GenerateID(CONF_KM271_ID): cv.use_id(KM271),
-            cv.Optional(CONF_WW_TEMP_TARGET): number.NUMBER_SCHEMA.extend({
+            cv.Optional(CONF_WW_TEMP_TARGET): number.number_schema(BuderusParamNumber).extend({
                 cv.GenerateID(): cv.declare_id(BuderusParamNumber),
                 cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
                 cv.Optional(CONF_MIN_VALUE, default=30): cv.float_,
                 cv.Optional(CONF_STEP, default=1): cv.positive_float,
             }),
 
-#            cv.Optional(CONF_BLR_TEMP_MAX): number.NUMBER_SCHEMA.extend({
+#            cv.Optional(CONF_BLR_TEMP_MAX): number.number_schema(BuderusParamNumber).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
 #                cv.Optional(CONF_MAX_VALUE, default=99): cv.float_,
 #                cv.Optional(CONF_MIN_VALUE, default=-70): cv.float_,
 #                cv.Optional(CONF_STEP, default=1): cv.float_,
 #            }),
-#            cv.Optional(CONF_BLR_PUMPT_TURN_ON): number.NUMBER_SCHEMA.extend({
+#            cv.Optional(CONF_BLR_PUMPT_TURN_ON): number.number_schema(BuderusParamNumber).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
 #                cv.Optional(CONF_MAX_VALUE, default=60): cv.float_,
 #                cv.Optional(CONF_MIN_VALUE, default=-15): cv.float_,
 #                cv.Optional(CONF_STEP, default=1): cv.float_,
 #            }),
-#            cv.Optional(CONF_TIME_OFFSET): number.NUMBER_SCHEMA.extend({
+#            cv.Optional(CONF_TIME_OFFSET): number.number_schema(BuderusParamNumber).extend({
 #                cv.GenerateID(): cv.declare_id(BuderusParamNumber),
 #                cv.Optional(CONF_MAX_VALUE, default=5): cv.float_,
 #                cv.Optional(CONF_MIN_VALUE, default=-5): cv.float_,
