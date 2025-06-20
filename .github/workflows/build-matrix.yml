@@ -1,0 +1,50 @@
+# .github/workflows/build-matrix.yml
+name: 🧪 Build selected ESPHome YAMLs (Matrix)
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create dummy secrets.yaml
+        run: |
+          cat <<EOF > secrets.yaml
+          wifi_ssid: "dummy_ssid"
+          wifi_pass: "dummy_pass"
+          EOF
+
+      - name: Upload workspace state
+        uses: actions/upload-artifact@v4
+        with:
+          name: esphome-workspace
+          path: |
+            .  
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    container:
+      image: esphome/esphome:latest
+    strategy:
+      matrix:
+        yaml_file:
+          - buderus-km271.yaml
+          - buderus-km271_en.yaml
+
+    steps:
+      - name: Download prepared workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: esphome-workspace
+
+      - name: Compile ${{ matrix.yaml_file }}
+        run: |
+          esphome compile "${{ matrix.yaml_file }}"

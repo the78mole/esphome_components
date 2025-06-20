@@ -1,0 +1,16 @@
+{
+  "name": "ESPHome Devcontainer",
+  "image": "esphome/esphome:latest",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esphome.esphome-vscode",
+        "redhat.vscode-yaml",
+        "ms-python.python"
+      ]
+    }
+  },
+  "features": {},
+  "remoteUser": "root",
+  "workspaceFolder": "/workspaces/esphome_components"
+}
