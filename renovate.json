@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "enabledManagers": [
+    "devcontainer",
+    "github-actions"
+  ],
+  "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
+}
