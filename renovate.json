@@ -1,6 +1,7 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "enabledManagers": [
     "devcontainer",
@@ -8,5 +9,5 @@
   ],
   "labels": ["dependencies"],
   "dependencyDashboard": true,
-  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
+  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard"
 }
