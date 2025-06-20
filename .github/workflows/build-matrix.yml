@@ -38,6 +38,8 @@ jobs:
         yaml_file:
           - buderus-km271.yaml
           - buderus-km271_en.yaml
+          - buderus-km271-hc2-rw.yaml
+          - buderus-km271-writable.yaml
 
     steps:
       - name: Download prepared workspace

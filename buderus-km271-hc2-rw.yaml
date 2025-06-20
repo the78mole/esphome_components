@@ -1,5 +1,87 @@
 # Read and write entities only needed if hc2 aka Heizkreis2 is present in your system
 # For that Module FM241 should be installed https://the78mole.de/wp-content/uploads/2021/07/67903492.pdf
+substitutions:
+  name: "km271-for-friends"
+
+esphome:
+  name: "${name}"
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  name_add_mac_suffix: true
+
+  platformio_options:
+    upload_speed: 921600
+    #board_build.f_flash: 80000000L
+    #board_build.partitions: "default_8MB.csv
+    #upload_flash_size: "8MB"
+
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: the78mole.km271-wifi
+    version: "1.0"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  platform: esphome
+#  password: "xxx"
+
+wifi:
+#  ssid: "test"
+#  password: "testtest"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Fallback Hotspot"
+    password: "Z8zfajgxVvNw"
+
+dashboard_import:
+  package_import_url: github://the78mole/esphome_components/components/km271_wifi/km271-for-friends.yaml@main
+
+captive_portal:
+#  keep_user_credentials: true
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO2
+  rx_pin: GPIO4
+  baud_rate: 2400
+
+external_components:
+#  - source:
+#      type: local
+#      path: my_components/components
+#    components: [ km271_wifi ]
+  - source: github://the78mole/esphome_components@main
+    components: [ km271_wifi ]
+ 
+esp32_improv:
+  authorizer: improvble
+  authorized_duration: 120s
+  status_indicator: led3
+  identify_duration: 60s
+
+improv_serial: 
+    
+status_led:
+  id: ledgn1
+  pin: 
+    number: GPIO21
+    inverted: true
+
+km271_wifi:
+  - id: budoil
+    uart_id: uart_bus
 
 select:
   - platform: km271_wifi
@@ -48,7 +130,33 @@ number:
     config_heating_circuit_2_holiday_days:
       name: "HK2 Urlaubstage"
 
+output:
+  - platform: gpio
+    id: led3
+    #name: LED3_Yellow
+    pin: 
+      number: 23
+      mode: OUTPUT
+      inverted: true
+  - platform: gpio
+    id: led4
+    #name: LED4_Red
+    pin: 
+      number: 25
+      mode: OUTPUT
+      inverted: true
+
 binary_sensor:
+  - platform: gpio
+    id: improvble
+    name: "USER 2"
+    pin:
+      number: GPIO27
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+
   - platform: km271_wifi
     # Betriebswerte 1 HK2
     heating_circuit_2_switch_off_optimization:
@@ -103,3 +211,16 @@ sensor:
       name: "HK2 Heizkurve 0 °C"
     heating_circuit_2_curve_n10:
       name: "HK2 Heizkurve -10 °C"
+
+switch:
+  - platform: gpio
+    name: LED2_Green
+    pin: 
+      number: 22
+      mode: OUTPUT
+      inverted: true
+
+text_sensor:
+  - platform: km271_wifi
+    firmware_version:
+      name: "Firmware Version Control"
