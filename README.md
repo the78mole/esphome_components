@@ -1,3 +1,13 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/the78mole/esphome_components)
+[![🧪 Build selected ESPHome YAMLs (Matrix)](https://github.com/the78mole/esphome_components/actions/workflows/build-matrix.yml/badge.svg)](https://github.com/the78mole/esphome_components/actions/workflows/build-matrix.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Matrix](https://img.shields.io/matrix/molesblog%3Amatrix.org)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/the78mole/esphome_components)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/the78mole/esphome_components)
+![GitHub forks](https://img.shields.io/github/forks/the78mole/esphome_components)
+
+
 # esphome_components
 ESPhome Components from the little digger and Jens
 
