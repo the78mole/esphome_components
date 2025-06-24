@@ -5,7 +5,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/the78mole/esphome_components)
 ![GitHub Repo stars](https://img.shields.io/github/stars/the78mole/esphome_components)
 
-![Matrix](https://img.shields.io/matrix/molesblog%3Amatrix.org)
+[![Matrix](https://img.shields.io/matrix/molesblog%3Amatrix.org)](https://matrix.to/#/#molesblog:matrix.org)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/the78mole/esphome_components)
 [![🧪 Build selected ESPHome YAMLs (Matrix)](https://github.com/the78mole/esphome_components/actions/workflows/build-matrix.yml/badge.svg)](https://github.com/the78mole/esphome_components/actions/workflows/build-matrix.yml)
 
