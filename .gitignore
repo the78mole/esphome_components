@@ -8,3 +8,4 @@ km271.includes
 *~
 .DS_Store
 .esphome
+secrets.yaml
