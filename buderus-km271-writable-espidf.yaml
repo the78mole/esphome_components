@@ -9,9 +9,6 @@ esphome:
 
   platformio_options:
     upload_speed: 921600
-    #board_build.f_flash: 80000000L
-    #board_build.partitions: "default_8MB.csv
-    #upload_flash_size: "8MB"
 
   # This will allow for (future) project identification,
   # configuration and updates.
@@ -19,10 +16,11 @@ esphome:
     name: the78mole.km271-wifi
     version: "1.0"
 
+# This YAML is for testing with the esp-idf framework
 esp32:
   board: esp32dev
   framework:
-    type: arduino
+    type: esp-idf
 
 # Enable logging
 logger:
