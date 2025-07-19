@@ -112,8 +112,8 @@ binary_sensor:
       name: "HC1 Hot Water priority"
     heating_circuit_1_screed_drying:
       name: "HC1 Screed Drying"
-    heating_circuit_1_:
-      name: "HC1 "
+    heating_circuit_1_holiday:
+      name: "HC1 Holiday"
     heating_circuit_1_antifreeze:
       name: "HC1 Antifreeze"
     heating_circuit_1_manually:
