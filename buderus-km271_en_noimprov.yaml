@@ -4,7 +4,7 @@
 # toggle green led D2.
 # To upload a new firmware, search for the "Fallback Hotspot" WiFi and
 # log in with password "Z8zfajgxVvNw". It could take up to a minute for
-# the fallack AP to be enabled when not able to connect to the "test"
+# the fallback AP to be enabled when not able to connect to the "test"
 # wifi network. So, if status is blinking, give it a minute to show up.
 substitutions:
   name: "km271-for-friends"
@@ -93,12 +93,12 @@ binary_sensor:
         pullup: true
 
 # Above is all the "give-away hardware suggestion stuff"
-# It is the place for cleanup of to reduce flash footprint, like: 
+# It is the place for cleanup to reduce flash footprint, like: 
 # improv, captive portal, dashboard_import,...)
 ##################################################################
 
 ##################################################################
-# Below is the real examle stuff
+# Below is the real example stuff
 
   - platform: km271_wifi
     # Betriebswerte 1 HC1
@@ -201,7 +201,7 @@ binary_sensor:
       name: "DHW Priority Switching"
     # Kesselfehler
     error_burner_malfunction:
-      name: "FBurner Failure"
+      name: "Burner Failure"
     error_boiler_sensor:
       name: "Boiler Sensor Error"
     error_additional_sensor:
@@ -211,7 +211,7 @@ binary_sensor:
     error_exhaust_gas_sensor:
       name: "Exhaust Gas Sensor Error"
     error_exhaust_gas_over_limit:
-      name: "FExhaust Gas Over Limit Error"
+      name: "Exhaust Gas Over Limit Error"
     error_safety_chain_released:
       name: "Safety Chain Error"
     error_external_disturbance:
@@ -330,7 +330,7 @@ number:
       name: "HC2 Target Room Temperature Day"
       mode: slider
     config_heating_circuit_2_holiday_target_temperature:
-      name: "Holiday Temperaturer"
+      name: "Holiday Temperature"
       mode: slider
     config_heating_circuit_2_flow_temperature_max:
       name: "HC2 Maximum Heating Circuit Temperature"
@@ -350,7 +350,7 @@ select:
     config_ww_operation_mode:
       name: "Hot Water Operating Mode"
     config_ww_circular_pump_interval:
-      name: "WHot Water Circulation Pump Interval"
+      name: "Hot Water Circulation Pump Interval"
 
     config_heating_circuit_1_summer_winter_switch_temperature:
       name: "HC1 Summer Winter Changeover Temperature"
