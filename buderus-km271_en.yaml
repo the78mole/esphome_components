@@ -210,7 +210,7 @@ binary_sensor:
       name: "DHW Priority Switching"
     # Kesselfehler
     error_burner_malfunction:
-      name: "FBurner Failure"
+      name: "Burner Failure"
     error_boiler_sensor:
       name: "Boiler Sensor Error"
     error_additional_sensor:
@@ -317,7 +317,7 @@ number:
       name: "HC1 Target Room Temperature Day"
       mode: slider
     config_heating_circuit_1_holiday_target_temperature:
-      name: "Holiday Temperature"
+      name: "HC1 Holiday Temperature"
       mode: slider
     config_heating_circuit_1_flow_temperature_max:
       name: "HC1 Maximum Heating Circuit Temperature"
@@ -339,7 +339,7 @@ number:
       name: "HC2 Target Room Temperature Day"
       mode: slider
     config_heating_circuit_2_holiday_target_temperature:
-      name: "Holiday Temperaturer"
+      name: "HC2 Holiday Temperature"
       mode: slider
     config_heating_circuit_2_flow_temperature_max:
       name: "HC2 Maximum Heating Circuit Temperature"
