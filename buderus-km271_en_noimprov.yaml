@@ -112,8 +112,8 @@ binary_sensor:
       name: "HC1 Hot Water priority"
     heating_circuit_1_screed_drying:
       name: "HC1 Screed Drying"
-    heating_circuit_1_holiday:
-      name: "HC1 Holiday"
+    heating_circuit_1_:
+      name: "HC1 "
     heating_circuit_1_antifreeze:
       name: "HC1 Antifreeze"
     heating_circuit_1_manually:
@@ -144,8 +144,8 @@ binary_sensor:
       name: "HC2 Hot Water priority"
     heating_circuit_2_screed_drying:
       name: "HC2 Screed Drying"
-    heating_circuit_2_holiday:
-      name: "HC2 Holiday"
+    heating_circuit_2_:
+      name: "HC2 "
     heating_circuit_2_antifreeze:
       name: "HC2 Antifreeze"
     heating_circuit_2_manually:
@@ -172,8 +172,8 @@ binary_sensor:
       name: "WW Disinfection"
     ww_reload:
       name: "DHW Reload"
-    ww_holiday:
-      name: "DHW Holiday"
+    ww_:
+      name: "DHW "
     ww_error_disinfection:
       name: "DHW Disinfektion Error"
     ww_error_sensor:
@@ -308,7 +308,7 @@ number:
       name: "HC1 Target Room Temperature Day"
       mode: slider
     config_heating_circuit_1_holiday_target_temperature:
-      name: "Holiday Temperature"
+      name: "HC1 Holiday Temperature"
       mode: slider
     config_heating_circuit_1_flow_temperature_max:
       name: "HC1 Maximum Heating Circuit Temperature"
@@ -330,7 +330,7 @@ number:
       name: "HC2 Target Room Temperature Day"
       mode: slider
     config_heating_circuit_2_holiday_target_temperature:
-      name: "Holiday Temperature"
+      name: "HC2 Holiday Temperature"
       mode: slider
     config_heating_circuit_2_flow_temperature_max:
       name: "HC2 Maximum Heating Circuit Temperature"
