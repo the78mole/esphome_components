@@ -144,8 +144,8 @@ binary_sensor:
       name: "HC2 Hot Water priority"
     heating_circuit_2_screed_drying:
       name: "HC2 Screed Drying"
-    heating_circuit_2_:
-      name: "HC2 "
+    heating_circuit_2_holiday:
+      name: "HC2 Holiday"
     heating_circuit_2_antifreeze:
       name: "HC2 Antifreeze"
     heating_circuit_2_manually:
@@ -172,8 +172,8 @@ binary_sensor:
       name: "WW Disinfection"
     ww_reload:
       name: "DHW Reload"
-    ww_:
-      name: "DHW "
+    ww_holiday:
+      name: "DHW Holiday"
     ww_error_disinfection:
       name: "DHW Disinfektion Error"
     ww_error_sensor:
