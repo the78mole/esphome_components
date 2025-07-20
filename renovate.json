@@ -9,5 +9,45 @@
   ],
   "labels": ["dependencies"],
   "dependencyDashboard": true,
-  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard"
+  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "esphome-version:\\s*\\n(?:[ \\t]*- stable\\n)?(?<depValues>([ \\t]*- (?<currentValue>\\d+\\.\\d+\\.\\d+)\\n)+)"
+      ],
+      "depNameTemplate": "ghcr.io/esphome/esphome",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "esphome-version:\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "ghcr.io/esphome/esphome",
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "ghcr.io/esphome/esphome"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": "ESPHome Versionsupdate",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    }
+  ]
 }
+

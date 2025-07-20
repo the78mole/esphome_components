@@ -1,0 +1,99 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create SemVer Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # wichtig für vollständige git history
+
+      - name: Get latest version tag
+        id: get_latest
+        run: |
+          git fetch --tags
+          latest=$(git tag --list 'v*' --sort=-v:refname | head -n1 || echo "v0.0.0")
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Generate new version
+        id: semver
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "/(feat|fix|refactor)!:/"
+          minor_pattern: "/^feat:/"
+          version_format: "${major}.${minor}.${patch}"
+          search_commit_body: true
+          debug: true
+
+      - name: Check if new release is needed
+        id: check
+        run: |
+          if [ "v${{ steps.semver.outputs.version }}" == "${{ steps.get_latest.outputs.latest }}" ]; then
+            echo "No new version needed."
+            echo "release=false" >> $GITHUB_OUTPUT
+          else
+            echo "New version will be: ${{ steps.semver.outputs.version }}"
+            echo "release=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate changelog
+        if: steps.check.outputs.release == 'true'
+        id: changelog
+        run: |
+          NEW_TAG="v${{ steps.semver.outputs.version }}"
+          OLD_TAG="${{ steps.get_latest.outputs.latest }}"
+          
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          echo "## Changelog" >> $GITHUB_OUTPUT
+          
+          FEATS=$(git log ${OLD_TAG}..HEAD --grep="^feat" --pretty=format:"- %s" || true)
+          FIXES=$(git log ${OLD_TAG}..HEAD --grep="^fix" --pretty=format:"- %s" || true)
+          BREAKS=$(git log ${OLD_TAG}..HEAD --grep="!:" --pretty=format:"- %s" || true)
+
+          ANY_OUTPUT=false
+
+          if [ -n "$FEATS" ]; then
+            echo -e "\n### ✨ Features" >> $GITHUB_OUTPUT
+            echo "$FEATS" >> $GITHUB_OUTPUT
+            ANY_OUTPUT=true
+          fi
+
+          if [ -n "$FIXES" ]; then
+            echo -e "\n### 🐛 Fixes" >> $GITHUB_OUTPUT
+            echo "$FIXES" >> $GITHUB_OUTPUT
+            ANY_OUTPUT=true
+          fi
+
+          if [ -n "$BREAKS" ]; then
+            echo -e "\n### 💥 Breaking Changes" >> $GITHUB_OUTPUT
+            echo "$BREAKS" >> $GITHUB_OUTPUT
+            ANY_OUTPUT=true
+          fi
+
+          if [ "$ANY_OUTPUT" = false ]; then
+            echo -e "\n### 📝 Commits" >> $GITHUB_OUTPUT
+            git log ${OLD_TAG}..HEAD --pretty=format:"- %s" >> $GITHUB_OUTPUT
+          fi
+
+          echo -e "\n---\n**Full Changelog:** [${OLD_TAG}...${NEW_TAG}](https://github.com/${{ github.repository }}/compare/${OLD_TAG}...${NEW_TAG})" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.semver.outputs.version }}
+          name: Release v${{ steps.semver.outputs.version }}
+          body: ${{ steps.changelog.outputs.release_notes }}
