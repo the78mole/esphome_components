@@ -6,11 +6,16 @@
       "extensions": [
         "esphome.esphome-vscode",
         "redhat.vscode-yaml",
-        "ms-python.python"
+        "ms-python.python",
+        "SanjulaGanepola.github-local-actions",
+        "github.vscode-github-actions"
       ]
     }
   },
-  "features": {},
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
   "remoteUser": "root",
   "workspaceFolder": "/workspaces/esphome_components"
 }
