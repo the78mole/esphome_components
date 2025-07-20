@@ -15,8 +15,8 @@ ota:
   password: "put-your-ota-passphrase-here"  # Should be auto generated, when device is first created
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+  # ssid: !secret wifi_ssid
+  # password: !secret wifi_pass
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
