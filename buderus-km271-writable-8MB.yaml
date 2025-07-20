@@ -1,5 +1,5 @@
 substitutions:
-  name: "km271-for-friends"
+  name: "km271-for-friends-writable-8mb"
 
 esphome:
   name: "${name}"

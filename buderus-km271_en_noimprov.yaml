@@ -7,7 +7,7 @@
 # the fallback AP to be enabled when not able to connect to the "test"
 # wifi network. So, if status is blinking, give it a minute to show up.
 substitutions:
-  name: "km271-for-friends"
+  name: "km271-for-friends-noimprov"
 
 esphome:
   name: "${name}"
