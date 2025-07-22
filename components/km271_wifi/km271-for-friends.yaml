@@ -318,7 +318,7 @@ number:
       name: "Heizkreis 1 Raumsolltemperatur Tag"
       mode: slider
     config_heating_circuit_1_holiday_target_temperature:
-      name: "Urlaubstemperatur"
+      name: "Heizkreis 1 Urlaubstemperatur"
       mode: slider
     config_heating_circuit_1_flow_temperature_max:
       name: "Heizkreis 1 Heizkreistemperatur Maximal"
@@ -340,7 +340,7 @@ number:
       name: "HK2 Raumsolltemperatur Tag"
       mode: slider
     config_heating_circuit_2_holiday_target_temperature:
-      name: "Urlaubstemperatur"
+      name: "HK2 Urlaubstemperatur"
       mode: slider
     config_heating_circuit_2_flow_temperature_max:
       name: "HK2 Heizkreistemperatur Maximal"
