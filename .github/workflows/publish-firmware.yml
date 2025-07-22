@@ -52,6 +52,8 @@ jobs:
         buderus-km271-hc2-rw.yaml
         buderus-km271-writable-espidf.yaml
         buderus-km271-writable-8MB.yaml
+        components/km271_wifi/km271-for-friends.yaml
+        components/km271_wifi/km271_hc1_only.yaml
       esphome-version: 2025.7.2
       combined-name: buderus-km271
       release-version: ${{ needs.set-release-version.outputs.release_version }}
