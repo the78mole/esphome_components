@@ -40,6 +40,23 @@ See https://esphome.io/components/external_components.html for information about
 To configure the component, see the included file buderus-km271.yaml.
 If you are not interested in some of the provided values, just remove the respective entry in the the section "sensor" or "binary_sensor", but leave the empty sections in place to avoid comiler errors with missing headers.
 
+### Example Configurations
+
+You can find many example YAML configurations in the root of this repository. They all get verified by Github Actions workflows to be correct and can be compiled with the latest ESPHome version. Using the latest esphome is ensured by renovate bot and can have a delay of some days, because it needs to undergo some checks and if there is a problem with the YAML files and the new versions, it mostly needs to be fixed manually.
+
+The main intention of these examples are:
+| Filename | Description |
+|---|---|
+| buderus-km271.yaml | Standard configuration for the KM271 component (German). |
+| buderus-km271_en.yaml | Standard configuration for the KM271 component (English). |
+| buderus-km271_en_noimprov.yaml | English configuration without [improv](https://www.improv-wifi.com/). |
+| buderus-km271-hc2-rw.yaml | Configuration for KM271 with read/write support for heating circuit 2. |
+| buderus-km271-writable-espidf.yaml | Configuration using the ESP-IDF framework (saves ~50% of flash space). |
+| buderus-km271-writable-8MB.yaml | Configuration using 8MB flash memory (not supported by all HW versions). |
+| components/km271_wifi/km271-for-friends.yaml | This is the version usually delivered with the HW. |
+| components/km271_wifi/km271_hc1_only.yaml | Example configuration for KM271 only using heating circuit 1. |
+
+
 #### Writing Values and Changing Parameters 
 If you plan to change settings for your heater, see the included file buderus-km271-writable.yaml. This file also provides integration for changing values via home assistant.
 

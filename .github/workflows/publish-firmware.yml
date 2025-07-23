@@ -12,6 +12,9 @@ on:
 permissions:
   contents: write
 
+env:
+  FIRMWARE_FILES_LIST: firmware-files.txt
+
 jobs:
   set-release-version:
     name: Extract Release Version
@@ -40,20 +43,50 @@ jobs:
             echo "release_version=${LATEST_TAG}" | tee -a $GITHUB_OUTPUT
           fi
 
+  check-esphome-names:
+    name: Check for Duplicate ESPHome Names
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: pip install pyyaml
+      
+      - name: Check for duplicate ESPHome names
+        run: python3 scripts/check-esphome-names.py ${{ env.FIRMWARE_FILES_LIST }}
+
+  read-firmware-files:
+    name: Read Firmware Files List
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.read-files.outputs.files }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Read firmware files list
+        id: read-files
+        run: |
+          FILES=$(cat ${{ env.FIRMWARE_FILES_LIST }} | grep -v '^#' | grep -v '^$' | tr '\n' ' ' | sed 's/ $//')
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" | tee -a $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
   build-firmware:
     name: Build Firmware
-    needs: set-release-version
+    needs: 
+      - set-release-version
+      - check-esphome-names
+      - read-firmware-files
     uses: esphome/workflows/.github/workflows/build.yml@2025.4.0
     with:
-      files: |
-        buderus-km271.yaml
-        buderus-km271_en.yaml
-        buderus-km271_en_noimprov.yaml
-        buderus-km271-hc2-rw.yaml
-        buderus-km271-writable-espidf.yaml
-        buderus-km271-writable-8MB.yaml
-        components/km271_wifi/km271-for-friends.yaml
-        components/km271_wifi/km271_hc1_only.yaml
+      files: ${{ needs.read-firmware-files.outputs.files }}
       esphome-version: 2025.7.2
       combined-name: buderus-km271
       release-version: ${{ needs.set-release-version.outputs.release_version }}
@@ -63,6 +96,7 @@ jobs:
     needs: 
       - build-firmware
       - set-release-version
+      - read-firmware-files
     uses: esphome/workflows/.github/workflows/upload-to-gh-release.yml@2025.4.0
     with:
       version: ${{ needs.set-release-version.outputs.release_version }}
