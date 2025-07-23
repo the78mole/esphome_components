@@ -107,6 +107,10 @@ def check_for_duplicates(firmware_files_path: Path) -> bool:
     print(f"Checking {len(firmware_files)} firmware configurations for duplicate ESPHome names...")
     print()
     
+    maxlenfilename = max(len(f) for f in firmware_files) if firmware_files else 0
+    
+    print (f"{'Configuration File'.ljust(maxlenfilename)} | ESPHome Name")
+    print (f"{'-'*maxlenfilename}-|{'-'*20}-")
     for firmware_file in firmware_files:
         yaml_path = workspace_root / firmware_file
         
@@ -118,13 +122,14 @@ def check_for_duplicates(firmware_files_path: Path) -> bool:
         
         if esphome_name:
             name_to_files[esphome_name].append(firmware_file)
-            print(f"  {firmware_file} -> '{esphome_name}'")
+            print(f"{firmware_file.ljust(maxlenfilename)} | {esphome_name}")
     
     print()
     
     # Check for duplicates
     duplicates_found = False
-    
+
+
     for name, files in name_to_files.items():
         if len(files) > 1:
             duplicates_found = True
@@ -133,14 +138,7 @@ def check_for_duplicates(firmware_files_path: Path) -> bool:
                 print(f"  - {file}")
             print()
     
-    if not duplicates_found:
-        print("✅ All ESPHome names are unique!")
-        return True
-    else:
-        print("❌ Duplicate ESPHome names detected!")
-        print("\nPlease ensure each firmware configuration has a unique 'esphome.name' value.")
-        return False
-
+    return True if not duplicates_found else False
 
 def main():
     """Main function."""
