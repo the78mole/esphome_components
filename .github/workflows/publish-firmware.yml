@@ -12,6 +12,9 @@ on:
 permissions:
   contents: write
 
+env:
+  FIRMWARE_FILES_LIST: firmware-files.txt
+
 jobs:
   set-release-version:
     name: Extract Release Version
@@ -40,6 +43,24 @@ jobs:
             echo "release_version=${LATEST_TAG}" | tee -a $GITHUB_OUTPUT
           fi
 
+  check-esphome-names:
+    name: Check for Duplicate ESPHome Names
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: pip install pyyaml
+      
+      - name: Check for duplicate ESPHome names
+        run: python3 scripts/check-esphome-names.py ${{ env.FIRMWARE_FILES_LIST }}
+
   read-firmware-files:
     name: Read Firmware Files List
     runs-on: ubuntu-latest
@@ -52,15 +73,16 @@ jobs:
       - name: Read firmware files list
         id: read-files
         run: |
-          FILES=$(cat .github/workflows/firmware-files.txt | grep -v '^#' | grep -v '^$' | tr '\n' ' ' | sed 's/ $//')
+          FILES=$(cat ${{ env.FIRMWARE_FILES_LIST }} | grep -v '^#' | grep -v '^$' | tr '\n' ' ' | sed 's/ $//')
           echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "$FILES" | tee -a $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
   build-firmware:
     name: Build Firmware
     needs: 
       - set-release-version
+      - check-esphome-names
       - read-firmware-files
     uses: esphome/workflows/.github/workflows/build.yml@2025.4.0
     with:
