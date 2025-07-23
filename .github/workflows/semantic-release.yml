@@ -35,16 +35,36 @@ jobs:
           minor_pattern: "/^feat:/"
           version_format: "${major}.${minor}.${patch}"
           search_commit_body: true
+          bump_each_commit: true
           debug: true
 
       - name: Check if new release is needed
         id: check
         run: |
-          if [ "v${{ steps.semver.outputs.version }}" == "${{ steps.get_latest.outputs.latest }}" ]; then
-            echo "No new version needed."
+          LATEST_TAG="${{ steps.get_latest.outputs.latest }}"
+          NEW_VERSION="v${{ steps.semver.outputs.version }}"
+          
+          # Check if there are any commits since the latest tag
+          COMMITS_SINCE=$(git rev-list ${LATEST_TAG}..HEAD --count 2>/dev/null || echo "0")
+          
+          if [ "$COMMITS_SINCE" -eq "0" ]; then
+            echo "No new commits since $LATEST_TAG."
             echo "release=false" >> $GITHUB_OUTPUT
+          elif [ "$NEW_VERSION" == "$LATEST_TAG" ]; then
+            echo "Version hasn't changed ($NEW_VERSION), but there are $COMMITS_SINCE new commits."
+            echo "Force creating patch release..."
+            # Calculate next patch version manually
+            LATEST_WITHOUT_V=$(echo $LATEST_TAG | sed 's/^v//')
+            MAJOR=$(echo $LATEST_WITHOUT_V | cut -d. -f1)
+            MINOR=$(echo $LATEST_WITHOUT_V | cut -d. -f2)
+            PATCH=$(echo $LATEST_WITHOUT_V | cut -d. -f3)
+            NEW_PATCH=$((PATCH + 1))
+            NEW_VERSION="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+            echo "version_override=${MAJOR}.${MINOR}.${NEW_PATCH}" >> $GITHUB_OUTPUT
+            echo "New version will be: $NEW_VERSION"
+            echo "release=true" >> $GITHUB_OUTPUT
           else
-            echo "New version will be: ${{ steps.semver.outputs.version }}"
+            echo "New version will be: $NEW_VERSION"
             echo "release=true" >> $GITHUB_OUTPUT
           fi
       
@@ -52,7 +72,11 @@ jobs:
         if: steps.check.outputs.release == 'true'
         id: changelog
         run: |
-          NEW_TAG="v${{ steps.semver.outputs.version }}"
+          if [ -n "${{ steps.check.outputs.version_override }}" ]; then
+            NEW_TAG="v${{ steps.check.outputs.version_override }}"
+          else
+            NEW_TAG="v${{ steps.semver.outputs.version }}"
+          fi
           OLD_TAG="${{ steps.get_latest.outputs.latest }}"
           
           echo "release_notes<<EOF" >> $GITHUB_OUTPUT
@@ -94,7 +118,7 @@ jobs:
         if: steps.check.outputs.release == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.semver.outputs.version }}
-          name: Release v${{ steps.semver.outputs.version }}
+          tag_name: ${{ steps.check.outputs.version_override && format('v{0}', steps.check.outputs.version_override) || format('v{0}', steps.semver.outputs.version) }}
+          name: ${{ steps.check.outputs.version_override && format('Release v{0}', steps.check.outputs.version_override) || format('Release v{0}', steps.semver.outputs.version) }}
           body: ${{ steps.changelog.outputs.release_notes }}
           generate_release_notes: true
