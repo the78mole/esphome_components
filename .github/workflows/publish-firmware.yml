@@ -73,9 +73,8 @@ jobs:
       - name: Read firmware files list
         id: read-files
         run: |
-          FILES=$(cat ${{ env.FIRMWARE_FILES_LIST }} | grep -v '^#' | grep -v '^$' | tr '\n' ' ' | sed 's/ $//')
           echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "$FILES" | tee -a $GITHUB_OUTPUT
+          cat ${{ env.FIRMWARE_FILES_LIST }} | grep -v '^#' | grep -v '^$' | tee -a $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
   build-firmware:
