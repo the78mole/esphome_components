@@ -2,7 +2,7 @@
 # hot water. You need to add your wifi credentials to make the esp
 # join your home WiFi.
 substitutions:
-  name: "km271-for-friends"
+  name: "km271-hc1-only"
 
 esphome:
   name: "${name}"
