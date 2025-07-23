@@ -2,9 +2,6 @@ name: CI
 
 on:
   pull_request:
-    paths:
-      - '*.yaml'
-      - '.github/workflows/ci.yml'
   # push:
   #   branches:
   #     - main
@@ -33,6 +30,8 @@ jobs:
           - buderus-km271-hc2-rw
           - buderus-km271-writable-espidf
           - buderus-km271-writable-8MB
+          - components/km271_wifi/km271-for-friends
+          - components/km271_wifi/km271_hc1_only
         #### Modify above here to match your project ####
 
         esphome-version:

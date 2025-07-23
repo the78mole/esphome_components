@@ -1,6 +1,6 @@
 packages:
   # Include all of the core configuration
-  core: !include buderus-km271-writable-espidf.yaml
+  core: !include km271_hc1_only.yaml
 
 esphome:
   # This will allow for project identification,
@@ -14,8 +14,4 @@ esphome:
 # In this case it is the core yaml file that does not contain the extra things
 # that are provided by this factory yaml file as the user does not need these once adopted.
 dashboard_import:
-  package_import_url: github://the78mole/ESPhome-KM271-WiFi/blob/main/buderus-km271-writable-espidf.yaml
-  
-# Sets up the improv via serial client for Wi-Fi provisioning.
-# Handy if your device has a usb port for the user to add credentials when they first get it.
-improv_serial:
+  package_import_url: github://the78mole/ESPhome-KM271-WiFi/blob/main/components/km271_wifi/km271_hc1_only.yaml

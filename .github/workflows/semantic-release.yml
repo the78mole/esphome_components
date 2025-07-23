@@ -97,3 +97,4 @@ jobs:
           tag_name: v${{ steps.semver.outputs.version }}
           name: Release v${{ steps.semver.outputs.version }}
           body: ${{ steps.changelog.outputs.release_notes }}
+          generate_release_notes: true
