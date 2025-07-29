@@ -75,13 +75,3 @@ You should be safe for some years if you don't write more 20 values per day - bu
    * Changing of values is only supported for a few values
    * Only one write request can be active at the same time
    * Written values are not read back for verification.
-
-### Notes by Jens
-I'm working on this project as a hobby. My work on this software is in no way associated with a company. If you like to use it, or improve on it, feel free.
-Use it at your own risk - it might work perfectly or it might not.
- 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-### Advertisement by Jens
-If you are in need of professional software engineering services, feel free to contact me. I've got good contacts to a ten-person embedded software and server software development team.
-They are based in Germany and also provide coaching and support regarding continuous integration and test automation.
