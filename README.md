@@ -53,6 +53,7 @@ The main intention of these examples are:
 | buderus-km271-hc2-rw.yaml | Configuration for KM271 with read/write support for heating circuit 2. |
 | buderus-km271-writable-espidf.yaml | Configuration using the ESP-IDF framework (saves ~50% of flash space). |
 | buderus-km271-writable-8MB.yaml | Configuration using 8MB flash memory (not supported by all HW versions). |
+| buderus-km271-writable-espidf-8MB.yaml | Configuration using ESP-IDF framework with 8MB flash memory. |
 | components/km271_wifi/km271-for-friends.yaml | This is the version usually delivered with the HW. |
 | components/km271_wifi/km271_hc1_only.yaml | Example configuration for KM271 only using heating circuit 1. |
 
