@@ -62,14 +62,6 @@ external_components:
   - source: github://the78mole/esphome_components@main
     components: [ km271_wifi ]
  
-esp32_improv:
-  authorizer: improvble
-  authorized_duration: 120s
-  status_indicator: led3
-  identify_duration: 60s
-
-improv_serial: 
-    
 status_led:
   id: ledgn1
   pin: 
