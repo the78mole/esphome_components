@@ -64,6 +64,7 @@ jobs:
         file: ${{ fromJson(needs.read-firmware-files.outputs.files) }}
         esphome-version:
           - 2025.7.2
+          - 2025.11.0
           #- stable
           
     steps:
