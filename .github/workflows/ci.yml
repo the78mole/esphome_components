@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -43,7 +43,7 @@ jobs:
       files: ${{ steps.read-files.outputs.files }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       - name: Read firmware files list and remove .yaml extensions
         id: read-files
@@ -68,7 +68,7 @@ jobs:
           
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
       - name: Create temporary secrets.yaml
