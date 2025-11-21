@@ -8,7 +8,7 @@ buderus-km271_en.yaml
 buderus-km271_en_noimprov.yaml
 buderus-km271-hc2-rw.yaml
 buderus-km271-writable-espidf.yaml
-buderus-km271-writable-8MB.yaml
+#buderus-km271-writable-8MB.yaml
 
 # Component-specific variants
 components/km271_wifi/km271-for-friends.yaml
