@@ -7,7 +7,9 @@
     "devcontainer",
     "github-actions"
   ],
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
   "customManagers": [
@@ -24,7 +26,9 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.github/workflows/.+\\.ya?ml$"],
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
       "matchStrings": [
         "esphome-version:\\s*[\"']?(?<currentValue>[^\\s\"']+)[\"']?"
       ],
@@ -60,4 +64,3 @@
     }
   ]
 }
-
