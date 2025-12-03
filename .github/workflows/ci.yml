@@ -69,7 +69,7 @@ jobs:
           
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Create temporary secrets.yaml
