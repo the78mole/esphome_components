@@ -1,6 +1,6 @@
 {
   "name": "ESPHome Devcontainer",
-  "image": "esphome/esphome:2025.11.4",
+  "image": "esphome/esphome:2025.11.5",
   "customizations": {
     "vscode": {
       "extensions": [
