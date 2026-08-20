@@ -86,7 +86,7 @@ jobs:
     uses: esphome/workflows/.github/workflows/build.yml@2026.8.1
     with:
       files: ${{ needs.read-firmware-files.outputs.files }}
-      esphome-version: 2025.11.0
+      esphome-version: 2026.7.4
       combined-name: buderus-km271
       release-version: ${{ needs.set-release-version.outputs.release_version }}
 
