@@ -122,3 +122,20 @@ jobs:
           name: ${{ steps.check.outputs.version_override && format('Release v{0}', steps.check.outputs.version_override) || format('Release v{0}', steps.semver.outputs.version) }}
           body: ${{ steps.changelog.outputs.release_notes }}
           generate_release_notes: true
+
+      # Publish Firmware runs via workflow_run and cannot read these outputs directly,
+      # so hand the tag over as an artifact. Without it that workflow has to guess the
+      # version from the newest tag, which breaks when releases follow each other fast.
+      - name: Record released version
+        if: steps.check.outputs.release == 'true'
+        run: |
+          mkdir -p release-meta
+          echo "${{ steps.check.outputs.version_override && format('v{0}', steps.check.outputs.version_override) || format('v{0}', steps.semver.outputs.version) }}" | tee release-meta/version.txt
+
+      - name: Upload released version
+        if: steps.check.outputs.release == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-version
+          path: release-meta/version.txt
+          retention-days: 1
