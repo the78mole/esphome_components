@@ -5,6 +5,13 @@ on:
     branches:
       - main
 
+# Ein Merge-Schwung soll ein Release ergeben, nicht eines pro Merge. Jeder weitere
+# Push cancelt den noch wartenden Lauf; nur der letzte übersteht den Debounce
+# unten und schneidet das Release - mit allen Commits des Schwungs darin.
+concurrency:
+  group: semantic-release-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -14,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Muss der erste Schritt bleiben und vor dem Checkout stehen: bis hierher ist
+      # ein Cancel folgenlos, nach dem Anlegen von Tag und Release wäre er
+      # schädlich. Der Checkout danach sieht alle Commits des Schwungs statt nur
+      # den, der diesen Lauf ausgelöst hat.
+      - name: Debounce - auf weitere Merges warten
+        run: sleep 180
+
       - name: Checkout code
         uses: actions/checkout@v7
         with:

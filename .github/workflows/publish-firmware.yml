@@ -9,13 +9,13 @@ on:
     types:
       - completed
 
-# Several merges in quick succession each start a Semantic Release run, and each of
-# those starts this workflow. Queue them instead of letting their uploads overlap;
-# never cancel, because a cancelled run would leave its release without firmware.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
+# Hier steht bewusst keine concurrency-Group. Sie hat nicht die Eigenschaft, die
+# man ihr zuschreibt: cancel-in-progress: false schützt nur den laufenden Lauf,
+# einen bereits wartenden cancelt GitHub trotzdem, sobald ein weiterer dazukommt -
+# und dessen Release blieb dann ohne Firmware. Nötig ist sie ohnehin nicht mehr:
+# set-release-version unten pinnt jeden Lauf per Artifact auf das Release, das sein
+# Auslöser tatsächlich erzeugt hat, womit zwei Läufe nie dieselben Assets
+# hochladen. Serialisiert wird eine Stufe davor, in Semantic Release.
 permissions:
   contents: write
   actions: read  # read the triggering run's artifact
