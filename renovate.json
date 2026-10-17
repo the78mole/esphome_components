@@ -50,16 +50,13 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": [
-        "ghcr.io/esphome/esphome"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "groupName": "ESPHome Versionsupdate",
+      "description": "Alles Nicht-Major in einen Sammel-PR: ein PR, ein CI-Lauf, ein Merge, ein Release - statt vier Releases für vier Einzel-PRs. Majors bleiben einzeln, damit sie Aufmerksamkeit bekommen.",
+      "groupName": "Dependencies (non-major)",
       "matchUpdateTypes": [
         "minor",
-        "patch"
+        "patch",
+        "digest",
+        "pin"
       ]
     }
   ]

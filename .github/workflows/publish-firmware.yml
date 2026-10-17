@@ -9,8 +9,16 @@ on:
     types:
       - completed
 
+# Hier steht bewusst keine concurrency-Group. Sie hat nicht die Eigenschaft, die
+# man ihr zuschreibt: cancel-in-progress: false schützt nur den laufenden Lauf,
+# einen bereits wartenden cancelt GitHub trotzdem, sobald ein weiterer dazukommt -
+# und dessen Release blieb dann ohne Firmware. Nötig ist sie ohnehin nicht mehr:
+# set-release-version unten pinnt jeden Lauf per Artifact auf das Release, das sein
+# Auslöser tatsächlich erzeugt hat, womit zwei Läufe nie dieselben Assets
+# hochladen. Serialisiert wird eine Stufe davor, in Semantic Release.
 permissions:
   contents: write
+  actions: read  # read the triggering run's artifact
 
 env:
   FIRMWARE_FILES_LIST: firmware-files.txt
@@ -23,25 +31,46 @@ jobs:
     if: github.event_name == 'release' || github.event.workflow_run.conclusion == 'success'
     outputs:
       release_version: ${{ steps.set-version.outputs.release_version }}
+      has_release: ${{ steps.set-version.outputs.has_release }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+      # Semantic Release records the tag it created. Reading it pins this run to that
+      # exact release instead of "whatever tag is newest when the job happens to run" -
+      # the latter let two runs target the same release, and the loser's asset upload
+      # failed with HTTP 422.
+      - name: Download version from triggering run
+        if: github.event_name == 'workflow_run'
+        continue-on-error: true  # no artifact means no release was cut
+        uses: actions/download-artifact@v4
+        with:
+          name: release-version
+          path: release-meta
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract release-version
         id: set-version
         run: |
           if [ "${{ github.event.release.tag_name }}" != "" ]; then
             # Direct release trigger
-            echo "Release version from event: ${{ github.event.release.tag_name }}"
-            echo "release_version=${{ github.event.release.tag_name }}" | tee -a $GITHUB_OUTPUT
+            VERSION="${{ github.event.release.tag_name }}"
+            echo "Release version from event: ${VERSION}"
+          elif [ -s release-meta/version.txt ]; then
+            # Workflow run trigger - the version that run actually released
+            VERSION=$(tr -d '[:space:]' < release-meta/version.txt)
+            echo "Release version from triggering run: ${VERSION}"
           else
-            # Workflow run trigger - get the latest release tag
-            echo "Fetching latest release tag..."
-            LATEST_TAG=$(git describe --tags --abbrev=0)
-            echo "release_version=${LATEST_TAG}" | tee -a $GITHUB_OUTPUT
+            # Semantic Release ran but cut no release, so there is nothing to publish.
+            echo "Triggering run recorded no release, nothing to publish."
+            echo "has_release=false" | tee -a $GITHUB_OUTPUT
+            exit 0
           fi
+          echo "has_release=true" | tee -a $GITHUB_OUTPUT
+          echo "release_version=${VERSION}" | tee -a $GITHUB_OUTPUT
 
   check-esphome-names:
     name: Check for Duplicate ESPHome Names
@@ -83,6 +112,7 @@ jobs:
       - set-release-version
       - check-esphome-names
       - read-firmware-files
+    if: needs.set-release-version.outputs.has_release == 'true'
     uses: esphome/workflows/.github/workflows/build.yml@2026.10.2
     with:
       files: ${{ needs.read-firmware-files.outputs.files }}
@@ -96,6 +126,7 @@ jobs:
       - build-firmware
       - set-release-version
       - read-firmware-files
+    if: needs.set-release-version.outputs.has_release == 'true'
     uses: esphome/workflows/.github/workflows/upload-to-gh-release.yml@2026.10.2
     with:
       version: ${{ needs.set-release-version.outputs.release_version }}
